@@ -5,5 +5,4 @@ class Event( var date: String?,
              var interval:Int?,
              var content: String?,
              var done: Boolean?
-) {
-}
+)

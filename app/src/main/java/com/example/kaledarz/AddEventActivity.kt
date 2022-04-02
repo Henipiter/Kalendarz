@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
@@ -25,22 +24,18 @@ class AddEventActivity : AppCompatActivity() {
     lateinit var buttonInterval: Button
     lateinit var addButton: Button
     lateinit var buttonDate: Button
-    lateinit var dataText: TextView
     lateinit var contentText1: EditText
-    lateinit var buttonTime: Button
-    lateinit var timeText: TextView
-    lateinit var intervalText: TextView
+    lateinit var buttonStartTime: Button
+    lateinit var buttonEndTime: Button
     var calendar = Calendar.getInstance()
     var picker: TimePickerDialog? = null
 
     private fun findViews() {
-        dataText = findViewById(R.id.data_text)
-        timeText = findViewById(R.id.time_text)
         buttonDate = findViewById(R.id.date_button)
         addButton = findViewById(R.id.edit_button_1)
-        buttonTime = findViewById(R.id.time_button)
+        buttonStartTime = findViewById(R.id.start_time_button)
+        buttonEndTime = findViewById(R.id.end_time_button)
         buttonInterval = findViewById(R.id.remind_button)
-        intervalText = findViewById(R.id.interval_text)
         contentText1 = findViewById(R.id.contentText)
     }
 
@@ -71,7 +66,7 @@ class AddEventActivity : AppCompatActivity() {
                 calendar.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
-        buttonTime.setOnClickListener {
+        buttonStartTime.setOnClickListener {
             val cldr = Calendar.getInstance()
             val hour = cldr[Calendar.HOUR_OF_DAY]
             val minutes = cldr[Calendar.MINUTE]
@@ -79,7 +74,7 @@ class AddEventActivity : AppCompatActivity() {
             picker = TimePickerDialog(
                 this@AddEventActivity, { tp, sHour, sMinute ->
                     setHourAndMinutes(sHour, sMinute)
-                    timeText.text = "$hourValue:$minuteValue"
+                    buttonStartTime.text = "$hourValue:$minuteValue"
                 }, hour, minutes, true
             )
             picker!!.show()
@@ -89,8 +84,8 @@ class AddEventActivity : AppCompatActivity() {
 
             val note = Note(
                 null,
-                dataText.text.toString().trim(),
-                timeText.text.toString().trim(),
+                buttonDate.text.toString().trim(),
+                buttonStartTime.text.toString().trim(),
                 Integer.valueOf(intervalValue.trim()),
                 contentText1.text.toString().trim(),
                 false
@@ -116,13 +111,13 @@ class AddEventActivity : AppCompatActivity() {
     }
 
     private fun editIntervalText() {
-        intervalText.text = "Remind in every $intervalValue minutes"
+        buttonInterval.text = "$intervalValue minutes"
     }
 
     private fun updateDateInView() {
         val myFormat = "dd-MM-yyyy" // mention the format you need
         val sdf = SimpleDateFormat(myFormat, Locale.US)
-        dataText.text = sdf.format(calendar.time)
+        buttonDate.text = sdf.format(calendar.time)
     }
 
     private fun showAddItemDialog(c: Context) {
@@ -143,7 +138,7 @@ class AddEventActivity : AppCompatActivity() {
     private fun getAndSetIntentData() {
 
         if (intent.hasExtra("date")) {
-            dataText.text = intent.getStringExtra("date").toString()
+            buttonDate.text = intent.getStringExtra("date").toString()
         } else {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         }

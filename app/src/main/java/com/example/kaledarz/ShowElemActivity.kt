@@ -7,53 +7,30 @@ import android.os.Bundle
 import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class ShowElemActivity : AppCompatActivity() {
 
-    lateinit var dateText: EditText
-    lateinit var timeText: EditText
-    lateinit var intervalText: TextView
-    lateinit var contentText: EditText
-    lateinit var editButton: Button
-    lateinit var deleteButton: Button
-    lateinit var backButton: Button
-    lateinit var doneButton: Button
-    lateinit var changeDateButton: Button
-    lateinit var changeTimeButton: Button
-    lateinit var changeIntevalButton: Button
-
-    lateinit var myDB: MyDatabaseHelper
-
-    private val CANCEL_INFO = "CANCEL"
-    private val DELETE_INFO = "DELETE"
-    private val EDIT_INFO = "EDIT"
-    private val SAVE_INFO = "SAVE"
-
-    var id = "1"
-    var date = "1"
-    var time = "1"
-    var interval = "1"
-    var content = "1"
-    var done = "1"
-
-    private fun findViews() {
-        dateText = findViewById(R.id.date_text_2)
-        timeText = findViewById(R.id.time_text_2)
-        intervalText = findViewById(R.id.interval_text_2)
-        contentText = findViewById(R.id.contentText_2)
-        editButton = findViewById(R.id.edit_button_2)
-        deleteButton = findViewById(R.id.delete_button_2)
-        backButton = findViewById(R.id.back_button_2)
-        doneButton = findViewById(R.id.done_button_2)
-        changeDateButton = findViewById(R.id.date_button_2)
-        changeIntevalButton = findViewById(R.id.interval_button_2)
-        changeTimeButton = findViewById(R.id.time_button_2)
-        editButton = findViewById(R.id.edit_button_2)
+    companion object {
+        private const val EDIT_INFO = "EDIT"
+        private const val CANCEL_INFO = "CANCEL"
+        private const val DELETE_INFO = "DELETE"
+        private const val SAVE_INFO = "SAVE"
     }
 
+    private lateinit var contentText: EditText
+    lateinit var buttonEdit: Button
+    lateinit var buttonDelete: Button
+    lateinit var buttonBack: Button
+    lateinit var buttonDone: Button
+    lateinit var buttonDate: Button
+    lateinit var buttonStartTime: Button
+    lateinit var buttonEndTime: Button
+    lateinit var buttonInterval: Button
+
+    private lateinit var myDB: MyDatabaseHelper
+    private var note = Note()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -64,24 +41,24 @@ class ShowElemActivity : AppCompatActivity() {
         findViews()
         enableButtonIfInit()
 
-        changeIntevalButton.setOnClickListener { showAddItemDialog(this@ShowElemActivity) }
+        buttonInterval.setOnClickListener { showAddItemDialog(this@ShowElemActivity) }
 
-        deleteButton.setOnClickListener {
-            doneButton.isEnabled = true
-            if (deleteButton.text == CANCEL_INFO) { //CANCEL
+        buttonDelete.setOnClickListener {
+            buttonDone.isEnabled = true
+            if (buttonDelete.text == CANCEL_INFO) { //CANCEL
                 enableButtonIfCancel()
             } else {  //DELETE
                 deleteNoteAndExit()
             }
         }
-        backButton.setOnClickListener {
+        buttonBack.setOnClickListener {
             finish()
             val homepage = Intent(this, MainActivity::class.java)
             startActivity(homepage)
         }
 
-        editButton.setOnClickListener {
-            if (editButton.text != SAVE_INFO) { //EDIT
+        buttonEdit.setOnClickListener {
+            if (buttonEdit.text != SAVE_INFO) { //EDIT
                 enableButtonIfEdit()
             } else { //SAVE
                 saveNoteAndExit()
@@ -99,7 +76,7 @@ class ShowElemActivity : AppCompatActivity() {
             .setTitle("Change interval time")
             .setView(taskEditText)
             .setPositiveButton("Save") { dialog, which ->
-                interval = taskEditText.text.toString()
+                note.interval = taskEditText.text.toString().toInt()
                 editIntervalText()
             }
             .setNegativeButton("Cancel", null)
@@ -108,26 +85,28 @@ class ShowElemActivity : AppCompatActivity() {
     }
 
     private fun editIntervalText() {
-        intervalText.text = "Remind in every $interval minutes"
+        buttonInterval.text = note.interval.toString() + " minutes"
     }
 
 
     private fun getAndSetIntentData() {
         if (intent.hasExtra("id")) {
-            this.id = intent.getStringExtra("id").toString()
+            note.id = intent.getStringExtra("id").toString()
         } else {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun storeDataInArrays() {
-        val note = myDB.readOneData(this.id)
+        note = myDB.readOneData(note.id.toString())
         if (note.id == "") {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         } else {
-            dateText.setText(note.date)
-            timeText.setText(note.time)
-            intervalText.text = "Remind in every "+note.interval+" minutes"
+
+
+            buttonDate.text = note.date
+            buttonStartTime.text = note.time
+            buttonInterval.text = note.interval.toString() + " minutes"
             contentText.setText(note.content)
         }
 
@@ -146,36 +125,35 @@ class ShowElemActivity : AppCompatActivity() {
     }
 
     private fun enableButtonIfSave() {
-        disableEditText(dateText)
-        disableEditText(timeText)
         disableEditText(contentText)
 
-        editButton.text = EDIT_INFO
-        deleteButton.text = DELETE_INFO
-        doneButton.isEnabled = true
+        buttonEdit.text = Companion.EDIT_INFO
+        buttonDelete.text = DELETE_INFO
+        buttonDone.isEnabled = true
     }
 
     private fun enableButtonIfEdit() {
         enableEditText(contentText)
 
-        editButton.text = SAVE_INFO
-        deleteButton.text = CANCEL_INFO
-        doneButton.isEnabled = false
-        backButton.isEnabled = false
-        changeDateButton.isEnabled = true
-        changeIntevalButton.isEnabled = true
-        changeTimeButton.isEnabled = true
+        buttonEdit.text = SAVE_INFO
+        buttonDelete.text = CANCEL_INFO
+        buttonDone.isEnabled = false
+        buttonBack.isEnabled = false
+        buttonDate.isEnabled = true
+        buttonInterval.isEnabled = true
+        buttonStartTime.isEnabled = true
+        buttonEndTime.isEnabled = true
     }
 
     private fun saveNoteAndExit() {
         val myDB = MyDatabaseHelper(this)
-        myDB.deleteEvent(this.id)
+        myDB.deleteEvent(note.id.toString())
 
         val note = Note(
             null,
-            dateText.text.toString().trim(),
-            timeText.text.toString().trim(),
-            Integer.valueOf(intervalText.text.split(" ")[3].trim()),
+            buttonDate.text.toString().trim(),
+            buttonStartTime.text.toString().trim(),
+            Integer.valueOf(buttonInterval.text.split(" ")[0].trim()),
             contentText.text.toString().trim(),
             false
         )
@@ -188,36 +166,48 @@ class ShowElemActivity : AppCompatActivity() {
     }
 
     private fun deleteNoteAndExit() {
-        myDB.deleteEvent(this.id)
+        myDB.deleteEvent(note.id.toString())
         finish()
         val homepage = Intent(this, MainActivity::class.java)
         startActivity(homepage)
     }
 
     private fun enableButtonIfCancel() {
-        dateText.setText(date)
-        intervalText.text = interval
-        contentText.setText(content)
-        timeText.setText(time)
+        buttonDate.text = note.date
+        buttonInterval.text = note.interval.toString()
+        contentText.setText(note.content)
+        buttonStartTime.text = note.time
 
-        doneButton.isEnabled = true
-        backButton.isEnabled = true
-        changeDateButton.isEnabled = false
-        changeIntevalButton.isEnabled = false
-        changeTimeButton.isEnabled = false
-        editButton.text = EDIT_INFO
-        deleteButton.text = DELETE_INFO
+        buttonDone.isEnabled = true
+        buttonBack.isEnabled = true
+        buttonDate.isEnabled = false
+        buttonInterval.isEnabled = false
+        buttonStartTime.isEnabled = false
+        buttonEndTime.isEnabled = false
+        buttonEdit.text = Companion.EDIT_INFO
+        buttonDelete.text = DELETE_INFO
     }
 
     private fun enableButtonIfInit() {
-        disableEditText(dateText)
-        disableEditText(timeText)
         disableEditText(contentText)
-        doneButton.isEnabled = true
-        backButton.isEnabled = true
-        changeDateButton.isEnabled = false
-        changeIntevalButton.isEnabled = false
-        changeTimeButton.isEnabled = false
+        buttonDone.isEnabled = true
+        buttonBack.isEnabled = true
+        buttonDate.isEnabled = false
+        buttonInterval.isEnabled = false
+        buttonStartTime.isEnabled = false
+        buttonEndTime.isEnabled = false
     }
 
+    private fun findViews() {
+        contentText = findViewById(R.id.contentText_2)
+        buttonEdit = findViewById(R.id.edit_button_2)
+        buttonDelete = findViewById(R.id.delete_button_2)
+        buttonBack = findViewById(R.id.back_button_2)
+        buttonDone = findViewById(R.id.done_button_2)
+        buttonDate = findViewById(R.id.date_button_2)
+        buttonInterval = findViewById(R.id.interval_button_2)
+        buttonStartTime = findViewById(R.id.start_time_button_2)
+        buttonEndTime = findViewById(R.id.end_time_button_)
+        buttonEdit = findViewById(R.id.edit_button_2)
+    }
 }

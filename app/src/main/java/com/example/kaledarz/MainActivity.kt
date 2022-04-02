@@ -19,13 +19,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerViewEvent: RecyclerView
     private lateinit var databaseHelper: MyDatabaseHelper
     private var chooseDate = "2020-01-01"
+    private var noteList: ArrayList<Note> = ArrayList()
 
-
-    private var id: ArrayList<String> = ArrayList()
-    private var date: ArrayList<String> = ArrayList()
-    private var time: ArrayList<String> = ArrayList()
-    private var interval: ArrayList<String> = ArrayList()
-    private var content: ArrayList<String> = ArrayList()
     private lateinit var customAdapter: CustomAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         chooseDate = getTodayDate()
         databaseHelper = MyDatabaseHelper(this)
 
-        customAdapter = CustomAdapter(this, this, id, date, time, interval, content)
+        customAdapter = CustomAdapter(this, this, noteList)
         recyclerViewEvent.adapter = customAdapter
         recyclerViewEvent.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -70,23 +65,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun storeDataInArrays() {
-        id.clear()
-        date.clear()
-        time.clear()
-        interval.clear()
-        content.clear()
-        val cursor = databaseHelper.readAllData(chooseDate)
-        if (cursor?.count == 0) {
+        noteList.clear()
+        noteList.addAll(databaseHelper.readAllData(chooseDate))
+        if (noteList.size == 0) {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
-        } else {
-            while (cursor?.moveToNext() == true) {
-                id.add(cursor.getString(0))
-                date.add(cursor.getString(1))
-                time.add(cursor.getString(2))
-                interval.add(cursor.getString(3))
-                content.add(cursor.getString(4))
-
-            }
         }
     }
 

@@ -14,11 +14,7 @@ class CustomAdapter(
 
     var activity: Activity,
     var context: Context,
-    var id: ArrayList<String>,
-    var date: ArrayList<String>,
-    var time: ArrayList<String>,
-    var interval: ArrayList<String>,
-    var content: ArrayList<String>
+    var noteList: ArrayList<Note>
 ) : RecyclerView.Adapter<CustomAdapter.MyViewHolder>() {
     var position = 0
 
@@ -45,21 +41,21 @@ class CustomAdapter(
         if (trimmedDescription.length > 16) {
             trimmedDescription = trimmedDescription.substring(0, 16)
         }
-        return trimmedDescription
+        return "$trimmedDescription..."
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         this.position = position
-        holder.time.text = time[position]
-        holder.content.text = trimDescription(content[position])
+        holder.time.text = noteList[position].time
+        holder.content.text = noteList[position].content?.let { trimDescription(it) }
         holder.mainLayout.setOnClickListener {
             val intent = Intent(context, ShowElemActivity::class.java)
-            intent.putExtra("id", id[position])
+            intent.putExtra("id", noteList[position].id)
             activity.startActivity(intent)
         }
     }
 
     override fun getItemCount(): Int {
-        return id.size
+        return noteList.size
     }
 }

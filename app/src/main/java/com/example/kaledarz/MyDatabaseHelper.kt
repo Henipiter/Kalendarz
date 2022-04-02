@@ -43,13 +43,13 @@ class MyDatabaseHelper(val context: Context?) :
         return db.delete(TABLE_NAME, "$COLUMN_ID=$id", null) > 0
     }
 
-    fun addGame(date: String, time: String, interval: Int, content: String) {
+    fun addGame(note: Note) {
         val db = this.writableDatabase
         val cv = ContentValues()
-        cv.put(COLUMN_DATE, date)
-        cv.put(COLUMN_TIME, time)
-        cv.put(COLUMN_INTERVAL, interval)
-        cv.put(COLUMN_CONTENT, content)
+        cv.put(COLUMN_DATE, note.date)
+        cv.put(COLUMN_TIME, note.time)
+        cv.put(COLUMN_INTERVAL, note.interval)
+        cv.put(COLUMN_CONTENT, note.content)
 
         val result = db.insert(TABLE_NAME, null, cv)
         if (result == (-1).toLong()) {
@@ -59,7 +59,7 @@ class MyDatabaseHelper(val context: Context?) :
         }
     }
 
-    fun readAllData(data: String): Cursor? {
+    fun readAllData(data: String): ArrayList<Note> {
         val query = "Select * from $TABLE_NAME where $COLUMN_DATE='$data';"
         Log.e("query", query)
         val db = this.readableDatabase
@@ -67,10 +67,10 @@ class MyDatabaseHelper(val context: Context?) :
         if (db != null) {
             cursor = db.rawQuery(query, null)
         }
-        return cursor
+        return cursorToNotes(cursor)
     }
 
-    fun readOneData(id: String): Cursor? {
+    fun readOneData(id: String): Note {
         val query = "Select * from $TABLE_NAME where $COLUMN_ID='$id';"
         Log.e("query", query)
         val db = this.readableDatabase
@@ -78,6 +78,44 @@ class MyDatabaseHelper(val context: Context?) :
         if (db != null) {
             cursor = db.rawQuery(query, null)
         }
-        return cursor
+        return cursorToNote(cursor, id)
+    }
+
+    private fun cursorToNotes(cursor: Cursor?): ArrayList<Note> {
+        val notes = ArrayList<Note>()
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                val note = Note(
+                    cursor.getString(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3).toInt(),
+                    cursor.getString(4),
+                    false
+                )
+                notes.add(note)
+            }
+        }
+        return notes
+    }
+
+    private fun cursorToNote(cursor: Cursor?, id: String): Note {
+        var note = Note()
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                if (cursor.getString(0) == id) {
+                    note = Note(
+                        cursor.getString(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3).toInt(),
+                        cursor.getString(4),
+                        false
+                    )
+                    break
+                }
+            }
+        }
+        return note
     }
 }

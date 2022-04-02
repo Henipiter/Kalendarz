@@ -86,12 +86,16 @@ class AddEventActivity : AppCompatActivity() {
         }
         addButton.setOnClickListener {
             val myDB = MyDatabaseHelper(this)
-            myDB.addGame(
+
+            val note = Note(
+                null,
                 dataText.text.toString().trim(),
                 timeText.text.toString().trim(),
                 Integer.valueOf(intervalValue.trim()),
-                contentText1.text.toString().trim()
+                contentText1.text.toString().trim(),
+                false
             )
+            myDB.addGame(note)
             finish()
             val homepage = Intent(this, MainActivity::class.java)
             startActivity(homepage)

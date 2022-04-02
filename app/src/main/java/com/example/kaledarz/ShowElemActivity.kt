@@ -121,27 +121,16 @@ class ShowElemActivity : AppCompatActivity() {
     }
 
     private fun storeDataInArrays() {
-        val cursor = myDB.readOneData(this.id)
-        if (cursor?.count == 0) {
+        val note = myDB.readOneData(this.id)
+        if (note.id == "") {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         } else {
-            while (cursor?.moveToNext() == true) {
-                if (cursor.getString(0) == this.id) {
-
-                    this.id = cursor.getString(0)
-                    this.date = cursor.getString(1)
-                    this.time = cursor.getString(2)
-                    this.content = cursor.getString(4)
-                    this.interval = cursor.getString(3)
-
-                    dateText.setText(this.date)
-                    timeText.setText(this.time)
-                    intervalText.text = "Remind in every $interval minutes"
-                    contentText.setText(this.content)
-                    break
-                }
-            }
+            dateText.setText(note.date)
+            timeText.setText(note.time)
+            intervalText.text = "Remind in every "+note.interval+" minutes"
+            contentText.setText(note.content)
         }
+
     }
 
     private fun disableEditText(editText: EditText) {
@@ -178,15 +167,20 @@ class ShowElemActivity : AppCompatActivity() {
         changeTimeButton.isEnabled = true
     }
 
-    private fun saveNoteAndExit(){
+    private fun saveNoteAndExit() {
         val myDB = MyDatabaseHelper(this)
         myDB.deleteEvent(this.id)
-        myDB.addGame(
+
+        val note = Note(
+            null,
             dateText.text.toString().trim(),
             timeText.text.toString().trim(),
             Integer.valueOf(intervalText.text.split(" ")[3].trim()),
             contentText.text.toString().trim(),
+            false
         )
+
+        myDB.addGame(note)
         finish()
         enableButtonIfSave()
         val homepage = Intent(this, MainActivity::class.java)
@@ -202,7 +196,7 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun enableButtonIfCancel() {
         dateText.setText(date)
-        intervalText.setText(interval)
+        intervalText.text = interval
         contentText.setText(content)
         timeText.setText(time)
 

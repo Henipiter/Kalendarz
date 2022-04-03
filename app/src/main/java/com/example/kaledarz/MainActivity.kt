@@ -1,13 +1,19 @@
 package com.example.kaledarz
 
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
@@ -16,10 +22,14 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     private lateinit var calendar: CalendarView
     private lateinit var addNew: Button
+    private lateinit var buttonNotify: Button
+    private lateinit var buttonStopNotify: Button
     private lateinit var recyclerViewEvent: RecyclerView
     private lateinit var databaseHelper: MyDatabaseHelper
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
+
+    private val CHANNEL_ID = "dupa"
 
     private lateinit var customAdapter: CustomAdapter
 
@@ -28,7 +38,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         calendar = findViewById(R.id.calendarView)
         addNew = findViewById(R.id.add_button)
+        buttonNotify = findViewById(R.id.notify_button)
+        buttonStopNotify = findViewById(R.id.notify_button_stop)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
+
+        createNotificationChannel()
+
+
         val calendarView = CalendarView(this)
         calendarView.setDate(System.currentTimeMillis(), false, true)
 
@@ -42,6 +58,13 @@ class MainActivity : AppCompatActivity() {
 
         storeDataInArrays()
         customAdapter.notifyDataSetChanged()
+        buttonNotify.setOnClickListener {
+            createNotification()
+        }
+
+        buttonStopNotify.setOnClickListener{
+            deleteNotification()
+        }
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
             chooseDate = getChosenDate(year, month, dayOfMonth)
@@ -54,6 +77,45 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddEventActivity::class.java)
             intent.putExtra("date", chooseDate)
             this.startActivity(intent)
+        }
+    }
+
+    private fun deleteNotification(){
+        val notificationManager = getSystemService(
+            NOTIFICATION_SERVICE
+        ) as NotificationManager
+        notificationManager.cancel(1)
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.channel_name)
+            val descriptionText = getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createNotification() {
+        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.aaa)
+            .setContentTitle("Titel")
+            .setContentText("Content dupa")
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setOngoing(true)
+
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(1, builder.build())
         }
     }
 
@@ -70,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         if (noteList.size == 0) {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         }
-        for ( n in noteList){
+        for (n in noteList) {
             Log.e("done", n.done.toString())
 
         }

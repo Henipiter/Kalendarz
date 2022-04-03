@@ -71,7 +71,6 @@ class ShowElemActivity : AppCompatActivity() {
         buttonDone.setOnClickListener {
             buttonDoneManager()
             myDB.updateDone(note.id.toString(), !note.done)
-            buttonDone.text = note.done.toString() + buttonDone.text.subSequence(1, 5)
         }
     }
 

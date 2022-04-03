@@ -17,9 +17,10 @@ import java.util.*
 
 
 class AddEventActivity : AppCompatActivity() {
-
-    var hourValue: String = "09"
-    var minuteValue: String = "00"
+    var initHourValue = ""
+    var initMinuteValue = ""
+    var hourValue = "09"
+    var minuteValue = "00"
     var intervalValue = "5"
     lateinit var buttonInterval: Button
     lateinit var addButton: Button
@@ -39,12 +40,23 @@ class AddEventActivity : AppCompatActivity() {
         contentText1 = findViewById(R.id.contentText)
     }
 
+    private fun setHoursOnButtons() {
+        val cldr = Calendar.getInstance()
+        val hour = cldr[Calendar.HOUR_OF_DAY] + 1
+        setHourAndMinutes(hour, 0).toString()
+        initHourValue = hourValue
+        initMinuteValue = minuteValue
+        buttonStartTime.text = (hourValue.toInt() + 1).toString() + ":00"
+        buttonEndTime.text = (hourValue.toInt() + 2).toString() + ":00"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_event)
         findViews()
         getAndSetIntentData()
         editIntervalText()
+        setHoursOnButtons()
 
         val dateSetListener =
             DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
@@ -67,9 +79,8 @@ class AddEventActivity : AppCompatActivity() {
             ).show()
         }
         buttonStartTime.setOnClickListener {
-            val cldr = Calendar.getInstance()
-            val hour = cldr[Calendar.HOUR_OF_DAY]
-            val minutes = cldr[Calendar.MINUTE]
+            val hour = buttonStartTime.text.subSequence(0,2).toString().toInt()
+            val minutes = buttonStartTime.text.subSequence(3,5).toString().toInt()
             // time picker dialog
             picker = TimePickerDialog(
                 this@AddEventActivity, { tp, sHour, sMinute ->
@@ -80,14 +91,13 @@ class AddEventActivity : AppCompatActivity() {
             picker!!.show()
         }
         buttonEndTime.setOnClickListener {
-            val cldr = Calendar.getInstance()
-            val hour = cldr[Calendar.HOUR_OF_DAY]+1
-            val minutes = 0
+            val hour = buttonEndTime.text.subSequence(0,2).toString().toInt()
+            val minutes = buttonEndTime.text.subSequence(3,5).toString().toInt()
             // time picker dialog
             picker = TimePickerDialog(
                 this@AddEventActivity, { tp, sHour, sMinute ->
                     setHourAndMinutes(sHour, sMinute)
-                    buttonStartTime.text = "$hourValue:$minuteValue"
+                    buttonEndTime.text = "$hourValue:$minuteValue"
                 }, hour, minutes, true
             )
             picker!!.show()

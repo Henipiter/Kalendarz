@@ -43,7 +43,7 @@ class MyDatabaseHelper(val context: Context?) :
                         "$CONTENT_COLUMN  TEXT, " +
                         "$DONE_MARK_COLUMN  INTEGER );")
         db?.execSQL(createTableQuery)
-//        db?.close()
+        db?.close()
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -54,7 +54,7 @@ class MyDatabaseHelper(val context: Context?) :
     fun deleteEvent(id: String): Boolean {
         val db = this.writableDatabase
         val result = db.delete(TABLE_NAME, "$ID_COLUMN=$id", null) > 0
-//        db.close()
+        db.close()
         return result
     }
 
@@ -74,24 +74,29 @@ class MyDatabaseHelper(val context: Context?) :
         } else {
             Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
         }
-//        db.close()
+        db.close()
     }
 
     fun updateDone(id: String, value: Boolean) {
+        var bool=0
+        if(value)
+            bool=1
         val db = this.writableDatabase
-        val values = ContentValues()
+//        val values = ContentValues()
+//
+//        values.put(DONE_MARK_COLUMN, value)
+//        val result = db.update(TABLE_NAME, values, "$ID_COLUMN='$id'", null)
+//        Log.e("aa", result.toString() + result.toString())
+//        if (result == (-1)) {
+//            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
+//        } else {
+//            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+//        }
 
-        values.put(DONE_MARK_COLUMN, value)
-        val result = db.update(TABLE_NAME, values, "$ID_COLUMN=$id", null)
-        Log.e("aa", result.toString() + result.toString())
-        if (result == (-1)) {
-            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
-        }
-//        val query = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN=$value WHERE $ID_COLUMN=$id"
-//        db.execSQL(query);
-//        Log.e("aa", query)
+        val query1 = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN = $bool where $ID_COLUMN = '$id'"
+//        val query  = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN = $value WHERE $ID_COLUMN=$id"
+        db.execSQL(query1);
+        Log.e("aa", query1)
         db.close()
 
     }
@@ -105,7 +110,7 @@ class MyDatabaseHelper(val context: Context?) :
             cursor = db.rawQuery(query, null)
         }
         val result = cursorToNotes(cursor)
-//        db.close()
+        db.close()
         return result
     }
 
@@ -118,7 +123,7 @@ class MyDatabaseHelper(val context: Context?) :
             cursor = db.rawQuery(query, null)
         }
         val result = cursorToNote(cursor, id)
-//        db.close()
+        db.close()
         return result
     }
 
@@ -133,12 +138,19 @@ class MyDatabaseHelper(val context: Context?) :
                     cursor.getString(END_TIME_CURSOR_POSITION),
                     cursor.getString(INTERVAL_CURSOR_POSITION).toInt(),
                     cursor.getString(CONTENT_CURSOR_POSITION),
-                    cursor.getString(DONE_MARK_CURSOR_POSITION).toBoolean()
+                    strToBool(cursor.getString(DONE_MARK_CURSOR_POSITION))
                 )
                 notes.add(note)
             }
         }
         return notes
+    }
+
+    private fun strToBool(str:String):Boolean{
+        var bool = false
+        if(str=="1")
+            bool=true
+        return bool
     }
 
     private fun cursorToNote(cursor: Cursor?, id: String): Note {
@@ -153,7 +165,7 @@ class MyDatabaseHelper(val context: Context?) :
                         cursor.getString(END_TIME_CURSOR_POSITION),
                         cursor.getString(INTERVAL_CURSOR_POSITION).toInt(),
                         cursor.getString(CONTENT_CURSOR_POSITION),
-                        cursor.getString(DONE_MARK_CURSOR_POSITION).toBoolean()
+                        strToBool(cursor.getString(DONE_MARK_CURSOR_POSITION))
                     )
                     break
                 }

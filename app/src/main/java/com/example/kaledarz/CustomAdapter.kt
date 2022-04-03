@@ -46,7 +46,7 @@ class CustomAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         this.position = position
-        holder.time.text = noteList[position].time
+        holder.time.text = noteList[position].start_time
         holder.content.text = noteList[position].content?.let { trimDescription(it) }
         holder.mainLayout.setOnClickListener {
             val intent = Intent(context, ShowElemActivity::class.java)

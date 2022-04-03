@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -39,6 +40,8 @@ class ShowElemActivity : AppCompatActivity() {
         myDB = MyDatabaseHelper(this)
 
         findViews()
+        getAndSetIntentData()
+        storeDataInArrays()
         enableButtonIfInit()
 
         buttonInterval.setOnClickListener { showAddItemDialog(this@ShowElemActivity) }
@@ -65,8 +68,11 @@ class ShowElemActivity : AppCompatActivity() {
             }
         }
 
-        getAndSetIntentData()
-        storeDataInArrays()
+        buttonDone.setOnClickListener {
+            buttonDoneManager()
+            myDB.updateDone(note.id.toString(), !note.done)
+            buttonDone.text = note.done.toString() + buttonDone.text.subSequence(1, 5)
+        }
     }
 
     private fun showAddItemDialog(c: Context) {
@@ -99,17 +105,16 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun storeDataInArrays() {
         note = myDB.readOneData(note.id.toString())
+        Log.e("done:", note.done.toString())
         if (note.id == "") {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         } else {
-
-
             buttonDate.text = note.date
-            buttonStartTime.text = note.time
+            buttonStartTime.text = note.start_time
+            buttonEndTime.text = note.start_time
             buttonInterval.text = note.interval.toString() + " minutes"
             contentText.setText(note.content)
         }
-
     }
 
     private fun disableEditText(editText: EditText) {
@@ -126,15 +131,13 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun enableButtonIfSave() {
         disableEditText(contentText)
-
-        buttonEdit.text = Companion.EDIT_INFO
+        buttonEdit.text = EDIT_INFO
         buttonDelete.text = DELETE_INFO
         buttonDone.isEnabled = true
     }
 
     private fun enableButtonIfEdit() {
         enableEditText(contentText)
-
         buttonEdit.text = SAVE_INFO
         buttonDelete.text = CANCEL_INFO
         buttonDone.isEnabled = false
@@ -145,6 +148,16 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEndTime.isEnabled = true
     }
 
+    private fun buttonDoneManager() {
+        if (note.done) {
+            buttonDone.text = "Mark as undone"
+            note.done = false
+        } else {
+            buttonDone.text = "Mark as done"
+            note.done = true
+        }
+    }
+
     private fun saveNoteAndExit() {
         val myDB = MyDatabaseHelper(this)
         myDB.deleteEvent(note.id.toString())
@@ -153,6 +166,7 @@ class ShowElemActivity : AppCompatActivity() {
             null,
             buttonDate.text.toString().trim(),
             buttonStartTime.text.toString().trim(),
+            buttonEndTime.text.toString().trim(),
             Integer.valueOf(buttonInterval.text.split(" ")[0].trim()),
             contentText.text.toString().trim(),
             false
@@ -176,7 +190,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonDate.text = note.date
         buttonInterval.text = note.interval.toString()
         contentText.setText(note.content)
-        buttonStartTime.text = note.time
+        buttonStartTime.text = note.start_time
 
         buttonDone.isEnabled = true
         buttonBack.isEnabled = true
@@ -196,6 +210,8 @@ class ShowElemActivity : AppCompatActivity() {
         buttonInterval.isEnabled = false
         buttonStartTime.isEnabled = false
         buttonEndTime.isEnabled = false
+
+        buttonDoneManager()
     }
 
     private fun findViews() {

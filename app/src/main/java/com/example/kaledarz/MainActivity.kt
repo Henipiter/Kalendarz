@@ -70,6 +70,10 @@ class MainActivity : AppCompatActivity() {
         if (noteList.size == 0) {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         }
+        for ( n in noteList){
+            Log.e("done", n.done.toString())
+
+        }
     }
 
     private fun getTodayDate(): String {

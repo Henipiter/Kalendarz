@@ -79,6 +79,19 @@ class AddEventActivity : AppCompatActivity() {
             )
             picker!!.show()
         }
+        buttonEndTime.setOnClickListener {
+            val cldr = Calendar.getInstance()
+            val hour = cldr[Calendar.HOUR_OF_DAY]+1
+            val minutes = 0
+            // time picker dialog
+            picker = TimePickerDialog(
+                this@AddEventActivity, { tp, sHour, sMinute ->
+                    setHourAndMinutes(sHour, sMinute)
+                    buttonStartTime.text = "$hourValue:$minuteValue"
+                }, hour, minutes, true
+            )
+            picker!!.show()
+        }
         addButton.setOnClickListener {
             val myDB = MyDatabaseHelper(this)
 
@@ -86,6 +99,7 @@ class AddEventActivity : AppCompatActivity() {
                 null,
                 buttonDate.text.toString().trim(),
                 buttonStartTime.text.toString().trim(),
+                buttonEndTime.text.toString().trim(),
                 Integer.valueOf(intervalValue.trim()),
                 contentText1.text.toString().trim(),
                 false

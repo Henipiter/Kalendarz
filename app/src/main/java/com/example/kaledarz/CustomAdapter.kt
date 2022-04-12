@@ -50,6 +50,7 @@ class CustomAdapter(
         holder.content.text = noteList[position].content?.let { trimDescription(it) }
         holder.mainLayout.setOnClickListener {
             val intent = Intent(context, ShowElemActivity::class.java)
+            intent.putExtra("type", "EDIT")
             intent.putExtra("id", noteList[position].id)
             activity.startActivity(intent)
         }

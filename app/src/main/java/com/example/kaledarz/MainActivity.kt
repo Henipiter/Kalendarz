@@ -74,7 +74,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         addNew.setOnClickListener {
-            val intent = Intent(this, AddEventActivity::class.java)
+            val intent = Intent(this, ShowElemActivity::class.java)
+            intent.putExtra("type", "ADD")
             intent.putExtra("date", chooseDate)
             this.startActivity(intent)
         }

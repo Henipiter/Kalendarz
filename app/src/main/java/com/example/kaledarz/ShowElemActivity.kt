@@ -35,7 +35,6 @@ class ShowElemActivity : AppCompatActivity() {
     lateinit var buttonStartTime: Button
     lateinit var buttonEndTime: Button
     lateinit var buttonInterval: Button
-    lateinit var warningTextView: TextView
 
 
     private var calendar = Calendar.getInstance()
@@ -58,7 +57,6 @@ class ShowElemActivity : AppCompatActivity() {
 
         findViews()
         getAndSetIntentData()
-        warningTextView.visibility = View.GONE
         buttonStartTime.setOnClickListener {
             val hour = buttonStartTime.text.subSequence(0, 2).toString().toInt()
             val minutes = buttonStartTime.text.subSequence(3, 5).toString().toInt()
@@ -120,7 +118,7 @@ class ShowElemActivity : AppCompatActivity() {
             if (buttonDelete.text == CANCEL_INFO) { //CANCEL
                 enableButtonIfCancel()
             } else {  //DELETE
-                deleteNoteAndExit()
+                showDeleteConfirmDialog(this@ShowElemActivity)
             }
         }
 
@@ -203,7 +201,8 @@ class ShowElemActivity : AppCompatActivity() {
             messageError = "End time is not later than start date"
         }
         val dialog: AlertDialog = AlertDialog.Builder(c)
-            .setTitle(messageError)
+            .setTitle("Date error")
+            .setMessage(messageError)
             .setNegativeButton("OK", null)
             .create()
         dialog.show()
@@ -218,6 +217,18 @@ class ShowElemActivity : AppCompatActivity() {
             .setPositiveButton("Save") { dialog, which ->
                 note.interval = taskEditText.text.toString().toInt()
                 buttonInterval.text = note.interval.toString() + " minutes"
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+        dialog.show()
+    }
+
+    private fun showDeleteConfirmDialog(c: Context) {
+        val dialog: AlertDialog = AlertDialog.Builder(c)
+            .setTitle("Are you sure?")
+            .setMessage("Are you sure to delete that event?")
+            .setPositiveButton("Delete") { dialog, which ->
+                deleteNoteAndExit()
             }
             .setNegativeButton("Cancel", null)
             .create()
@@ -410,6 +421,5 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEndTime = findViewById(R.id.end_time_button_)
         buttonEdit = findViewById(R.id.edit_button_2)
         buttonAdd = findViewById(R.id.add_button_2)
-        warningTextView = findViewById(R.id.warningTextView)
     }
 }

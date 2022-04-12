@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
@@ -37,6 +38,7 @@ class ShowElemActivity : AppCompatActivity() {
     lateinit var buttonStartTime: Button
     lateinit var buttonEndTime: Button
     lateinit var buttonInterval: Button
+    lateinit var imageDone: ImageView
 
 
     private var calendar = Calendar.getInstance()
@@ -135,6 +137,9 @@ class ShowElemActivity : AppCompatActivity() {
             note.done = !note.done
             refreshDoneButton()
             myDB.updateDone(note.id.toString(), note.done)
+            finish()
+            val homepage = Intent(this, MainActivity::class.java)
+            startActivity(homepage)
         }
 
         buttonAdd.setOnClickListener {
@@ -342,6 +347,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonInterval.isEnabled = bool
         buttonStartTime.isEnabled = bool
         buttonEndTime.isEnabled = bool
+        contentText.isEnabled=bool
     }
 
     private fun findViews() {

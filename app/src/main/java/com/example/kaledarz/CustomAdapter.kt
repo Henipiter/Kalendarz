@@ -6,6 +6,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -21,9 +22,9 @@ class CustomAdapter(
     class MyViewHolder(
         var itemView: View,
         var time: TextView = itemView.findViewById(R.id.time_1),
-//        var interval: TextView = itemView.findViewById(R.id.interval_1),
         var content: TextView = itemView.findViewById(R.id.content_1),
-        var mainLayout: ConstraintLayout = itemView.findViewById(R.id.mainLayout)
+        var mainLayout: ConstraintLayout = itemView.findViewById(R.id.mainLayout),
+        var imageDone: ImageView = itemView.findViewById(R.id.imageDone)
     ) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -44,10 +45,21 @@ class CustomAdapter(
         return "$trimmedDescription..."
     }
 
+    private fun setRightDoneImage(){
+
+    }
+
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         this.position = position
+        setRightDoneImage()
         holder.time.text = noteList[position].start_time
         holder.content.text = noteList[position].content?.let { trimDescription(it) }
+        if(noteList[position].done){
+            holder.imageDone.setImageResource(R.drawable.done)
+        }
+        else{
+            holder.imageDone.setImageResource(R.drawable.undone)
+        }
         holder.mainLayout.setOnClickListener {
             val intent = Intent(context, ShowElemActivity::class.java)
             intent.putExtra("type", "EDIT")

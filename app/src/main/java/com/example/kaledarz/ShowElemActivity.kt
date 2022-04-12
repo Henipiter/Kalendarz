@@ -39,7 +39,7 @@ class ShowElemActivity : AppCompatActivity() {
     lateinit var buttonInterval: Button
 
 
-    var calendar = Calendar.getInstance()
+    private var calendar = Calendar.getInstance()
     var picker: TimePickerDialog? = null
 
     var initHourValue = ""
@@ -62,7 +62,6 @@ class ShowElemActivity : AppCompatActivity() {
         buttonStartTime.setOnClickListener {
             val hour = buttonStartTime.text.subSequence(0,2).toString().toInt()
             val minutes = buttonStartTime.text.subSequence(3,5).toString().toInt()
-            // time picker dialog
             picker = TimePickerDialog(
                 this@ShowElemActivity, { tp, sHour, sMinute ->
                     setHourAndMinutes(sHour, sMinute)
@@ -74,7 +73,6 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEndTime.setOnClickListener {
             val hour = buttonEndTime.text.subSequence(0,2).toString().toInt()
             val minutes = buttonEndTime.text.subSequence(3,5).toString().toInt()
-            // time picker dialog
             picker = TimePickerDialog(
                 this@ShowElemActivity, { tp, sHour, sMinute ->
                     setHourAndMinutes(sHour, sMinute)
@@ -158,35 +156,6 @@ class ShowElemActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateDateInView():String {
-        val myFormat = "dd-MM-yyyy" // mention the format you need
-        val sdf = SimpleDateFormat(myFormat, Locale.US)
-        return sdf.format(calendar.time)
-    }
-
-    private fun setHour(time: Int):String{
-        return if (time.toString().length == 1) {
-            "0$time"
-        } else {
-            time.toString()
-        }
-    }
-
-    private fun setHourAndMinutes(sHour: Int, sMinute: Int) {
-        hourValue = setHour(sHour)
-        minuteValue = setHour(sMinute)
-    }
-
-    private fun setHoursOnButtons() {
-        val cldr = Calendar.getInstance()
-        val hour = cldr[Calendar.HOUR_OF_DAY] + 1
-        setHourAndMinutes(hour, 0).toString()
-        initHourValue = hourValue
-        initMinuteValue = minuteValue
-        buttonStartTime.text = setHour(hourValue.toInt() + 1) + ":00"
-        buttonEndTime.text = setHour(hourValue.toInt() + 2) + ":00"
-    }
-
     private fun showAddItemDialog(c: Context) {
         val taskEditText = EditText(c)
         taskEditText.inputType = InputType.TYPE_CLASS_NUMBER
@@ -208,7 +177,7 @@ class ShowElemActivity : AppCompatActivity() {
             if (activityType == "EDIT") {
                 getIntentForEditView()
                 showEditViewButton()
-                disableButtonIfEdit()
+                enableButtonIfEdit(false)
                 storeDataInArrays()
                 refreshDoneButton()
             } else if (activityType == "ADD") {
@@ -274,58 +243,33 @@ class ShowElemActivity : AppCompatActivity() {
         startActivity(homepage)
     }
 
-    private fun hideEditViewButton() {
-        buttonEdit.visibility = View.GONE
-        buttonDelete.visibility = View.GONE
-        buttonDone.visibility = View.GONE
-        buttonAdd.visibility = View.VISIBLE
+    private fun updateDateInView():String {
+        val myFormat = "dd-MM-yyyy" // mention the format you need
+        val sdf = SimpleDateFormat(myFormat, Locale.US)
+        return sdf.format(calendar.time)
     }
 
-    private fun showEditViewButton() {
-        buttonEdit.visibility = View.VISIBLE
-        buttonDelete.visibility = View.VISIBLE
-        buttonDone.visibility = View.VISIBLE
-        buttonAdd.visibility = View.GONE
+    private fun setHour(time: Int):String{
+        return if (time.toString().length == 1) {
+            "0$time"
+        } else {
+            time.toString()
+        }
     }
 
-    private fun disableEditText(editText: EditText) {
-        editText.isFocusable = false
-        editText.isEnabled = false
-        editText.isCursorVisible = false
+    private fun setHourAndMinutes(sHour: Int, sMinute: Int) {
+        hourValue = setHour(sHour)
+        minuteValue = setHour(sMinute)
     }
 
-    private fun enableEditText(editText: EditText) {
-        editText.isFocusableInTouchMode = true
-        editText.isEnabled = true
-        editText.isCursorVisible = true
-    }
-
-    private fun enableButtonIfSave() {
-        disableEditText(contentText)
-        buttonEdit.text = EDIT_INFO
-        buttonDelete.text = DELETE_INFO
-        buttonDone.isEnabled = true
-    }
-
-    private fun enableButtonIfEdit() {
-        enableEditText(contentText)
-        buttonEdit.text = SAVE_INFO
-        buttonDelete.text = CANCEL_INFO
-        buttonDone.isEnabled = false
-        buttonStartDate.isEnabled = true
-        buttonEndDate.isEnabled = true
-        buttonInterval.isEnabled = true
-        buttonStartTime.isEnabled = true
-        buttonEndTime.isEnabled = true
-    }
-
-    private fun disableButtonIfEdit(){
-        buttonDone.isEnabled = true
-        buttonStartDate.isEnabled = false
-        buttonEndDate.isEnabled = false
-        buttonInterval.isEnabled = false
-        buttonStartTime.isEnabled = false
-        buttonEndTime.isEnabled = false
+    private fun setHoursOnButtons() {
+        val cldr = Calendar.getInstance()
+        val hour = cldr[Calendar.HOUR_OF_DAY] + 1
+        setHourAndMinutes(hour, 0).toString()
+        initHourValue = hourValue
+        initMinuteValue = minuteValue
+        buttonStartTime.text = setHour(hourValue.toInt() + 1) + ":00"
+        buttonEndTime.text = setHour(hourValue.toInt() + 2) + ":00"
     }
 
     private fun refreshDoneButton(){
@@ -345,16 +289,59 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun enableButtonIfCancel() {
 
-        disableEditText(contentText)
+        enableEditText(contentText,false)
         buttonStartDate.text = note.start_date
         buttonEndDate.text = note.end_date
         buttonInterval.text = note.interval.toString()
         contentText.setText(note.content)
         buttonStartTime.text = note.start_time
 
-        disableButtonIfEdit()
+        enableButtonIfEdit(false)
         buttonEdit.text = EDIT_INFO
         buttonDelete.text = DELETE_INFO
+    }
+
+    private fun hideEditViewButton() {
+        buttonEdit.visibility = View.GONE
+        buttonDelete.visibility = View.GONE
+        buttonDone.visibility = View.GONE
+        buttonAdd.visibility = View.VISIBLE
+    }
+
+    private fun showEditViewButton() {
+        buttonEdit.visibility = View.VISIBLE
+        buttonDelete.visibility = View.VISIBLE
+        buttonDone.visibility = View.VISIBLE
+        buttonAdd.visibility = View.GONE
+    }
+
+    private fun enableEditText(editText: EditText, bool:Boolean) {
+        editText.isFocusableInTouchMode = bool
+        editText.isEnabled = bool
+        editText.isCursorVisible = bool
+    }
+
+    private fun enableButtonIfSave() {
+        enableEditText(contentText, false)
+        buttonEdit.text = EDIT_INFO
+        buttonDelete.text = DELETE_INFO
+        buttonDone.isEnabled = true
+    }
+
+    private fun enableButtonIfEdit() {
+        enableEditText(contentText, true)
+        buttonEdit.text = SAVE_INFO
+        buttonDelete.text = CANCEL_INFO
+        enableButtonIfEdit(true)
+    }
+
+    private fun enableButtonIfEdit(bool:Boolean){
+        buttonDone.isEnabled = !bool
+        buttonStartDate.isEnabled = bool
+        buttonEndDate.isEnabled = bool
+        buttonInterval.isEnabled = bool
+        buttonStartTime.isEnabled = bool
+        buttonEndTime.isEnabled = bool
     }
 
     private fun findViews() {

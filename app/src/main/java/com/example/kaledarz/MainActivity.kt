@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun createNotification() {
         var builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.aaa)
+            .setSmallIcon(R.drawable.bbb)
             .setContentTitle("Titel")
             .setContentText("Content dupa")
             .setPriority(NotificationCompat.PRIORITY_MAX)

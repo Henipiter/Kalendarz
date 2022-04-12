@@ -59,10 +59,6 @@ class ShowElemActivity : AppCompatActivity() {
 
         findViews()
         getAndSetIntentData()
-//        storeDataInArrays()
-
-//        setHoursOnButtons()
-
         buttonStartTime.setOnClickListener {
             val hour = buttonStartTime.text.subSequence(0,2).toString().toInt()
             val minutes = buttonStartTime.text.subSequence(3,5).toString().toInt()
@@ -88,28 +84,17 @@ class ShowElemActivity : AppCompatActivity() {
             picker!!.show()
         }
 
-        val startDateSetListener =
-            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, monthOfYear)
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                updateStartDateInView()
-            }
-
-        val endDateSetListener =
-            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                calendar.set(Calendar.YEAR, year)
-                calendar.set(Calendar.MONTH, monthOfYear)
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                updateEndDateInView()
-            }
-
         buttonInterval.setOnClickListener { showAddItemDialog(this@ShowElemActivity) }
 
         buttonStartDate.setOnClickListener {
             DatePickerDialog(
                 this@ShowElemActivity,
-                startDateSetListener,
+                { view, year, monthOfYear, dayOfMonth ->
+                    calendar.set(Calendar.YEAR, year)
+                    calendar.set(Calendar.MONTH, monthOfYear)
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    buttonStartDate.text = updateDateInView()
+                },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
@@ -119,7 +104,12 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEndDate.setOnClickListener {
             DatePickerDialog(
                 this@ShowElemActivity,
-                endDateSetListener,
+                { view, year, monthOfYear, dayOfMonth ->
+                    calendar.set(Calendar.YEAR, year)
+                    calendar.set(Calendar.MONTH, monthOfYear)
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    buttonEndDate.text = updateDateInView()
+                },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
@@ -146,7 +136,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonDone.setOnClickListener {
             note.done = !note.done
             refreshDoneButton()
-            myDB.updateDone(note.id.toString(), !note.done)
+            myDB.updateDone(note.id.toString(), note.done)
         }
 
         buttonAdd.setOnClickListener {
@@ -168,23 +158,17 @@ class ShowElemActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateStartDateInView() {
+    private fun updateDateInView():String {
         val myFormat = "dd-MM-yyyy" // mention the format you need
         val sdf = SimpleDateFormat(myFormat, Locale.US)
-        buttonStartDate.text = sdf.format(calendar.time)
+        return sdf.format(calendar.time)
     }
 
-    private fun updateEndDateInView() {
-        val myFormat = "dd-MM-yyyy" // mention the format you need
-        val sdf = SimpleDateFormat(myFormat, Locale.US)
-        buttonEndDate.text = sdf.format(calendar.time)
-    }
-
-    private fun setHour(sHour: Int):String{
-        return if (sHour.toString().length == 1) {
-            "0$sHour"
+    private fun setHour(time: Int):String{
+        return if (time.toString().length == 1) {
+            "0$time"
         } else {
-            sHour.toString()
+            time.toString()
         }
     }
 
@@ -226,6 +210,7 @@ class ShowElemActivity : AppCompatActivity() {
                 showEditViewButton()
                 disableButtonIfEdit()
                 storeDataInArrays()
+                refreshDoneButton()
             } else if (activityType == "ADD") {
                 getIntentForAddView()
                 hideEditViewButton()
@@ -236,7 +221,6 @@ class ShowElemActivity : AppCompatActivity() {
     }
 
     private fun getIntentForEditView() {
-        refreshDoneButton()
         if (intent.hasExtra("id")) {
             note.id = intent.getStringExtra("id").toString()
         } else {
@@ -368,12 +352,7 @@ class ShowElemActivity : AppCompatActivity() {
         contentText.setText(note.content)
         buttonStartTime.text = note.start_time
 
-        buttonDone.isEnabled = true
-        buttonStartDate.isEnabled = false
-        buttonEndDate.isEnabled = false
-        buttonInterval.isEnabled = false
-        buttonStartTime.isEnabled = false
-        buttonEndTime.isEnabled = false
+        disableButtonIfEdit()
         buttonEdit.text = EDIT_INFO
         buttonDelete.text = DELETE_INFO
     }

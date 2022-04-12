@@ -11,10 +11,7 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
@@ -38,7 +35,7 @@ class ShowElemActivity : AppCompatActivity() {
     lateinit var buttonStartTime: Button
     lateinit var buttonEndTime: Button
     lateinit var buttonInterval: Button
-    lateinit var imageDone: ImageView
+    lateinit var warningTextView: TextView
 
 
     private var calendar = Calendar.getInstance()
@@ -61,9 +58,10 @@ class ShowElemActivity : AppCompatActivity() {
 
         findViews()
         getAndSetIntentData()
+        warningTextView.visibility = View.GONE
         buttonStartTime.setOnClickListener {
-            val hour = buttonStartTime.text.subSequence(0,2).toString().toInt()
-            val minutes = buttonStartTime.text.subSequence(3,5).toString().toInt()
+            val hour = buttonStartTime.text.subSequence(0, 2).toString().toInt()
+            val minutes = buttonStartTime.text.subSequence(3, 5).toString().toInt()
             picker = TimePickerDialog(
                 this@ShowElemActivity, { tp, sHour, sMinute ->
                     setHourAndMinutes(sHour, sMinute)
@@ -72,9 +70,10 @@ class ShowElemActivity : AppCompatActivity() {
             )
             picker!!.show()
         }
+
         buttonEndTime.setOnClickListener {
-            val hour = buttonEndTime.text.subSequence(0,2).toString().toInt()
-            val minutes = buttonEndTime.text.subSequence(3,5).toString().toInt()
+            val hour = buttonEndTime.text.subSequence(0, 2).toString().toInt()
+            val minutes = buttonEndTime.text.subSequence(3, 5).toString().toInt()
             picker = TimePickerDialog(
                 this@ShowElemActivity, { tp, sHour, sMinute ->
                     setHourAndMinutes(sHour, sMinute)
@@ -143,22 +142,71 @@ class ShowElemActivity : AppCompatActivity() {
         }
 
         buttonAdd.setOnClickListener {
-            val myDB = MyDatabaseHelper(this)
-            val note = Note(
-                null,
-                buttonStartDate.text.toString().trim(),
-                buttonEndDate.text.toString().trim(),
-                buttonStartTime.text.toString().trim(),
-                buttonEndTime.text.toString().trim(),
-                Integer.valueOf(intervalValue.trim()),
-                contentText.text.toString().trim(),
-                false
-            )
-            myDB.addGame(note)
-            finish()
-            val homepage = Intent(this, MainActivity::class.java)
-            startActivity(homepage)
+
+            if (isCorrectDate()) {
+
+                val myDB = MyDatabaseHelper(this)
+                val note = Note(
+                    null,
+                    buttonStartDate.text.toString().trim(),
+                    buttonEndDate.text.toString().trim(),
+                    buttonStartTime.text.toString().trim(),
+                    buttonEndTime.text.toString().trim(),
+                    Integer.valueOf(intervalValue.trim()),
+                    contentText.text.toString().trim(),
+                    false
+                )
+                myDB.addGame(note)
+                finish()
+                val homepage = Intent(this, MainActivity::class.java)
+                startActivity(homepage)
+            } else {
+                showErrorDateDialog(this@ShowElemActivity)
+            }
         }
+    }
+
+    private fun isEndDateGreaterThanStartDate(): Boolean {
+        val sdf = SimpleDateFormat("dd-MM-yyyy")
+        val startDate = sdf.parse(buttonStartDate.text.toString())
+        val endDate = sdf.parse(buttonEndDate.text.toString())
+
+        return startDate < endDate
+    }
+
+    private fun isEndDateEqualToStartDate(): Boolean {
+        val sdf = SimpleDateFormat("dd-MM-yyyy")
+        val startDate = sdf.parse(buttonStartDate.text.toString())
+        val endDate = sdf.parse(buttonEndDate.text.toString())
+
+        return startDate == endDate
+    }
+
+    private fun isEndTimeGreaterThanStartTime(): Boolean {
+        val sdf = SimpleDateFormat("HH:mm")
+        val startTime = sdf.parse(buttonStartTime.text.toString())
+        val endTime = sdf.parse(buttonEndTime.text.toString())
+
+        return startTime < endTime
+    }
+
+    private fun isCorrectDate(): Boolean {
+        return isEndDateGreaterThanStartDate() || (isEndDateEqualToStartDate() && isEndTimeGreaterThanStartTime())
+    }
+
+    private fun showErrorDateDialog(c: Context) {
+        var messageError = ""
+        if (!isEndDateGreaterThanStartDate()) {
+            messageError = "Start date is later than end date"
+        }
+        if (!isEndTimeGreaterThanStartTime()) {
+            messageError = "End time is not later than start date"
+        }
+        val dialog: AlertDialog = AlertDialog.Builder(c)
+            .setTitle(messageError)
+            .setNegativeButton("OK", null)
+            .create()
+        dialog.show()
     }
 
     private fun showAddItemDialog(c: Context) {
@@ -248,13 +296,13 @@ class ShowElemActivity : AppCompatActivity() {
         startActivity(homepage)
     }
 
-    private fun updateDateInView():String {
+    private fun updateDateInView(): String {
         val myFormat = "dd-MM-yyyy" // mention the format you need
         val sdf = SimpleDateFormat(myFormat, Locale.US)
         return sdf.format(calendar.time)
     }
 
-    private fun setHour(time: Int):String{
+    private fun setHour(time: Int): String {
         return if (time.toString().length == 1) {
             "0$time"
         } else {
@@ -277,7 +325,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEndTime.text = setHour(hourValue.toInt() + 2) + ":00"
     }
 
-    private fun refreshDoneButton(){
+    private fun refreshDoneButton() {
         if (note.done) {
             buttonDone.text = "Mark as undone"
         } else {
@@ -294,7 +342,7 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun enableButtonIfCancel() {
 
-        enableEditText(contentText,false)
+        enableEditText(contentText, false)
         buttonStartDate.text = note.start_date
         buttonEndDate.text = note.end_date
         buttonInterval.text = note.interval.toString()
@@ -320,7 +368,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonAdd.visibility = View.GONE
     }
 
-    private fun enableEditText(editText: EditText, bool:Boolean) {
+    private fun enableEditText(editText: EditText, bool: Boolean) {
         editText.isFocusableInTouchMode = bool
         editText.isEnabled = bool
         editText.isCursorVisible = bool
@@ -340,14 +388,14 @@ class ShowElemActivity : AppCompatActivity() {
         enableButtonIfEdit(true)
     }
 
-    private fun enableButtonIfEdit(bool:Boolean){
+    private fun enableButtonIfEdit(bool: Boolean) {
         buttonDone.isEnabled = !bool
         buttonStartDate.isEnabled = bool
         buttonEndDate.isEnabled = bool
         buttonInterval.isEnabled = bool
         buttonStartTime.isEnabled = bool
         buttonEndTime.isEnabled = bool
-        contentText.isEnabled=bool
+        contentText.isEnabled = bool
     }
 
     private fun findViews() {
@@ -362,5 +410,6 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEndTime = findViewById(R.id.end_time_button_)
         buttonEdit = findViewById(R.id.edit_button_2)
         buttonAdd = findViewById(R.id.add_button_2)
+        warningTextView = findViewById(R.id.warningTextView)
     }
 }

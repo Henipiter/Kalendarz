@@ -1,19 +1,13 @@
 package com.example.kaledarz
 
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
@@ -26,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonStopNotify: Button
     private lateinit var recyclerViewEvent: RecyclerView
     private lateinit var databaseHelper: MyDatabaseHelper
+    private lateinit var notificationHelper: NotificationHelper
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
 
@@ -41,8 +36,9 @@ class MainActivity : AppCompatActivity() {
         buttonNotify = findViewById(R.id.notify_button)
         buttonStopNotify = findViewById(R.id.notify_button_stop)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
-
-        createNotificationChannel()
+        notificationHelper = NotificationHelper(this)
+        notificationHelper.createNotificationChannel()
+//        createNotificationChannel()
 
 
         val calendarView = CalendarView(this)
@@ -59,11 +55,11 @@ class MainActivity : AppCompatActivity() {
         storeDataInArrays()
         customAdapter.notifyDataSetChanged()
         buttonNotify.setOnClickListener {
-            createNotification()
+            notificationHelper.createNotification(1,"title", "content")
         }
 
-        buttonStopNotify.setOnClickListener{
-            deleteNotification()
+        buttonStopNotify.setOnClickListener {
+            notificationHelper.deleteNotification(1)
         }
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
@@ -78,45 +74,6 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("type", "ADD")
             intent.putExtra("date", chooseDate)
             this.startActivity(intent)
-        }
-    }
-
-    private fun deleteNotification(){
-        val notificationManager = getSystemService(
-            NOTIFICATION_SERVICE
-        ) as NotificationManager
-        notificationManager.cancel(1)
-    }
-
-    private fun createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.channel_name)
-            val descriptionText = getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-    private fun createNotification() {
-        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.bbb)
-            .setContentTitle("Titel")
-            .setContentText("Content dupa")
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setOngoing(true)
-
-        with(NotificationManagerCompat.from(this)) {
-            // notificationId is a unique int for each notification that you must define
-            notify(1, builder.build())
         }
     }
 

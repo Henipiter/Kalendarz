@@ -152,7 +152,8 @@ class ShowElemActivity : AppCompatActivity() {
                     buttonEndTime.text.toString().trim(),
                     Integer.valueOf(intervalValue.trim()),
                     contentText.text.toString().trim(),
-                    false
+                    false,
+                    ""
                 )
                 myDB.addGame(note)
                 finish()
@@ -298,7 +299,8 @@ class ShowElemActivity : AppCompatActivity() {
             buttonEndTime.text.toString().trim(),
             Integer.valueOf(buttonInterval.text.split(" ")[0].trim()),
             contentText.text.toString().trim(),
-            false
+            false,
+            ""
         )
         myDB.addGame(note)
         finish()

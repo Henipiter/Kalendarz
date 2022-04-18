@@ -74,7 +74,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         addNew.setOnClickListener {
-            val intent = Intent(this, AddEventActivity::class.java)
+            val intent = Intent(this, ShowElemActivity::class.java)
+            intent.putExtra("type", "ADD")
             intent.putExtra("date", chooseDate)
             this.startActivity(intent)
         }
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun createNotification() {
         var builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.aaa)
+            .setSmallIcon(R.drawable.bbb)
             .setContentTitle("Titel")
             .setContentText("Content dupa")
             .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -131,10 +132,6 @@ class MainActivity : AppCompatActivity() {
         noteList.addAll(databaseHelper.readAllData(chooseDate))
         if (noteList.size == 0) {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
-        }
-        for (n in noteList) {
-            Log.e("done", n.done.toString())
-
         }
     }
 

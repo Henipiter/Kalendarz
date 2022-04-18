@@ -104,9 +104,9 @@ class AddEventActivity : AppCompatActivity() {
         }
         addButton.setOnClickListener {
             val myDB = MyDatabaseHelper(this)
-
             val note = Note(
                 null,
+                buttonDate.text.toString().trim(),
                 buttonDate.text.toString().trim(),
                 buttonStartTime.text.toString().trim(),
                 buttonEndTime.text.toString().trim(),

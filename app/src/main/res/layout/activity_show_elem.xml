@@ -17,6 +17,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/date_button_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="2020-07-10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_button_2" />
+
+    <Button
         android:id="@+id/start_time_button_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,8 +40,8 @@
         android:id="@+id/end_time_button_"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
         android:text="20:20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_time_button_2" />
@@ -40,37 +50,38 @@
         android:id="@+id/contentText_2"
         android:layout_width="351dp"
         android:layout_height="227dp"
-        android:layout_marginTop="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginTop="32dp"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/interval_button_2" />
+        app:layout_constraintTop_toBottomOf="@+id/end_time_button_" />
 
     <Button
         android:id="@+id/done_button_2"
         android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:width="200dp"
         android:text="Mark as done"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/back_button_2"
+        android:id="@+id/add_button_2"
         android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="32dp"
         android:width="200dp"
-        android:text="Back"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:text="Add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.525"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contentText_2" />
 
     <Button
         android:id="@+id/edit_button_2"
@@ -87,11 +98,11 @@
         android:id="@+id/delete_button_2"
         android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:width="200dp"
         android:text="Delete"
-        app:layout_constraintBottom_toTopOf="@+id/back_button_2"
+        app:layout_constraintBottom_toTopOf="@+id/done_button_2"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
@@ -100,7 +111,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="0dp"
-        android:text="Date"
+        android:text="Start date"
         app:layout_constraintBottom_toTopOf="@+id/date_button_2"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -112,6 +123,16 @@
         android:layout_marginBottom="0dp"
         android:text="Interval"
         app:layout_constraintBottom_toTopOf="@+id/interval_button_2"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="0dp"
+        android:text="End date"
+        app:layout_constraintBottom_toTopOf="@+id/date_button_3"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -148,9 +169,9 @@
         android:id="@+id/interval_button_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
         android:text="5 minutes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_button_2" />
+        app:layout_constraintTop_toBottomOf="@+id/add_button_2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,7 +16,8 @@ class MyDatabaseHelper(val context: Context?) :
         private const val DATABASE_NAME = "Events.db"
         const val TABLE_NAME = "events"
         const val ID_COLUMN = "_id"
-        const val DATE_COLUMN = "date"
+        const val START_DATE_COLUMN = "start_date"
+        const val END_DATE_COLUMN = "end_date"
         const val START_TIME_COLUMN = "start_time"
         const val END_TIME_COLUMN = "end_time"
         const val INTERVAL_COLUMN = "interval"
@@ -24,26 +25,28 @@ class MyDatabaseHelper(val context: Context?) :
         const val DONE_MARK_COLUMN = "done_mark"
 
         const val ID_CURSOR_POSITION = 0
-        const val DATE_CURSOR_POSITION = 1
-        const val START_TIME_CURSOR_POSITION = 2
-        const val END_TIME_CURSOR_POSITION = 3
-        const val INTERVAL_CURSOR_POSITION = 4
-        const val CONTENT_CURSOR_POSITION = 5
-        const val DONE_MARK_CURSOR_POSITION = 6
+        const val START_DATE_CURSOR_POSITION = 1
+        const val END_DATE_CURSOR_POSITION = 2
+        const val START_TIME_CURSOR_POSITION = 3
+        const val END_TIME_CURSOR_POSITION = 4
+        const val INTERVAL_CURSOR_POSITION = 5
+        const val CONTENT_CURSOR_POSITION = 6
+        const val DONE_MARK_CURSOR_POSITION = 7
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableQuery = (
                 "CREATE TABLE $TABLE_NAME ( " +
                         "$ID_COLUMN  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                        "$DATE_COLUMN DATE, " +
+                        "$START_DATE_COLUMN DATE, " +
+                        "$END_DATE_COLUMN DATE, " +
                         "$START_TIME_COLUMN  TEXT, " +
                         "$END_TIME_COLUMN  TEXT, " +
                         "$INTERVAL_COLUMN  INTEGER, " +
                         "$CONTENT_COLUMN  TEXT, " +
                         "$DONE_MARK_COLUMN  INTEGER );")
         db?.execSQL(createTableQuery)
-        db?.close()
+//        db?.close()
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -54,14 +57,15 @@ class MyDatabaseHelper(val context: Context?) :
     fun deleteEvent(id: String): Boolean {
         val db = this.writableDatabase
         val result = db.delete(TABLE_NAME, "$ID_COLUMN=$id", null) > 0
-        db.close()
+//        db.close()
         return result
     }
 
     fun addGame(note: Note) {
         val db = this.writableDatabase
         val contentValues = ContentValues()
-        contentValues.put(DATE_COLUMN, note.date)
+        contentValues.put(START_DATE_COLUMN, note.start_date)
+        contentValues.put(END_DATE_COLUMN, note.end_date)
         contentValues.put(START_TIME_COLUMN, note.start_time)
         contentValues.put(END_TIME_COLUMN, note.end_time)
         contentValues.put(INTERVAL_COLUMN, note.interval)
@@ -74,7 +78,7 @@ class MyDatabaseHelper(val context: Context?) :
         } else {
             Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
         }
-        db.close()
+//        db.close()
     }
 
     fun updateDone(id: String, value: Boolean) {
@@ -82,27 +86,14 @@ class MyDatabaseHelper(val context: Context?) :
         if(value)
             bool=1
         val db = this.writableDatabase
-//        val values = ContentValues()
-//
-//        values.put(DONE_MARK_COLUMN, value)
-//        val result = db.update(TABLE_NAME, values, "$ID_COLUMN='$id'", null)
-//        Log.e("aa", result.toString() + result.toString())
-//        if (result == (-1)) {
-//            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
-//        } else {
-//            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
-//        }
-
         val query1 = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN = $bool where $ID_COLUMN = '$id'"
-//        val query  = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN = $value WHERE $ID_COLUMN=$id"
         db.execSQL(query1);
         Log.e("aa", query1)
-        db.close()
-
+//        db.close()
     }
 
     fun readAllData(data: String): ArrayList<Note> {
-        val query = "Select * from $TABLE_NAME where $DATE_COLUMN='$data' ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
+        val query = "Select * from $TABLE_NAME where $START_DATE_COLUMN='$data' ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
         Log.e("query", query)
         val db = this.readableDatabase
         var cursor: Cursor? = null
@@ -110,7 +101,7 @@ class MyDatabaseHelper(val context: Context?) :
             cursor = db.rawQuery(query, null)
         }
         val result = cursorToNotes(cursor)
-        db.close()
+//        db.close()
         return result
     }
 
@@ -123,7 +114,7 @@ class MyDatabaseHelper(val context: Context?) :
             cursor = db.rawQuery(query, null)
         }
         val result = cursorToNote(cursor, id)
-        db.close()
+//        db.close()
         return result
     }
 
@@ -133,7 +124,8 @@ class MyDatabaseHelper(val context: Context?) :
             while (cursor.moveToNext()) {
                 val note = Note(
                     cursor.getString(ID_CURSOR_POSITION),
-                    cursor.getString(DATE_CURSOR_POSITION),
+                    cursor.getString(START_DATE_CURSOR_POSITION),
+                    cursor.getString(END_DATE_CURSOR_POSITION),
                     cursor.getString(START_TIME_CURSOR_POSITION),
                     cursor.getString(END_TIME_CURSOR_POSITION),
                     cursor.getString(INTERVAL_CURSOR_POSITION).toInt(),
@@ -160,7 +152,8 @@ class MyDatabaseHelper(val context: Context?) :
                 if (cursor.getString(0) == id) {
                     note = Note(
                         cursor.getString(ID_CURSOR_POSITION),
-                        cursor.getString(DATE_CURSOR_POSITION),
+                        cursor.getString(START_DATE_CURSOR_POSITION),
+                        cursor.getString(END_DATE_CURSOR_POSITION),
                         cursor.getString(START_TIME_CURSOR_POSITION),
                         cursor.getString(END_TIME_CURSOR_POSITION),
                         cursor.getString(INTERVAL_CURSOR_POSITION).toInt(),

@@ -1,8 +1,6 @@
 package com.example.kaledarz
 
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
@@ -11,7 +9,9 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
@@ -48,6 +48,37 @@ class ShowElemActivity : AppCompatActivity() {
 
     private lateinit var myDB: MyDatabaseHelper
     private var note = Note()
+
+    private fun startAlarm(c: Calendar, note: Note, mode: String) {
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, AlarmReceiver::class.java)
+        intent.putExtra("mode", mode)
+        intent.putExtra("id", note.id)
+        intent.putExtra("title", note.start_date + " " + note.start_time)
+        intent.putExtra("content", note.content)
+        var id = note.id!!.toInt()
+        if (mode == "UNSET") {
+            id *= -1
+        }
+        val pendingIntent =
+            PendingIntent.getBroadcast(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
+    }
+
+    private fun cancelAlarm(note: Note) {
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, AlarmReceiver::class.java)
+        intent.putExtra("mode", "UNSET")
+        intent.putExtra("id", note.id)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            note.id!!.toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        alarmManager.cancel(pendingIntent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -134,6 +165,9 @@ class ShowElemActivity : AppCompatActivity() {
             note.done = !note.done
             refreshDoneButton()
             myDB.updateDone(note.id.toString(), note.done)
+            if (note.done) {
+                cancelAlarm(note)
+            }
             finish()
             val homepage = Intent(this, MainActivity::class.java)
             startActivity(homepage)
@@ -156,6 +190,20 @@ class ShowElemActivity : AppCompatActivity() {
                     ""
                 )
                 myDB.addGame(note)
+
+                note.id = myDB.readLastRow().id
+                startAlarm(
+                    getCalendarFromStrings(
+                        buttonStartDate.text.toString(),
+                        buttonStartTime.text.toString()
+                    ), note, "SET"
+                )
+                startAlarm(
+                    getCalendarFromStrings(
+                        buttonEndDate.text.toString(),
+                        buttonEndTime.text.toString()
+                    ), note, "UNSET"
+                )
                 finish()
                 val homepage = Intent(this, MainActivity::class.java)
                 startActivity(homepage)
@@ -163,6 +211,18 @@ class ShowElemActivity : AppCompatActivity() {
                 showErrorDateDialog(this@ShowElemActivity)
             }
         }
+    }
+
+    private fun getCalendarFromStrings(date: String, clock: String): Calendar {
+
+        val c = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, date.split("-")[0].toInt())
+        calendar.set(Calendar.MONTH, date.split("-")[1].toInt())
+        calendar.set(Calendar.DAY_OF_MONTH, date.split("-")[2].toInt())
+        c[Calendar.HOUR_OF_DAY] = clock.split(":")[0].toInt()
+        c[Calendar.MINUTE] = clock.split(":")[1].toInt()
+        c[Calendar.SECOND] = 0
+        return c
     }
 
     private fun isEndDateGreaterThanStartDate(): Boolean {
@@ -334,8 +394,8 @@ class ShowElemActivity : AppCompatActivity() {
         setHourAndMinutes(hour, 0).toString()
         initHourValue = hourValue
         initMinuteValue = minuteValue
-        buttonStartTime.text = setHour(hourValue.toInt() + 1) + ":00"
-        buttonEndTime.text = setHour(hourValue.toInt() + 2) + ":00"
+        buttonStartTime.text = setHour(hourValue.toInt()) + ":00"
+        buttonEndTime.text = setHour(hourValue.toInt() + 1) + ":00"
     }
 
     private fun refreshDoneButton() {

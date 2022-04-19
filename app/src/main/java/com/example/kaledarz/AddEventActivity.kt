@@ -112,7 +112,8 @@ class AddEventActivity : AppCompatActivity() {
                 buttonEndTime.text.toString().trim(),
                 Integer.valueOf(intervalValue.trim()),
                 contentText1.text.toString().trim(),
-                false
+                false,
+                ""
             )
             myDB.addGame(note)
             finish()

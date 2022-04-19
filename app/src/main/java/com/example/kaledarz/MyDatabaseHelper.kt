@@ -48,8 +48,8 @@ class MyDatabaseHelper(val context: Context?) :
                         "$END_TIME_COLUMN  TEXT, " +
                         "$INTERVAL_COLUMN  INTEGER, " +
                         "$CONTENT_COLUMN  TEXT, " +
-                        "$DONE_MARK_COLUMN  INTEGER )" +
-                        "$CREATION_DATE DATE;")
+                        "$DONE_MARK_COLUMN  INTEGER," +
+                        "$CREATION_DATE DATE );")
         db?.execSQL(createTableQuery)
     }
 

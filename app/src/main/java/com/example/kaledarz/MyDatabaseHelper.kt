@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import android.widget.Toast
-import java.text.SimpleDateFormat
 import java.util.*
 
 class MyDatabaseHelper(val context: Context?) :
@@ -37,6 +36,8 @@ class MyDatabaseHelper(val context: Context?) :
         const val DONE_MARK_CURSOR_POSITION = 7
         const val CREATION_DATE_CURSOR_POSITION = 8
     }
+
+    var dateFormatHelper = DateFormatHelper()
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableQuery = (
@@ -73,7 +74,7 @@ class MyDatabaseHelper(val context: Context?) :
         contentValues.put(INTERVAL_COLUMN, note.interval)
         contentValues.put(CONTENT_COLUMN, note.content)
         contentValues.put(DONE_MARK_COLUMN, note.done)
-        contentValues.put(CREATION_DATE, getDateTime())
+        contentValues.put(CREATION_DATE, dateFormatHelper.getCurrentDateTime())
 
         val result = db.insert(TABLE_NAME, null, contentValues)
         if (result == (-1).toLong()) {
@@ -170,9 +171,5 @@ class MyDatabaseHelper(val context: Context?) :
             strToBool(cursor.getString(DONE_MARK_CURSOR_POSITION)),
             cursor.getString(CREATION_DATE_CURSOR_POSITION)
         );
-    }
-
-    private fun getDateTime(): String? {
-        return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
     }
 }

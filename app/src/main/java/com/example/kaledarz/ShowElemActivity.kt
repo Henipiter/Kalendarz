@@ -76,9 +76,10 @@ class ShowElemActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        notificationHelper = NotificationHelper(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_elem)
+        notificationHelper.createNotificationChannel()
         myDB = MyDatabaseHelper(this)
 
         findViews()
@@ -382,9 +383,8 @@ class ShowElemActivity : AppCompatActivity() {
         val cldr = Calendar.getInstance()
         val hour = cldr[Calendar.HOUR_OF_DAY] + 1
         val initHourValue = dateFormatHelper.setHour(hour)
-        val initMinuteValue = dateFormatHelper.setHour(0)
         buttonStartTime.text = dateFormatHelper.setHour(initHourValue.toInt()) + ":00"
-        buttonEndTime.text = dateFormatHelper.setHour(initMinuteValue.toInt() + 1) + ":00"
+        buttonEndTime.text = dateFormatHelper.setHour(initHourValue.toInt() + 1) + ":00"
     }
 
     private fun refreshDoneButton() {

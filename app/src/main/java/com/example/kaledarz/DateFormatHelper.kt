@@ -67,8 +67,17 @@ class DateFormatHelper {
         }
     }
 
-    fun getCurrentDateTime(): String? {
+    fun getCurrentDateTimeForDatabase(): String? {
         return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", locale).format(Date())
+    }
+
+    fun getCurrentDateTime(): String {
+        return SimpleDateFormat("dd-MM-yyyy HH:mm:ss", locale).format(Date())
+    }
+
+    fun isFirstDateGreaterThanSecond(date1:String, date2:String):Boolean{
+        val sdf = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", locale)
+        return sdf.parse(date1) > sdf.parse(date2)
     }
 
 }

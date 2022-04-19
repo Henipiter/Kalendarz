@@ -74,7 +74,7 @@ class MyDatabaseHelper(val context: Context?) :
         contentValues.put(INTERVAL_COLUMN, note.interval)
         contentValues.put(CONTENT_COLUMN, note.content)
         contentValues.put(DONE_MARK_COLUMN, note.done)
-        contentValues.put(CREATION_DATE, dateFormatHelper.getCurrentDateTime())
+        contentValues.put(CREATION_DATE, dateFormatHelper.getCurrentDateTimeForDatabase())
 
         val result = db.insert(TABLE_NAME, null, contentValues)
         if (result == (-1).toLong()) {
@@ -90,7 +90,7 @@ class MyDatabaseHelper(val context: Context?) :
             bool = 1
         val db = this.writableDatabase
         val query1 = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN = $bool where $ID_COLUMN = '$id'"
-        db.execSQL(query1);
+        db.execSQL(query1)
         Log.e("aa", query1)
     }
 

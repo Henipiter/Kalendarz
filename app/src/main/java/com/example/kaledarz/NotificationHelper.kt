@@ -26,21 +26,29 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
         }
     }
 
-    fun createNotification(id: Int, title:String, content:String) {
+    fun createNotification(note: Note) {
+        createNotification(
+            note.id!!.toInt(),
+            note.start_date + " " + note.start_time,
+            note.content!!
+        )
+    }
+
+    fun createNotification(id: Int, title: String, content: String) {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.bbb)
             .setContentTitle(title)
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setOngoing(true)
+//            .setOngoing(true)
 
         with(NotificationManagerCompat.from(this)) {
             notify(id, builder.build())
         }
     }
 
-    fun deleteNotification(id: Int){
+    fun deleteNotification(id: Int) {
         val notificationManager = getSystemService(
             NOTIFICATION_SERVICE
         ) as NotificationManager

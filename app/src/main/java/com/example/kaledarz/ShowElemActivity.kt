@@ -76,10 +76,8 @@ class ShowElemActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        notificationHelper = NotificationHelper(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_elem)
-        notificationHelper.createNotificationChannel()
         myDB = MyDatabaseHelper(this)
 
         findViews()
@@ -225,34 +223,6 @@ class ShowElemActivity : AppCompatActivity() {
         c[Calendar.MINUTE] = clock.split(":")[1].toInt()
         c[Calendar.SECOND] = 0
         return c
-    }
-
-    private fun isEndDateGreaterThanStartDate(): Boolean {
-        val sdf = SimpleDateFormat("dd-MM-yyyy")
-        val startDate = sdf.parse(buttonStartDate.text.toString())
-        val endDate = sdf.parse(buttonEndDate.text.toString())
-
-        return startDate < endDate
-    }
-
-    private fun isEndDateEqualToStartDate(): Boolean {
-        val sdf = SimpleDateFormat("dd-MM-yyyy")
-        val startDate = sdf.parse(buttonStartDate.text.toString())
-        val endDate = sdf.parse(buttonEndDate.text.toString())
-
-        return startDate == endDate
-    }
-
-    private fun isEndTimeGreaterThanStartTime(): Boolean {
-        val sdf = SimpleDateFormat("HH:mm")
-        val startTime = sdf.parse(buttonStartTime.text.toString())
-        val endTime = sdf.parse(buttonEndTime.text.toString())
-
-        return startTime < endTime
-    }
-
-    private fun isCorrectDate(): Boolean {
-        return isEndDateGreaterThanStartDate() || (isEndDateEqualToStartDate() && isEndTimeGreaterThanStartTime())
     }
 
     private fun showErrorDateDialog(c: Context) {

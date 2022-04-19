@@ -3,7 +3,6 @@ package com.example.kaledarz
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.InputType
@@ -13,7 +12,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.util.*
 
 class ShowElemActivity : AppCompatActivity() {
 
@@ -38,12 +36,9 @@ class ShowElemActivity : AppCompatActivity() {
 
 
     private var calendar = Calendar.getInstance()
+    private var dateFormatHelper = DateFormatHelper()
     var picker: TimePickerDialog? = null
 
-    var initHourValue = ""
-    var initMinuteValue = ""
-    var hourValue = "09"
-    var minuteValue = "00"
     var intervalValue = "5"
 
     private lateinit var myDB: MyDatabaseHelper
@@ -93,8 +88,8 @@ class ShowElemActivity : AppCompatActivity() {
             val minutes = buttonStartTime.text.subSequence(3, 5).toString().toInt()
             picker = TimePickerDialog(
                 this@ShowElemActivity, { tp, sHour, sMinute ->
-                    setHourAndMinutes(sHour, sMinute)
-                    buttonStartTime.text = "$hourValue:$minuteValue"
+                    buttonStartTime.text =
+                        dateFormatHelper.setHour(sHour) + ":" + dateFormatHelper.setMinutes(sMinute)
                 }, hour, minutes, true
             )
             picker!!.show()
@@ -105,8 +100,8 @@ class ShowElemActivity : AppCompatActivity() {
             val minutes = buttonEndTime.text.subSequence(3, 5).toString().toInt()
             picker = TimePickerDialog(
                 this@ShowElemActivity, { tp, sHour, sMinute ->
-                    setHourAndMinutes(sHour, sMinute)
-                    buttonEndTime.text = "$hourValue:$minuteValue"
+                    buttonEndTime.text =
+                        dateFormatHelper.setHour(sHour) + ":" + dateFormatHelper.setMinutes(sMinute)
                 }, hour, minutes, true
             )
             picker!!.show()
@@ -121,7 +116,7 @@ class ShowElemActivity : AppCompatActivity() {
                     calendar.set(Calendar.YEAR, year)
                     calendar.set(Calendar.MONTH, monthOfYear)
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonStartDate.text = updateDateInView()
+                    buttonStartDate.text = dateFormatHelper.updateDateInView(calendar)
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -136,7 +131,7 @@ class ShowElemActivity : AppCompatActivity() {
                     calendar.set(Calendar.YEAR, year)
                     calendar.set(Calendar.MONTH, monthOfYear)
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonEndDate.text = updateDateInView()
+                    buttonEndDate.text = dateFormatHelper.updateDateInView(calendar)
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -175,7 +170,13 @@ class ShowElemActivity : AppCompatActivity() {
 
         buttonAdd.setOnClickListener {
 
-            if (isCorrectDate()) {
+            if (dateFormatHelper.isCorrectDate(
+                    buttonStartDate.text.toString(),
+                    buttonEndDate.text.toString(),
+                    buttonStartTime.text.toString(),
+                    buttonEndTime.text.toString()
+                )
+            ) {
 
                 val myDB = MyDatabaseHelper(this)
                 val note = Note(
@@ -255,10 +256,18 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun showErrorDateDialog(c: Context) {
         var messageError = ""
-        if (!isEndDateGreaterThanStartDate()) {
+        if (!dateFormatHelper.isEndDateGreaterThanStartDate(
+                buttonStartDate.text.toString(),
+                buttonEndDate.text.toString()
+            )
+        ) {
             messageError = "Start date is later than end date"
         }
-        if (!isEndTimeGreaterThanStartTime()) {
+        if (!dateFormatHelper.isEndTimeGreaterThanStartTime(
+                buttonStartTime.text.toString(),
+                buttonEndTime.text.toString()
+            )
+        ) {
             messageError = "End time is not later than start date"
         }
         val dialog: AlertDialog = AlertDialog.Builder(c)
@@ -369,33 +378,13 @@ class ShowElemActivity : AppCompatActivity() {
         startActivity(homepage)
     }
 
-    private fun updateDateInView(): String {
-        val myFormat = "dd-MM-yyyy" // mention the format you need
-        val sdf = SimpleDateFormat(myFormat, Locale.US)
-        return sdf.format(calendar.time)
-    }
-
-    private fun setHour(time: Int): String {
-        return if (time.toString().length == 1) {
-            "0$time"
-        } else {
-            time.toString()
-        }
-    }
-
-    private fun setHourAndMinutes(sHour: Int, sMinute: Int) {
-        hourValue = setHour(sHour)
-        minuteValue = setHour(sMinute)
-    }
-
     private fun setHoursOnButtons() {
         val cldr = Calendar.getInstance()
         val hour = cldr[Calendar.HOUR_OF_DAY] + 1
-        setHourAndMinutes(hour, 0).toString()
-        initHourValue = hourValue
-        initMinuteValue = minuteValue
-        buttonStartTime.text = setHour(hourValue.toInt()) + ":00"
-        buttonEndTime.text = setHour(hourValue.toInt() + 1) + ":00"
+        val initHourValue = dateFormatHelper.setHour(hour)
+        val initMinuteValue = dateFormatHelper.setHour(0)
+        buttonStartTime.text = dateFormatHelper.setHour(initHourValue.toInt()) + ":00"
+        buttonEndTime.text = dateFormatHelper.setHour(initMinuteValue.toInt() + 1) + ":00"
     }
 
     private fun refreshDoneButton() {

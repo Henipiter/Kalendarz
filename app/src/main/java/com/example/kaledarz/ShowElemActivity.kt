@@ -1,6 +1,8 @@
 package com.example.kaledarz
 
-import android.app.*
+import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
@@ -37,6 +39,9 @@ class ShowElemActivity : AppCompatActivity() {
 
     private var calendar = Calendar.getInstance()
     private var dateFormatHelper = DateFormatHelper()
+    private lateinit var notificationHelper: NotificationHelper
+    private lateinit var alarmHelper: AlarmHelper
+
     var picker: TimePickerDialog? = null
 
     var intervalValue = "5"
@@ -44,40 +49,12 @@ class ShowElemActivity : AppCompatActivity() {
     private lateinit var myDB: MyDatabaseHelper
     private var note = Note()
 
-    private fun startAlarm(c: Calendar, note: Note, mode: String) {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReceiver::class.java)
-        intent.putExtra("mode", mode)
-        intent.putExtra("id", note.id)
-        intent.putExtra("title", note.start_date + " " + note.start_time)
-        intent.putExtra("content", note.content)
-        var id = note.id!!.toInt()
-        if (mode == "UNSET") {
-            id *= -1
-        }
-        val pendingIntent =
-            PendingIntent.getBroadcast(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
-    }
-
-    private fun cancelAlarm(note: Note) {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReceiver::class.java)
-        intent.putExtra("mode", "UNSET")
-        intent.putExtra("id", note.id)
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            note.id!!.toInt(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        alarmManager.cancel(pendingIntent)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        notificationHelper = NotificationHelper(this)
+        alarmHelper = AlarmHelper(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_elem)
+        notificationHelper.createNotificationChannel()
         myDB = MyDatabaseHelper(this)
 
         findViews()
@@ -151,7 +128,7 @@ class ShowElemActivity : AppCompatActivity() {
             if (buttonEdit.text != SAVE_INFO) { //EDIT
                 enableButtonIfEdit()
             } else { //SAVE
-                saveNoteAndExit()
+                editNoteAndExit()
             }
         }
 
@@ -160,7 +137,9 @@ class ShowElemActivity : AppCompatActivity() {
             refreshDoneButton()
             myDB.updateDone(note.id.toString(), note.done)
             if (note.done) {
-                cancelAlarm(note)
+                unsetAlarm(note.id!!)
+            } else {
+                setAlarmAtAdding(note)
             }
             finish()
             val homepage = Intent(this, MainActivity::class.java)
@@ -176,53 +155,83 @@ class ShowElemActivity : AppCompatActivity() {
                     buttonEndTime.text.toString()
                 )
             ) {
-
-                val myDB = MyDatabaseHelper(this)
-                val note = Note(
-                    null,
-                    buttonStartDate.text.toString().trim(),
-                    buttonEndDate.text.toString().trim(),
-                    buttonStartTime.text.toString().trim(),
-                    buttonEndTime.text.toString().trim(),
-                    Integer.valueOf(intervalValue.trim()),
-                    contentText.text.toString().trim(),
-                    false,
-                    ""
-                )
-                myDB.addGame(note)
-
-                note.id = myDB.readLastRow().id
-                startAlarm(
-                    getCalendarFromStrings(
-                        buttonStartDate.text.toString(),
-                        buttonStartTime.text.toString()
-                    ), note, "SET"
-                )
-                startAlarm(
-                    getCalendarFromStrings(
-                        buttonEndDate.text.toString(),
-                        buttonEndTime.text.toString()
-                    ), note, "UNSET"
-                )
-                finish()
-                val homepage = Intent(this, MainActivity::class.java)
-                startActivity(homepage)
+                addNoteToDatabase()
+                finishAndReturnToMainActivity()
             } else {
                 showErrorDateDialog(this@ShowElemActivity)
             }
         }
     }
 
-    private fun getCalendarFromStrings(date: String, clock: String): Calendar {
+    private fun addNoteToDatabase() {
+        val myDB = MyDatabaseHelper(this)
+        val note = Note(
+            null,
+            buttonStartDate.text.toString().trim(),
+            buttonEndDate.text.toString().trim(),
+            buttonStartTime.text.toString().trim(),
+            buttonEndTime.text.toString().trim(),
+            Integer.valueOf(buttonInterval.text.split(" ")[0].trim()),
+            contentText.text.toString().trim(),
+            false,
+            ""
+        )
+        myDB.addGame(note)
+        note.id = myDB.readLastRow().id
+        setAlarmAtAdding(note)
+    }
 
-        val c = Calendar.getInstance()
-        calendar.set(Calendar.YEAR, date.split("-")[0].toInt())
-        calendar.set(Calendar.MONTH, date.split("-")[1].toInt())
-        calendar.set(Calendar.DAY_OF_MONTH, date.split("-")[2].toInt())
-        c[Calendar.HOUR_OF_DAY] = clock.split(":")[0].toInt()
-        c[Calendar.MINUTE] = clock.split(":")[1].toInt()
-        c[Calendar.SECOND] = 0
-        return c
+    private fun finishAndReturnToMainActivity() {
+        finish()
+        val homepage = Intent(this, MainActivity::class.java)
+        startActivity(homepage)
+    }
+
+    private fun unsetAlarm(id: String) {
+        alarmHelper.cancelAlarm(id)
+        notificationHelper.deleteNotification(id.toInt())
+    }
+
+    private fun setAlarmAtAdding(note: Note) {
+        val now = dateFormatHelper.getCurrentDateTime()
+        val startAt = note.start_date + " " + note.start_time + ":00"
+        val endAt = note.end_date + " " + note.end_time + ":00"
+
+        val hasToSetAlarmToPushNotification =
+            dateFormatHelper.isFirstDateGreaterThanSecond(startAt, now)
+
+        val hasToSetAlarmToHideNotification =
+            dateFormatHelper.isFirstDateGreaterThanSecond(endAt, now)
+
+        if (hasToSetAlarmToPushNotification) {
+
+            Log.e("Alarm", "Alarm to to push notification")
+            alarmHelper.startAlarm(
+                dateFormatHelper.getCalendarFromStrings(
+                    note.start_date!!,
+                    note.start_time!!
+                ), note, "SET"
+            )
+        } else {
+            if (hasToSetAlarmToHideNotification) {
+                notificationHelper.createNotification(note)
+                Log.e("Alarm", "Notification pushed without alarm")
+            } else {
+                Log.e("Alarm", "Notification not pushed")
+            }
+        }
+        if (hasToSetAlarmToHideNotification) {
+            alarmHelper.startAlarm(
+                dateFormatHelper.getCalendarFromStrings(
+                    note.end_date!!,
+                    note.end_time!!
+                ), note, "UNSET"
+            )
+            Log.e("Alarm", "Alarm to hide notification")
+
+        } else {
+            Log.e("Alarm", "No reaction")
+        }
     }
 
     private fun showErrorDateDialog(c: Context) {
@@ -269,7 +278,8 @@ class ShowElemActivity : AppCompatActivity() {
             .setTitle("Are you sure?")
             .setMessage("Are you sure to delete that event?")
             .setPositiveButton("Delete") { dialog, which ->
-                deleteNoteAndExit()
+                deleteNoteAndAlarm()
+                finishAndReturnToMainActivity()
             }
             .setNegativeButton("Cancel", null)
             .create()
@@ -327,26 +337,11 @@ class ShowElemActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveNoteAndExit() {
-        val myDB = MyDatabaseHelper(this)
-        myDB.deleteEvent(note.id.toString())
-
-        val note = Note(
-            null,
-            buttonStartDate.text.toString().trim(),
-            buttonEndDate.text.toString().trim(),
-            buttonStartTime.text.toString().trim(),
-            buttonEndTime.text.toString().trim(),
-            Integer.valueOf(buttonInterval.text.split(" ")[0].trim()),
-            contentText.text.toString().trim(),
-            false,
-            ""
-        )
-        myDB.addGame(note)
-        finish()
+    private fun editNoteAndExit() {
+        deleteNoteAndAlarm()
+        addNoteToDatabase()
         enableButtonIfSave()
-        val homepage = Intent(this, MainActivity::class.java)
-        startActivity(homepage)
+        finishAndReturnToMainActivity()
     }
 
     private fun setHoursOnButtons() {
@@ -365,11 +360,10 @@ class ShowElemActivity : AppCompatActivity() {
         }
     }
 
-    private fun deleteNoteAndExit() {
-        myDB.deleteEvent(note.id.toString())
-        finish()
-        val homepage = Intent(this, MainActivity::class.java)
-        startActivity(homepage)
+    private fun deleteNoteAndAlarm() {
+        val myDB = MyDatabaseHelper(this)
+        unsetAlarm(note.id!!)
+        myDB.deleteEvent(note.id!!)
     }
 
     private fun enableButtonIfCancel() {

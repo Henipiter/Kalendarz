@@ -41,7 +41,7 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-//            .setOngoing(true)
+            .setOngoing(true)
 
         with(NotificationManagerCompat.from(this)) {
             notify(id, builder.build())

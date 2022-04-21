@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import android.widget.Toast
+import java.util.*
 
 class MyDatabaseHelper(val context: Context?) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -23,6 +24,7 @@ class MyDatabaseHelper(val context: Context?) :
         const val INTERVAL_COLUMN = "interval"
         const val CONTENT_COLUMN = "content"
         const val DONE_MARK_COLUMN = "done_mark"
+        const val CREATION_DATE = "creation_date"
 
         const val ID_CURSOR_POSITION = 0
         const val START_DATE_CURSOR_POSITION = 1
@@ -32,7 +34,10 @@ class MyDatabaseHelper(val context: Context?) :
         const val INTERVAL_CURSOR_POSITION = 5
         const val CONTENT_CURSOR_POSITION = 6
         const val DONE_MARK_CURSOR_POSITION = 7
+        const val CREATION_DATE_CURSOR_POSITION = 8
     }
+
+    var dateFormatHelper = DateFormatHelper()
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableQuery = (
@@ -44,20 +49,18 @@ class MyDatabaseHelper(val context: Context?) :
                         "$END_TIME_COLUMN  TEXT, " +
                         "$INTERVAL_COLUMN  INTEGER, " +
                         "$CONTENT_COLUMN  TEXT, " +
-                        "$DONE_MARK_COLUMN  INTEGER );")
+                        "$DONE_MARK_COLUMN  INTEGER," +
+                        "$CREATION_DATE DATE );")
         db?.execSQL(createTableQuery)
-//        db?.close()
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-        //onCreate(db)
     }
 
     fun deleteEvent(id: String): Boolean {
         val db = this.writableDatabase
         val result = db.delete(TABLE_NAME, "$ID_COLUMN=$id", null) > 0
-//        db.close()
         return result
     }
 
@@ -71,6 +74,7 @@ class MyDatabaseHelper(val context: Context?) :
         contentValues.put(INTERVAL_COLUMN, note.interval)
         contentValues.put(CONTENT_COLUMN, note.content)
         contentValues.put(DONE_MARK_COLUMN, note.done)
+        contentValues.put(CREATION_DATE, dateFormatHelper.getCurrentDateTimeForDatabase())
 
         val result = db.insert(TABLE_NAME, null, contentValues)
         if (result == (-1).toLong()) {
@@ -78,22 +82,21 @@ class MyDatabaseHelper(val context: Context?) :
         } else {
             Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
         }
-//        db.close()
     }
 
     fun updateDone(id: String, value: Boolean) {
-        var bool=0
-        if(value)
-            bool=1
+        var bool = 0
+        if (value)
+            bool = 1
         val db = this.writableDatabase
         val query1 = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN = $bool where $ID_COLUMN = '$id'"
-        db.execSQL(query1);
+        db.execSQL(query1)
         Log.e("aa", query1)
-//        db.close()
     }
 
     fun readAllData(data: String): ArrayList<Note> {
-        val query = "Select * from $TABLE_NAME where $START_DATE_COLUMN='$data' ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
+        val query =
+            "Select * from $TABLE_NAME where $START_DATE_COLUMN='$data' ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
         Log.e("query", query)
         val db = this.readableDatabase
         var cursor: Cursor? = null
@@ -101,7 +104,6 @@ class MyDatabaseHelper(val context: Context?) :
             cursor = db.rawQuery(query, null)
         }
         val result = cursorToNotes(cursor)
-//        db.close()
         return result
     }
 
@@ -114,35 +116,27 @@ class MyDatabaseHelper(val context: Context?) :
             cursor = db.rawQuery(query, null)
         }
         val result = cursorToNote(cursor, id)
-//        db.close()
         return result
+    }
+
+    fun readLastRow(): Note {
+        val query = "Select * from $TABLE_NAME order by $CREATION_DATE LIMIT 1;"
+        val db = this.readableDatabase
+        var cursor: Cursor? = null
+        if (db != null) {
+            cursor = db.rawQuery(query, null)
+        }
+        return cursorToNotes(cursor)[0]
     }
 
     private fun cursorToNotes(cursor: Cursor?): ArrayList<Note> {
         val notes = ArrayList<Note>()
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                val note = Note(
-                    cursor.getString(ID_CURSOR_POSITION),
-                    cursor.getString(START_DATE_CURSOR_POSITION),
-                    cursor.getString(END_DATE_CURSOR_POSITION),
-                    cursor.getString(START_TIME_CURSOR_POSITION),
-                    cursor.getString(END_TIME_CURSOR_POSITION),
-                    cursor.getString(INTERVAL_CURSOR_POSITION).toInt(),
-                    cursor.getString(CONTENT_CURSOR_POSITION),
-                    strToBool(cursor.getString(DONE_MARK_CURSOR_POSITION))
-                )
-                notes.add(note)
+                notes.add(getNoteFromCursor(cursor))
             }
         }
         return notes
-    }
-
-    private fun strToBool(str:String):Boolean{
-        var bool = false
-        if(str=="1")
-            bool=true
-        return bool
     }
 
     private fun cursorToNote(cursor: Cursor?, id: String): Note {
@@ -150,20 +144,32 @@ class MyDatabaseHelper(val context: Context?) :
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 if (cursor.getString(0) == id) {
-                    note = Note(
-                        cursor.getString(ID_CURSOR_POSITION),
-                        cursor.getString(START_DATE_CURSOR_POSITION),
-                        cursor.getString(END_DATE_CURSOR_POSITION),
-                        cursor.getString(START_TIME_CURSOR_POSITION),
-                        cursor.getString(END_TIME_CURSOR_POSITION),
-                        cursor.getString(INTERVAL_CURSOR_POSITION).toInt(),
-                        cursor.getString(CONTENT_CURSOR_POSITION),
-                        strToBool(cursor.getString(DONE_MARK_CURSOR_POSITION))
-                    )
+                    note = getNoteFromCursor(cursor)
                     break
                 }
             }
         }
         return note
+    }
+
+    private fun strToBool(str: String): Boolean {
+        var bool = false
+        if (str == "1")
+            bool = true
+        return bool
+    }
+
+    private fun getNoteFromCursor(cursor: Cursor): Note {
+        return Note(
+            cursor.getString(ID_CURSOR_POSITION),
+            cursor.getString(START_DATE_CURSOR_POSITION),
+            cursor.getString(END_DATE_CURSOR_POSITION),
+            cursor.getString(START_TIME_CURSOR_POSITION),
+            cursor.getString(END_TIME_CURSOR_POSITION),
+            cursor.getString(INTERVAL_CURSOR_POSITION).toInt(),
+            cursor.getString(CONTENT_CURSOR_POSITION),
+            strToBool(cursor.getString(DONE_MARK_CURSOR_POSITION)),
+            cursor.getString(CREATION_DATE_CURSOR_POSITION)
+        );
     }
 }

@@ -8,7 +8,8 @@ class Note(
     var end_time: String?,
     var interval: Int?,
     var content: String?,
-    var done: Boolean
+    var done: Boolean,
+    var creation_date: String
 ) {
-    constructor() : this("", "", "", "", "", 0, "", false)
+    constructor() : this("", "", "", "", "", 0, "", false, "")
 }

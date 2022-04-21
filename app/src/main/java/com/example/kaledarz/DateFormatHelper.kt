@@ -11,12 +11,12 @@ class DateFormatHelper {
     fun getCalendarFromStrings(date: String, clock: String): Calendar {
 
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.YEAR, date.split("-")[0].toInt())
-        calendar.set(Calendar.MONTH, date.split("-")[1].toInt())
-        calendar.set(Calendar.DAY_OF_MONTH, date.split("-")[2].toInt())
-        calendar[Calendar.HOUR_OF_DAY] = clock.split(":")[0].toInt()
-        calendar[Calendar.MINUTE] = clock.split(":")[1].toInt()
-        calendar[Calendar.SECOND] = 0
+        calendar.set(Calendar.DAY_OF_MONTH, date.split("-")[0].toInt())
+        calendar.set(Calendar.MONTH, date.split("-")[1].toInt()-1)
+        calendar.set(Calendar.YEAR, date.split("-")[2].toInt())
+        calendar.set(Calendar.HOUR_OF_DAY, clock.split(":")[0].toInt())
+        calendar.set(Calendar.MINUTE, clock.split(":")[1].toInt())
+        calendar.set(Calendar.SECOND, 0)
         return calendar
     }
 

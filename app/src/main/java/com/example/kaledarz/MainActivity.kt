@@ -24,8 +24,6 @@ class MainActivity : AppCompatActivity() {
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
 
-    private val CHANNEL_ID = "dupa"
-
     private lateinit var customAdapter: CustomAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {

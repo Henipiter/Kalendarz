@@ -1,7 +1,9 @@
 package com.example.kaledarz
 
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +29,9 @@ class SegregatedList : AppCompatActivity() {
     private lateinit var buttonFuture: ImageButton
     private lateinit var buttonAll: ImageButton
 
+    private lateinit var noRowsInfoText: TextView
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_segregated_list)
@@ -37,6 +42,7 @@ class SegregatedList : AppCompatActivity() {
         buttonPast = findViewById(R.id.past_image_button)
         buttonFuture = findViewById(R.id.future_image_button)
         buttonAll = findViewById(R.id.all_image_button)
+        noRowsInfoText = findViewById(R.id.no_rows_info)
 
         databaseHelper = MyDatabaseHelper(this)
         customAdapter = CustomAdapter(this, this, noteListAdapter)
@@ -110,6 +116,12 @@ class SegregatedList : AppCompatActivity() {
             Status.ALL -> {
                 noteListAdapter.addAll(noteListAll)
             }
+        }
+        if(noteListAdapter.size==0){
+            noRowsInfoText.visibility = View.VISIBLE
+        }
+        else{
+            noRowsInfoText.visibility = View.GONE
         }
         customAdapter.notifyDataSetChanged()
 

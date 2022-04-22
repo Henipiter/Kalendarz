@@ -113,5 +113,18 @@
         </TableRow>
     </TableLayout>
 
+    <TextView
+        android:id="@+id/no_rows_info"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textSize="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No rows found"
+        tools:layout_editor_absoluteX="249dp"
+        tools:layout_editor_absoluteY="89dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

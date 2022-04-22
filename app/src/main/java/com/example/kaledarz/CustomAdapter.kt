@@ -21,11 +21,18 @@ class CustomAdapter(
 
     class MyViewHolder(
         var itemView: View,
-        var time: TextView = itemView.findViewById(R.id.time_1),
+        var time_start: TextView = itemView.findViewById(R.id.time_start),
+        var date_start: TextView = itemView.findViewById(R.id.date_start),
+        var time_end: TextView = itemView.findViewById(R.id.time_end),
+        var date_end: TextView = itemView.findViewById(R.id.date_end),
         var content: TextView = itemView.findViewById(R.id.content_1),
         var mainLayout: ConstraintLayout = itemView.findViewById(R.id.mainLayout),
         var imageDone: ImageView = itemView.findViewById(R.id.imageDone)
     ) : RecyclerView.ViewHolder(itemView)
+
+    companion object {
+        private const val EVENT_TITLE_LENGTH = 24
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(this.context)
@@ -35,30 +42,32 @@ class CustomAdapter(
     }
 
     private fun trimDescription(description: String): String {
-        if (!description.contains("\n") && description.length <= 16) {
+        if (!description.contains("\n") && description.length <= EVENT_TITLE_LENGTH) {
             return description
         }
         var trimmedDescription = description.split("\n")[0]
-        if (trimmedDescription.length > 16) {
-            trimmedDescription = trimmedDescription.substring(0, 16)
+        if (trimmedDescription.length > EVENT_TITLE_LENGTH) {
+            trimmedDescription = trimmedDescription.substring(0, EVENT_TITLE_LENGTH)
         }
         return "$trimmedDescription..."
     }
 
-    private fun setRightDoneImage(){
+    private fun setRightDoneImage() {
 
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         this.position = position
         setRightDoneImage()
-        holder.time.text = noteList[position].start_time
+        holder.time_start.text = noteList[position].start_time
+        holder.date_start.text = noteList[position].start_date
+        holder.time_end.text = noteList[position].end_time
+        holder.date_end.text = noteList[position].end_date
         holder.content.text = noteList[position].content?.let { trimDescription(it) }
-        if(noteList[position].done){
-            holder.imageDone.setImageResource(R.drawable.done)
-        }
-        else{
-            holder.imageDone.setImageResource(R.drawable.undone)
+        if (noteList[position].done) {
+            holder.imageDone.setImageResource(R.drawable.done_image)
+        } else {
+            getRightStatusImage(holder, noteList[position])
         }
         holder.mainLayout.setOnClickListener {
             val intent = Intent(context, ShowElemActivity::class.java)
@@ -70,5 +79,27 @@ class CustomAdapter(
 
     override fun getItemCount(): Int {
         return noteList.size
+    }
+
+    private fun getRightStatusImage(holder: MyViewHolder,note: Note) {
+        val dateFormatHelper = DateFormatHelper()
+        when {
+            dateFormatHelper.isFirstDateGreaterThanSecond(
+                dateFormatHelper.getCurrentDateTime(),
+                note.end_date + " " + note.end_time + ":00"
+            ) -> {
+                holder.imageDone.setImageResource(R.drawable.late_image)
+            }
+            dateFormatHelper.isFirstDateGreaterThanSecond(
+                note.start_date + " " + note.start_time + ":00",
+                dateFormatHelper.getCurrentDateTime()
+            ) -> {
+                holder.imageDone.setImageResource(R.drawable.future_image)
+            }
+            else -> {
+
+                holder.imageDone.setImageResource(R.drawable.undone_image)
+            }
+        }
     }
 }

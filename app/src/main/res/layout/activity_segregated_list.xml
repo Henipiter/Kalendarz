@@ -41,15 +41,6 @@
             android:layout_height="fill_parent"
             android:gravity="center_horizontal|center_vertical"
             android:textColor="#FFF">
-            <!--        <Button-->
-            <!--            android:id="@+id/btn4"-->
-            <!--            android:layout_width="@dimen/box_size"-->
-            <!--            android:layout_height="@dimen/box_size"-->
-            <!--            android:layout_marginLeft="@dimen/margin"-->
-            <!--            android:layout_marginRight="@dimen/margin"-->
-            <!--            android:layout_weight="1"-->
-            <!--            android:drawableTop="@drawable/future_image" />-->
-
 
             <ImageButton
                 android:id="@+id/all_image_button"
@@ -61,7 +52,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/bbb" />
+                android:src="@drawable/all_image" />
 
             <ImageButton
                 android:id="@+id/done_image_button"
@@ -119,7 +110,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:textSize="50dp"
+        android:textSize="50sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="No rows found"

@@ -22,7 +22,7 @@ class Note(
             }
         }
 
-        fun getRightStatusImage(note: Note) {
+        private fun getRightStatusImage(note: Note) {
 
             if (note.done) {
                 note.status = Status.DONE
@@ -46,18 +46,16 @@ class Note(
         }
 
         private fun checkStatusPast(note: Note): Boolean {
-            val dateFormatHelper = DateFormatHelper()
-            return dateFormatHelper.isFirstDateGreaterThanSecond(
-                dateFormatHelper.getCurrentDateTime(),
+            return DateFormatHelper.isFirstDateGreaterThanSecond(
+                DateFormatHelper.getCurrentDateTime(),
                 note.end_date + " " + note.end_time + ":00"
             )
         }
 
         private fun checkStatusFuture(note: Note): Boolean {
-            val dateFormatHelper = DateFormatHelper()
-            return dateFormatHelper.isFirstDateGreaterThanSecond(
+            return DateFormatHelper.isFirstDateGreaterThanSecond(
                 note.start_date + " " + note.start_time + ":00",
-                dateFormatHelper.getCurrentDateTime()
+                DateFormatHelper.getCurrentDateTime()
             )
         }
     }

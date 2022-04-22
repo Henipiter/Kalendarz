@@ -36,8 +36,6 @@ class MyDatabaseHelper(val context: Context?) :
         const val CREATION_DATE_CURSOR_POSITION = 8
     }
 
-    var dateFormatHelper = DateFormatHelper()
-
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableQuery = (
                 "CREATE TABLE $TABLE_NAME ( " +
@@ -73,7 +71,7 @@ class MyDatabaseHelper(val context: Context?) :
         contentValues.put(INTERVAL_COLUMN, note.interval)
         contentValues.put(CONTENT_COLUMN, note.content)
         contentValues.put(DONE_MARK_COLUMN, note.done)
-        contentValues.put(CREATION_DATE, dateFormatHelper.getCurrentDateTimeForDatabase())
+        contentValues.put(CREATION_DATE, DateFormatHelper.getCurrentDateTimeForDatabase())
 
         val result = db.insert(TABLE_NAME, null, contentValues)
         if (result == (-1).toLong()) {

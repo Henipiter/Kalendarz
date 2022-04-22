@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerViewEvent: RecyclerView
     private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
+    private lateinit var alarmHelper: AlarmHelper
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
 
@@ -34,10 +35,12 @@ class MainActivity : AppCompatActivity() {
         buttonStopNotify = findViewById(R.id.notify_button_stop)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
 
+        alarmHelper = AlarmHelper(this)
+
         val calendarView = CalendarView(this)
         calendarView.setDate(System.currentTimeMillis(), false, true)
 
-        chooseDate = getTodayDate()
+        chooseDate = DateFormatHelper.getTodayDate(calendar.date)
         databaseHelper = MyDatabaseHelper(this)
 
         customAdapter = CustomAdapter(this, this, noteList)
@@ -46,6 +49,7 @@ class MainActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         storeDataInArrays()
+        alarmHelper.setAlarmForNotes(noteList)
         customAdapter.notifyDataSetChanged()
         buttonNotify.setOnClickListener {
             val intent = Intent(this, SegregatedList::class.java)
@@ -57,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            chooseDate = getChosenDate(year, month, dayOfMonth)
+            chooseDate = DateFormatHelper.getChosenDate(year, month, dayOfMonth)
             Log.e("aa", chooseDate)
             storeDataInArrays()
             customAdapter.notifyDataSetChanged()
@@ -84,35 +88,6 @@ class MainActivity : AppCompatActivity() {
         if (noteList.size == 0) {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun getTodayDate(): String {
-        val calender = Calendar.getInstance()
-        calender.timeInMillis = calendar.date
-        val year = calender[Calendar.YEAR].toString()
-        var month = (1 + calender[Calendar.MONTH]).toString()
-        var curDate = calender[Calendar.DAY_OF_MONTH].toString()
-
-        if (curDate.length == 1) {
-            curDate = "0$curDate"
-        }
-        if (month.length == 1) {
-            month = "0$month"
-        }
-        return "$curDate-$month-$year"
-    }
-
-    private fun getChosenDate(year: Int, month: Int, dayOfMonth: Int): String {
-        val curDate = if (dayOfMonth < 10) {
-            "0$dayOfMonth"
-        } else {
-            dayOfMonth.toString()
-        }
-        val monthStr: String = if (month + 1 < 10) {
-            "0" + (month + 1).toString()
-        } else {
-            (month + 1).toString()
-        }
-        return "$curDate-$monthStr-$year"
+        Note.computeStatusForNoteList(noteList)
     }
 }

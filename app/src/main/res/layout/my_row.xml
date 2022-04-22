@@ -25,7 +25,7 @@
                 android:id="@+id/mainLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/green_700"
+                android:background="@color/rowColor"
                 android:padding="12dp">
 
                 <TextView
@@ -37,6 +37,7 @@
                     android:text="19:00"
                     android:textSize="14sp"
                     android:textStyle="bold"
+                    android:textColor="@color/defaultTextColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -46,6 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="0dp"
+                    android:textColor="@color/defaultTextColor"
                     android:text="14:02:2022"
                     android:textSize="10sp"
                     app:layout_constraintStart_toEndOf="@+id/time_end"
@@ -57,6 +59,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="0dp"
+                    android:textColor="@color/defaultTextColor"
                     android:text="9:00"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -69,6 +72,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="0dp"
+                    android:textColor="@color/defaultTextColor"
                     android:text="14:02:2022"
                     android:textSize="10sp"
                     app:layout_constraintStart_toEndOf="@+id/time_start"
@@ -80,6 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp"
                     android:layout_marginStart="4dp"
+                    android:textColor="@color/defaultTextColor"
                     android:text="TextView"
                     android:textSize="20sp"
                     app:layout_constraintHorizontal_bias="0.0"

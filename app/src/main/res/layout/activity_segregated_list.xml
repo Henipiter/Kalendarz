@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SegregatedList">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:fadeScrollbars="false"
+        android:paddingTop="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewEvent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </ScrollView>
+
+    <TableLayout
+        android:id="@+id/tableRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:background="@color/rowColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TableRow
+            android:gravity="center_horizontal|center_vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textColor="#FFF">
+            <!--        <Button-->
+            <!--            android:id="@+id/btn4"-->
+            <!--            android:layout_width="@dimen/box_size"-->
+            <!--            android:layout_height="@dimen/box_size"-->
+            <!--            android:layout_marginLeft="@dimen/margin"-->
+            <!--            android:layout_marginRight="@dimen/margin"-->
+            <!--            android:layout_weight="1"-->
+            <!--            android:drawableTop="@drawable/future_image" />-->
+
+
+            <ImageView
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/done_image" />
+
+            <ImageView
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/future_image" />
+
+            <ImageView
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/undone_image" />
+
+            <ImageView
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/late_image" />
+        </TableRow>
+    </TableLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

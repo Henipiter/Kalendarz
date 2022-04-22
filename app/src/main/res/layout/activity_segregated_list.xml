@@ -8,7 +8,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="580dp"
         android:fadeScrollbars="false"
         android:paddingTop="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,7 +21,7 @@
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewEvent"
+                android:id="@+id/recyclerViewSegregated"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
@@ -31,16 +31,15 @@
         android:id="@+id/tableRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:background="@color/rowColor"
+        android:paddingVertical="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TableRow
-            android:gravity="center_horizontal|center_vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:gravity="center_horizontal|center_vertical"
             android:textColor="#FFF">
             <!--        <Button-->
             <!--            android:id="@+id/btn4"-->
@@ -52,47 +51,63 @@
             <!--            android:drawableTop="@drawable/future_image" />-->
 
 
-            <ImageView
+            <ImageButton
+                android:id="@+id/all_image_button"
                 android:layout_width="@dimen/box_size"
                 android:layout_height="@dimen/box_size"
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
+                android:adjustViewBounds="true"
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
+                android:scaleType="centerInside"
+                android:src="@drawable/bbb" />
+
+            <ImageButton
+                android:id="@+id/done_image_button"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
                 android:adjustViewBounds="true"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
                 android:scaleType="centerInside"
                 android:src="@drawable/done_image" />
 
-            <ImageView
+            <ImageButton
+                android:id="@+id/future_image_button"
                 android:layout_width="@dimen/box_size"
                 android:layout_height="@dimen/box_size"
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
+                android:adjustViewBounds="true"
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
-                android:adjustViewBounds="true"
                 android:scaleType="centerInside"
                 android:src="@drawable/future_image" />
 
-            <ImageView
+            <ImageButton
+                android:id="@+id/undone_image_button"
                 android:layout_width="@dimen/box_size"
                 android:layout_height="@dimen/box_size"
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
+                android:adjustViewBounds="true"
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
-                android:adjustViewBounds="true"
                 android:scaleType="centerInside"
                 android:src="@drawable/undone_image" />
 
-            <ImageView
+            <ImageButton
+                android:id="@+id/past_image_button"
                 android:layout_width="@dimen/box_size"
                 android:layout_height="@dimen/box_size"
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
+                android:adjustViewBounds="true"
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
-                android:adjustViewBounds="true"
                 android:scaleType="centerInside"
                 android:src="@drawable/late_image" />
         </TableRow>

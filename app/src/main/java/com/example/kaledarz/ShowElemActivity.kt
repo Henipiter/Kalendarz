@@ -174,7 +174,8 @@ class ShowElemActivity : AppCompatActivity() {
             Integer.valueOf(buttonInterval.text.split(" ")[0].trim()),
             contentText.text.toString().trim(),
             false,
-            ""
+            "",
+            Status.UNDONE
         )
         myDB.addGame(note)
         note.id = myDB.readLastRow().id

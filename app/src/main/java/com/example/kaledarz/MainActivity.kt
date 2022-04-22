@@ -19,12 +19,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonNotify: Button
     private lateinit var buttonStopNotify: Button
     private lateinit var recyclerViewEvent: RecyclerView
+    private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
-    private lateinit var notificationHelper: NotificationHelper
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
 
-    private lateinit var customAdapter: CustomAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +33,6 @@ class MainActivity : AppCompatActivity() {
         buttonNotify = findViewById(R.id.notify_button)
         buttonStopNotify = findViewById(R.id.notify_button_stop)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
-        notificationHelper = NotificationHelper(this)
-        notificationHelper.createNotificationChannel()
-//        createNotificationChannel()
-
 
         val calendarView = CalendarView(this)
         calendarView.setDate(System.currentTimeMillis(), false, true)
@@ -53,11 +48,12 @@ class MainActivity : AppCompatActivity() {
         storeDataInArrays()
         customAdapter.notifyDataSetChanged()
         buttonNotify.setOnClickListener {
-            notificationHelper.createNotification(1,"title", "content")
+            val intent = Intent(this, SegregatedList::class.java)
+            this.startActivity(intent)
         }
 
         buttonStopNotify.setOnClickListener {
-            notificationHelper.deleteNotification(1)
+
         }
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
@@ -84,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun storeDataInArrays() {
         noteList.clear()
-        noteList.addAll(databaseHelper.readAllData(chooseDate))
+        noteList.addAll(databaseHelper.readAllDataByDate(chooseDate))
         if (noteList.size == 0) {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         }
@@ -107,17 +103,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getChosenDate(year: Int, month: Int, dayOfMonth: Int): String {
-        val curDate: String
-        val monthStr: String
-        if (dayOfMonth < 10) {
-            curDate = "0$dayOfMonth"
+        val curDate = if (dayOfMonth < 10) {
+            "0$dayOfMonth"
         } else {
-            curDate = dayOfMonth.toString()
+            dayOfMonth.toString()
         }
-        if (month + 1 < 10) {
-            monthStr = "0" + (month + 1).toString()
+        val monthStr: String = if (month + 1 < 10) {
+            "0" + (month + 1).toString()
         } else {
-            monthStr = (month + 1).toString()
+            (month + 1).toString()
         }
         return "$curDate-$monthStr-$year"
     }

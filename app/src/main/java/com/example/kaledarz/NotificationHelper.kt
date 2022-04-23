@@ -38,30 +38,36 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
     }
 
     fun createNotification(id: Int, title: String, content: String) {
-        val intent = Intent(this, ShowElemActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        intent.putExtra("type", "EDIT")
-        intent.putExtra("id", id.toString())
-        val pendingIntent: PendingIntent =
-            PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.bbb)
             .setContentTitle(title)
             .setContentText(content)
-            .setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText(content)
-            )
+            .setStyle(NotificationCompat.BigTextStyle().bigText(content))
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
-            .addAction(R.drawable.all, "GO TO NOTE", pendingIntent)
+            .addAction(R.drawable.all, "GO TO NOTE", getPendingIntentToNote(id))
+            .addAction(R.drawable.all, "GO TO APP", getPendingIntentToMain(id))
 
         with(NotificationManagerCompat.from(this)) {
             notify(id, builder.build())
         }
+    }
+
+    private fun getPendingIntentToNote(id: Int): PendingIntent {
+        val intentToNote = Intent(this, ShowElemActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        intentToNote.putExtra("type", "EDIT")
+        intentToNote.putExtra("id", id.toString())
+        return PendingIntent.getActivity(this, id, intentToNote, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    fun getPendingIntentToMain(id: Int): PendingIntent {
+        val intentToNote = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        return PendingIntent.getActivity(this, id, intentToNote, PendingIntent.FLAG_IMMUTABLE)
     }
 
     fun deleteNotification(id: Int) {

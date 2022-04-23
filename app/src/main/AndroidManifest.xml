@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Kaledarz">
         <activity
+            android:name=".FilterListActivity"
+            android:exported="false" />
+        <activity
             android:name=".SegregatedList"
             android:exported="false" />
         <activity android:name=".ShowElemActivity" />

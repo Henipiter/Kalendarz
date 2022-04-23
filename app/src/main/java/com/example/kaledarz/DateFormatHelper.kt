@@ -80,6 +80,11 @@ class DateFormatHelper {
             return sdf.parse(date1) > sdf.parse(date2)
         }
 
+        fun isFirstDateGreaterAndEqualToSecond(date1: String, date2: String, pattern:String): Boolean {
+            val sdf = SimpleDateFormat(pattern, locale)
+            return sdf.parse(date1) >= sdf.parse(date2)
+        }
+
         fun getTodayDate(calendarInMillis: Long): String {
             val calender = Calendar.getInstance()
             calender.timeInMillis = calendarInMillis

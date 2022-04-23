@@ -6,26 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".SegregatedList">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="530dp"
-        android:fadeScrollbars="false"
-        android:paddingTop="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewSegregated"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </ScrollView>
 
     <TableLayout
         android:id="@+id/tableRow"
@@ -103,35 +83,154 @@
                 android:src="@drawable/late_image" />
         </TableRow>
     </TableLayout>
-
-    <Button
+    <ImageButton
         android:id="@+id/filter_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="Filter"
+        android:layout_width="@dimen/box_size"
+        android:layout_height="@dimen/box_size"
+        android:layout_marginStart="36dp"
+        app:srcCompat="?android:attr/actionModeWebSearchDrawable"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tableRow" />
+
+    <ImageButton
+        android:id="@+id/refresh_button"
+        android:layout_width="@dimen/box_size"
+        android:layout_height="@dimen/box_size"
+        android:layout_marginEnd="36dp"
+        app:srcCompat="@android:drawable/stat_notify_sync_noanim"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tableRow"/>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:text="Date between :"
-        android:textSize="20sp"
+        android:layout_marginTop="8dp"
+        android:text="Start date:"
+        android:textSize="12sp"
         app:layout_constraintLeft_toRightOf="@id/filter_button"
         app:layout_constraintTop_toBottomOf="@id/tableRow" />
 
-    <Button
-        android:id="@+id/refresh_button"
+    <TextView
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:text="Refresh"
+        android:layout_marginTop="2dp"
+        android:text="End date:"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/filter_button"
+        app:layout_constraintTop_toBottomOf="@id/textView" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="2dp"
+        android:text="Content:"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/filter_button"
+        app:layout_constraintTop_toBottomOf="@id/textView1" />
+
+    <TextView
+        android:id="@+id/text_lower_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="8dp"
+        android:text="Lower"
+        android:textSize="12sp"
         app:layout_constraintLeft_toRightOf="@id/textView"
         app:layout_constraintTop_toBottomOf="@id/tableRow" />
+
+    <TextView
+        android:id="@+id/text_end_lower_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:text="Lower"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/textView"
+        app:layout_constraintTop_toBottomOf="@id/textView" />
+    <TextView
+        android:id="@+id/text_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:text="none"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/textView"
+        app:layout_constraintTop_toBottomOf="@id/textView1" />
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="8dp"
+        android:text=" - "
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/text_lower_start_date"
+        app:layout_constraintTop_toBottomOf="@id/tableRow" />
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:text=" - "
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/text_lower_start_date"
+        app:layout_constraintTop_toBottomOf="@id/textView" />
+
+    <TextView
+        android:id="@+id/text_upper_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="8dp"
+        android:text="Upper"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/text1"
+        app:layout_constraintTop_toBottomOf="@id/tableRow" />
+
+    <TextView
+        android:id="@+id/text_upper_end_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:text="Upper"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/text1"
+        app:layout_constraintTop_toBottomOf="@id/textView" />
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:fadeScrollbars="false"
+        android:paddingTop="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSegregated"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </ScrollView>
 
     <TextView
         android:id="@+id/no_rows_info"
@@ -145,6 +244,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="249dp"
         tools:layout_editor_absoluteY="89dp" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

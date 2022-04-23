@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import android.widget.Toast
-import java.util.*
 
 class MyDatabaseHelper(val context: Context?) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -36,8 +35,6 @@ class MyDatabaseHelper(val context: Context?) :
         const val DONE_MARK_CURSOR_POSITION = 7
         const val CREATION_DATE_CURSOR_POSITION = 8
     }
-
-    var dateFormatHelper = DateFormatHelper()
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableQuery = (
@@ -74,7 +71,7 @@ class MyDatabaseHelper(val context: Context?) :
         contentValues.put(INTERVAL_COLUMN, note.interval)
         contentValues.put(CONTENT_COLUMN, note.content)
         contentValues.put(DONE_MARK_COLUMN, note.done)
-        contentValues.put(CREATION_DATE, dateFormatHelper.getCurrentDateTimeForDatabase())
+        contentValues.put(CREATION_DATE, DateFormatHelper.getCurrentDateTimeForDatabase())
 
         val result = db.insert(TABLE_NAME, null, contentValues)
         if (result == (-1).toLong()) {
@@ -94,17 +91,27 @@ class MyDatabaseHelper(val context: Context?) :
         Log.e("aa", query1)
     }
 
-    fun readAllData(data: String): ArrayList<Note> {
+    fun readAllDataByDate(data: String): ArrayList<Note> {
         val query =
-            "Select * from $TABLE_NAME where $START_DATE_COLUMN='$data' ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
+            "Select * from $TABLE_NAME where $START_DATE_COLUMN<='$data' and $END_DATE_COLUMN>='$data' ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
         Log.e("query", query)
         val db = this.readableDatabase
         var cursor: Cursor? = null
         if (db != null) {
             cursor = db.rawQuery(query, null)
         }
-        val result = cursorToNotes(cursor)
-        return result
+        return cursorToNotes(cursor)
+    }
+
+    fun readAllData(): ArrayList<Note> {
+        val query = "Select * from $TABLE_NAME ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
+        Log.e("query", query)
+        val db = this.readableDatabase
+        var cursor: Cursor? = null
+        if (db != null) {
+            cursor = db.rawQuery(query, null)
+        }
+        return cursorToNotes(cursor)
     }
 
     fun readOneData(id: String): Note {
@@ -115,8 +122,7 @@ class MyDatabaseHelper(val context: Context?) :
         if (db != null) {
             cursor = db.rawQuery(query, null)
         }
-        val result = cursorToNote(cursor, id)
-        return result
+        return cursorToNote(cursor, id)
     }
 
     fun readLastRow(): Note {
@@ -169,7 +175,9 @@ class MyDatabaseHelper(val context: Context?) :
             cursor.getString(INTERVAL_CURSOR_POSITION).toInt(),
             cursor.getString(CONTENT_CURSOR_POSITION),
             strToBool(cursor.getString(DONE_MARK_CURSOR_POSITION)),
-            cursor.getString(CREATION_DATE_CURSOR_POSITION)
-        );
+            cursor.getString(CREATION_DATE_CURSOR_POSITION),
+            Status.UNDONE
+        )
     }
 }
+

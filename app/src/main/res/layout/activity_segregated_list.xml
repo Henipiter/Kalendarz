@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SegregatedList">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="530dp"
+        android:fadeScrollbars="false"
+        android:paddingTop="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSegregated"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </ScrollView>
+
+    <TableLayout
+        android:id="@+id/tableRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal|center_vertical"
+            android:textColor="#FFF">
+
+            <ImageButton
+                android:id="@+id/all_image_button"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:adjustViewBounds="true"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
+                android:scaleType="centerInside"
+                android:src="@drawable/all_image" />
+
+            <ImageButton
+                android:id="@+id/done_image_button"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:adjustViewBounds="true"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
+                android:scaleType="centerInside"
+                android:src="@drawable/done_image" />
+
+            <ImageButton
+                android:id="@+id/future_image_button"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:adjustViewBounds="true"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
+                android:scaleType="centerInside"
+                android:src="@drawable/future_image" />
+
+            <ImageButton
+                android:id="@+id/undone_image_button"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:adjustViewBounds="true"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
+                android:scaleType="centerInside"
+                android:src="@drawable/undone_image" />
+
+            <ImageButton
+                android:id="@+id/past_image_button"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:adjustViewBounds="true"
+                android:background="@color/buttonColor"
+                android:padding="@dimen/padding"
+                android:scaleType="centerInside"
+                android:src="@drawable/late_image" />
+        </TableRow>
+    </TableLayout>
+
+    <Button
+        android:id="@+id/filter_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Filter"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tableRow" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="Date between :"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toRightOf="@id/filter_button"
+        app:layout_constraintTop_toBottomOf="@id/tableRow" />
+
+    <Button
+        android:id="@+id/refresh_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Refresh"
+        app:layout_constraintLeft_toRightOf="@id/textView"
+        app:layout_constraintTop_toBottomOf="@id/tableRow" />
+
+    <TextView
+        android:id="@+id/no_rows_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No rows found"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="249dp"
+        tools:layout_editor_absoluteY="89dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

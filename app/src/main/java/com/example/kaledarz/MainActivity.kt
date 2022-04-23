@@ -19,12 +19,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonNotify: Button
     private lateinit var buttonStopNotify: Button
     private lateinit var recyclerViewEvent: RecyclerView
+    private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
-    private lateinit var notificationHelper: NotificationHelper
+    private lateinit var alarmHelper: AlarmHelper
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
 
-    private lateinit var customAdapter: CustomAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,15 +34,13 @@ class MainActivity : AppCompatActivity() {
         buttonNotify = findViewById(R.id.notify_button)
         buttonStopNotify = findViewById(R.id.notify_button_stop)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
-        notificationHelper = NotificationHelper(this)
-        notificationHelper.createNotificationChannel()
-//        createNotificationChannel()
 
+        alarmHelper = AlarmHelper(this)
 
         val calendarView = CalendarView(this)
         calendarView.setDate(System.currentTimeMillis(), false, true)
 
-        chooseDate = getTodayDate()
+        chooseDate = DateFormatHelper.getTodayDate(calendar.date)
         databaseHelper = MyDatabaseHelper(this)
 
         customAdapter = CustomAdapter(this, this, noteList)
@@ -51,17 +49,19 @@ class MainActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         storeDataInArrays()
+        alarmHelper.setAlarmForNotes(noteList)
         customAdapter.notifyDataSetChanged()
         buttonNotify.setOnClickListener {
-            notificationHelper.createNotification(1,"title", "content")
+            val intent = Intent(this, SegregatedList::class.java)
+            this.startActivity(intent)
         }
 
         buttonStopNotify.setOnClickListener {
-            notificationHelper.deleteNotification(1)
+
         }
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            chooseDate = getChosenDate(year, month, dayOfMonth)
+            chooseDate = DateFormatHelper.getChosenDate(year, month, dayOfMonth)
             Log.e("aa", chooseDate)
             storeDataInArrays()
             customAdapter.notifyDataSetChanged()
@@ -84,41 +84,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun storeDataInArrays() {
         noteList.clear()
-        noteList.addAll(databaseHelper.readAllData(chooseDate))
+        noteList.addAll(databaseHelper.readAllDataByDate(chooseDate))
         if (noteList.size == 0) {
             Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun getTodayDate(): String {
-        val calender = Calendar.getInstance()
-        calender.timeInMillis = calendar.date
-        val year = calender[Calendar.YEAR].toString()
-        var month = (1 + calender[Calendar.MONTH]).toString()
-        var curDate = calender[Calendar.DAY_OF_MONTH].toString()
-
-        if (curDate.length == 1) {
-            curDate = "0$curDate"
-        }
-        if (month.length == 1) {
-            month = "0$month"
-        }
-        return "$curDate-$month-$year"
-    }
-
-    private fun getChosenDate(year: Int, month: Int, dayOfMonth: Int): String {
-        val curDate: String
-        val monthStr: String
-        if (dayOfMonth < 10) {
-            curDate = "0$dayOfMonth"
-        } else {
-            curDate = dayOfMonth.toString()
-        }
-        if (month + 1 < 10) {
-            monthStr = "0" + (month + 1).toString()
-        } else {
-            monthStr = (month + 1).toString()
-        }
-        return "$curDate-$monthStr-$year"
+        Note.computeStatusForNoteList(noteList)
     }
 }

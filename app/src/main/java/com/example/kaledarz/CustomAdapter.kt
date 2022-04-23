@@ -64,11 +64,7 @@ class CustomAdapter(
         holder.time_end.text = noteList[position].end_time
         holder.date_end.text = noteList[position].end_date
         holder.content.text = noteList[position].content?.let { trimDescription(it) }
-        if (noteList[position].done) {
-            holder.imageDone.setImageResource(R.drawable.done_image)
-        } else {
-            getRightStatusImage(holder, noteList[position])
-        }
+        getRightStatusImage(holder, noteList[position])
         holder.mainLayout.setOnClickListener {
             val intent = Intent(context, ShowElemActivity::class.java)
             intent.putExtra("type", "EDIT")
@@ -81,24 +77,21 @@ class CustomAdapter(
         return noteList.size
     }
 
-    private fun getRightStatusImage(holder: MyViewHolder,note: Note) {
-        val dateFormatHelper = DateFormatHelper()
-        when {
-            dateFormatHelper.isFirstDateGreaterThanSecond(
-                dateFormatHelper.getCurrentDateTime(),
-                note.end_date + " " + note.end_time + ":00"
-            ) -> {
+    private fun getRightStatusImage(holder: MyViewHolder, note: Note) {
+        when (note.status) {
+            Status.DONE -> {
+                holder.imageDone.setImageResource(R.drawable.done_image)
+            }
+            Status.UNDONE -> {
+                holder.imageDone.setImageResource(R.drawable.undone_image)
+            }
+            Status.PAST -> {
                 holder.imageDone.setImageResource(R.drawable.late_image)
             }
-            dateFormatHelper.isFirstDateGreaterThanSecond(
-                note.start_date + " " + note.start_time + ":00",
-                dateFormatHelper.getCurrentDateTime()
-            ) -> {
+            Status.FUTURE -> {
                 holder.imageDone.setImageResource(R.drawable.future_image)
             }
-            else -> {
-
-                holder.imageDone.setImageResource(R.drawable.undone_image)
+            Status.ALL -> {
             }
         }
     }

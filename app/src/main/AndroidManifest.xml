@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Kaledarz">
-        <activity android:name=".ShowElemActivity"></activity>
+        <activity
+            android:name=".SegregatedList"
+            android:exported="false" />
+        <activity android:name=".ShowElemActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,7 +21,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".AlarmReceiver"/>
+        <receiver android:name=".AlarmReceiver" />
     </application>
 
 </manifest>

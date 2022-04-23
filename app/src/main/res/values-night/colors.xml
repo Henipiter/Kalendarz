@@ -2,4 +2,7 @@
 <resources>
     <color name="defaultTextColor">#ffffff</color>
     <color name="rowColor">@color/green_700</color>
+    <color name="buttonColor">@color/gray</color>
+    <color name="selectedButtonColor">@color/lightGray</color>
+
 </resources>

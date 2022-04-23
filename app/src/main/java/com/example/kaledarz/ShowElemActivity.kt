@@ -38,13 +38,10 @@ class ShowElemActivity : AppCompatActivity() {
 
 
     private var calendar = Calendar.getInstance()
-    private var dateFormatHelper = DateFormatHelper()
     private lateinit var notificationHelper: NotificationHelper
     private lateinit var alarmHelper: AlarmHelper
 
     var picker: TimePickerDialog? = null
-
-    var intervalValue = "5"
 
     private lateinit var myDB: MyDatabaseHelper
     private var note = Note()
@@ -65,7 +62,7 @@ class ShowElemActivity : AppCompatActivity() {
             picker = TimePickerDialog(
                 this@ShowElemActivity, { tp, sHour, sMinute ->
                     buttonStartTime.text =
-                        dateFormatHelper.setHour(sHour) + ":" + dateFormatHelper.setMinutes(sMinute)
+                        DateFormatHelper.setHour(sHour) + ":" + DateFormatHelper.setMinutes(sMinute)
                 }, hour, minutes, true
             )
             picker!!.show()
@@ -77,7 +74,7 @@ class ShowElemActivity : AppCompatActivity() {
             picker = TimePickerDialog(
                 this@ShowElemActivity, { tp, sHour, sMinute ->
                     buttonEndTime.text =
-                        dateFormatHelper.setHour(sHour) + ":" + dateFormatHelper.setMinutes(sMinute)
+                        DateFormatHelper.setHour(sHour) + ":" + DateFormatHelper.setMinutes(sMinute)
                 }, hour, minutes, true
             )
             picker!!.show()
@@ -92,7 +89,7 @@ class ShowElemActivity : AppCompatActivity() {
                     calendar.set(Calendar.YEAR, year)
                     calendar.set(Calendar.MONTH, monthOfYear)
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonStartDate.text = dateFormatHelper.updateDateInView(calendar)
+                    buttonStartDate.text = DateFormatHelper.updateDateInView(calendar)
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -107,7 +104,7 @@ class ShowElemActivity : AppCompatActivity() {
                     calendar.set(Calendar.YEAR, year)
                     calendar.set(Calendar.MONTH, monthOfYear)
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonEndDate.text = dateFormatHelper.updateDateInView(calendar)
+                    buttonEndDate.text = DateFormatHelper.updateDateInView(calendar)
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -137,9 +134,9 @@ class ShowElemActivity : AppCompatActivity() {
             refreshDoneButton()
             myDB.updateDone(note.id.toString(), note.done)
             if (note.done) {
-                unsetAlarm(note.id!!)
+                alarmHelper.unsetAlarm(note.id!!, notificationHelper)
             } else {
-                setAlarmAtAdding(note)
+                alarmHelper.setAlarm(note)
             }
             finish()
             val homepage = Intent(this, MainActivity::class.java)
@@ -148,7 +145,7 @@ class ShowElemActivity : AppCompatActivity() {
 
         buttonAdd.setOnClickListener {
 
-            if (dateFormatHelper.isCorrectDate(
+            if (DateFormatHelper.isCorrectDate(
                     buttonStartDate.text.toString(),
                     buttonEndDate.text.toString(),
                     buttonStartTime.text.toString(),
@@ -174,11 +171,12 @@ class ShowElemActivity : AppCompatActivity() {
             Integer.valueOf(buttonInterval.text.split(" ")[0].trim()),
             contentText.text.toString().trim(),
             false,
-            ""
+            "",
+            Status.UNDONE
         )
         myDB.addGame(note)
         note.id = myDB.readLastRow().id
-        setAlarmAtAdding(note)
+        alarmHelper.setAlarm(note)
     }
 
     private fun finishAndReturnToMainActivity() {
@@ -187,63 +185,17 @@ class ShowElemActivity : AppCompatActivity() {
         startActivity(homepage)
     }
 
-    private fun unsetAlarm(id: String) {
-        alarmHelper.cancelAlarm(id)
-        notificationHelper.deleteNotification(id.toInt())
-    }
-
-    private fun setAlarmAtAdding(note: Note) {
-        val now = dateFormatHelper.getCurrentDateTime()
-        val startAt = note.start_date + " " + note.start_time + ":00"
-        val endAt = note.end_date + " " + note.end_time + ":00"
-
-        val hasToSetAlarmToPushNotification =
-            dateFormatHelper.isFirstDateGreaterThanSecond(startAt, now)
-
-        val hasToSetAlarmToHideNotification =
-            dateFormatHelper.isFirstDateGreaterThanSecond(endAt, now)
-
-        if (hasToSetAlarmToPushNotification) {
-
-            Log.e("Alarm", "Alarm to to push notification")
-            alarmHelper.startAlarm(
-                dateFormatHelper.getCalendarFromStrings(
-                    note.start_date!!,
-                    note.start_time!!
-                ), note, "SET"
-            )
-        } else {
-            if (hasToSetAlarmToHideNotification) {
-                notificationHelper.createNotification(note)
-                Log.e("Alarm", "Notification pushed without alarm")
-            } else {
-                Log.e("Alarm", "Notification not pushed")
-            }
-        }
-        if (hasToSetAlarmToHideNotification) {
-            alarmHelper.startAlarm(
-                dateFormatHelper.getCalendarFromStrings(
-                    note.end_date!!,
-                    note.end_time!!
-                ), note, "UNSET"
-            )
-            Log.e("Alarm", "Alarm to hide notification")
-
-        } else {
-            Log.e("Alarm", "No reaction")
-        }
-    }
 
     private fun showErrorDateDialog(c: Context) {
         var messageError = ""
-        if (!dateFormatHelper.isEndDateGreaterThanStartDate(
+        if (!DateFormatHelper.isEndDateGreaterThanStartDate(
                 buttonStartDate.text.toString(),
                 buttonEndDate.text.toString()
             )
         ) {
             messageError = "Start date is later than end date"
         }
-        if (!dateFormatHelper.isEndTimeGreaterThanStartTime(
+        if (!DateFormatHelper.isEndTimeGreaterThanStartTime(
                 buttonStartTime.text.toString(),
                 buttonEndTime.text.toString()
             )
@@ -347,9 +299,9 @@ class ShowElemActivity : AppCompatActivity() {
     private fun setHoursOnButtons() {
         val cldr = Calendar.getInstance()
         val hour = cldr[Calendar.HOUR_OF_DAY] + 1
-        val initHourValue = dateFormatHelper.setHour(hour)
-        buttonStartTime.text = dateFormatHelper.setHour(initHourValue.toInt()) + ":00"
-        buttonEndTime.text = dateFormatHelper.setHour(initHourValue.toInt() + 1) + ":00"
+        val initHourValue = DateFormatHelper.setHour(hour)
+        buttonStartTime.text = DateFormatHelper.setHour(initHourValue.toInt()) + ":00"
+        buttonEndTime.text = DateFormatHelper.setHour(initHourValue.toInt() + 1) + ":00"
     }
 
     private fun refreshDoneButton() {
@@ -362,7 +314,7 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun deleteNoteAndAlarm() {
         val myDB = MyDatabaseHelper(this)
-        unsetAlarm(note.id!!)
+        alarmHelper.unsetAlarm(note.id!!,notificationHelper)
         myDB.deleteEvent(note.id!!)
     }
 

@@ -7,6 +7,10 @@
     <color name="teal_700">#267A20</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray">#4C4949</color>
+    <color name="lightGray">#7E7878</color>
     <color name="defaultTextColor">#000000</color>
     <color name="rowColor">@color/green_700</color>
+    <color name="buttonColor">@color/gray</color>
+    <color name="selectedButtonColor">@color/lightGray</color>
 </resources>

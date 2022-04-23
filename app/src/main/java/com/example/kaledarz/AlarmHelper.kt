@@ -43,17 +43,19 @@ class AlarmHelper(private val context: Context) {
         intent.putExtra("mode", mode)
         intent.putExtra("id", note.id)
         intent.putExtra("content", note.content)
+        intent.putExtra("title", getTitle(note))
         var id = note.id!!.toInt()
         if (mode == "UNSET") {
-            intent.putExtra("title", note.end_date + " " + note.end_time)
             id *= -1
-        } else {
-            intent.putExtra("title", note.start_date + " " + note.start_time)
         }
         val pendingIntent =
             PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
+    }
+
+    private fun getTitle(note: Note): String {
+        return note.start_time + " " + note.start_date + " - " + note.end_time + " " + note.end_date
     }
 
     private fun cancelAlarm(id: String) {

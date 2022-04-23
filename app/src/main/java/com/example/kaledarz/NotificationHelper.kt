@@ -2,8 +2,10 @@ package com.example.kaledarz
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -30,19 +32,32 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
         createNotification(
             note.id!!.toInt(),
             "From (" + note.start_time + " " + note.start_date + ") to ("
-                    + note.end_time + " " + note.end_date+")",
+                    + note.end_time + " " + note.end_date + ")",
             note.content!!
         )
     }
 
     fun createNotification(id: Int, title: String, content: String) {
+        val intent = Intent(this, ShowElemActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        intent.putExtra("type", "EDIT")
+        intent.putExtra("id", id.toString())
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.bbb)
             .setContentTitle(title)
             .setContentText(content)
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(content)
+            )
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
+            .addAction(R.drawable.all, "GO TO NOTE", pendingIntent)
 
         with(NotificationManagerCompat.from(this)) {
             notify(id, builder.build())

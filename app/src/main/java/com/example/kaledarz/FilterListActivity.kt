@@ -1,13 +1,21 @@
 package com.example.kaledarz
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CompoundButton
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import com.example.kaledarz.Constants.Companion.LOWER_START
+import com.example.kaledarz.Constants.Companion.LOWER_END
+import com.example.kaledarz.Constants.Companion.UPPER_START
+import com.example.kaledarz.Constants.Companion.UPPER_END
+import com.example.kaledarz.Constants.Companion.CONTENT
+import com.example.kaledarz.Constants.Companion.NONE
 
 
 class FilterListActivity : AppCompatActivity() {
@@ -22,18 +30,11 @@ class FilterListActivity : AppCompatActivity() {
     private lateinit var switchLowerEnd: SwitchCompat
     private lateinit var switchUpperStart: SwitchCompat
     private lateinit var switchUpperEnd: SwitchCompat
+    private lateinit var switchContent: SwitchCompat
 
+    private lateinit var textContent: EditText
 
-    private var enableStart = false
-    private var enableEnd = false
     private var calendar = Calendar.getInstance()
-
-    companion object{
-        const val LOWER_START = "LOWER_START"
-        const val LOWER_END = "LOWER_END"
-        const val UPPER_START = "UPPER_START"
-        const val UPPER_END = "UPPER_END"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +50,24 @@ class FilterListActivity : AppCompatActivity() {
         switchLowerEnd = findViewById(R.id.lower_end_switch)
         switchUpperStart = findViewById(R.id.upper_start_switch)
         switchUpperEnd = findViewById(R.id.upper_end_switch)
+        switchContent = findViewById(R.id.content_switch)
+
+        textContent = findViewById(R.id.content_text2)
 
         receiveIntents()
         buttonExit.setOnClickListener {
-            val returnIntent = addIntentAtConfirm()
-            setResult(RESULT_OK, returnIntent)
-            finish()
+            if (switchContent.isChecked && textContent.text.toString() == "") {
+                val dialog: AlertDialog = AlertDialog.Builder(this)
+                    .setTitle("Content value error")
+                    .setMessage("Fill this field")
+                    .setNegativeButton("OK", null)
+                    .create()
+                dialog.show()
+            } else {
+                val returnIntent = addIntentAtConfirm()
+                setResult(RESULT_OK, returnIntent)
+                finish()
+            }
         }
 
         buttonLowerStart.setOnClickListener {
@@ -129,21 +142,26 @@ class FilterListActivity : AppCompatActivity() {
         switchUpperStart.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
             buttonUpperStart.isEnabled = value
         }
+        switchContent.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
+            textContent.isEnabled = value
+        }
     }
 
     private fun receiveIntents() {
-        analyzeIntent(LOWER_START)
-        analyzeIntent(LOWER_END)
-        analyzeIntent(UPPER_START)
-        analyzeIntent(UPPER_END)
+        analyzeIntentForButtons(LOWER_START)
+        analyzeIntentForButtons(LOWER_END)
+        analyzeIntentForButtons(UPPER_START)
+        analyzeIntentForButtons(UPPER_END)
+        analyzeIntentForText(CONTENT)
+
     }
 
-    private fun analyzeIntent(name:String){
+    private fun analyzeIntentForButtons(name: String) {
         if (intent.hasExtra(name)) {
             val intentValue = intent.getStringExtra(name)
             val switch = getSwitchByName(name)
             val button = getButtonByName(name)
-            if (intentValue == "none") {
+            if (intentValue == NONE) {
                 switch.isChecked = false
                 button.isEnabled = false
                 button.text = DateFormatHelper.getCurrentDateTime().substring(0, 10)
@@ -155,8 +173,26 @@ class FilterListActivity : AppCompatActivity() {
         }
     }
 
+    private fun analyzeIntentForText(name: String) {
+        if (intent.hasExtra(name)) {
+            val intentValue = intent.getStringExtra(name)
+            val switch = getSwitchByName(name)
+            val enabled = intentValue != NONE
+            switch.isChecked = enabled
+            textContent.isEnabled = enabled
+            if (enabled) {
+                textContent.setText(intentValue)
+            } else {
+                textContent.setText("")
+            }
+        }
+    }
+
     private fun addIntentAtConfirm(): Intent {
         val returnIntent = Intent()
+        if (switchContent.isChecked) {
+            returnIntent.putExtra(CONTENT, textContent.text.toString())
+        }
         if (switchLowerEnd.isChecked) {
             returnIntent.putExtra(LOWER_END, buttonLowerEnd.text)
         }
@@ -172,8 +208,8 @@ class FilterListActivity : AppCompatActivity() {
         return returnIntent
     }
 
-    private fun getSwitchByName(name:String):SwitchCompat{
-        return when(name){
+    private fun getSwitchByName(name: String): SwitchCompat {
+        return when (name) {
             LOWER_END -> {
                 switchLowerEnd
             }
@@ -183,14 +219,17 @@ class FilterListActivity : AppCompatActivity() {
             LOWER_START -> {
                 switchLowerStart
             }
-            else -> {
+            UPPER_START -> {
                 switchUpperStart
+            }
+            else -> {
+                switchContent
             }
         }
     }
 
-    private fun getButtonByName(name:String):Button{
-        return when(name){
+    private fun getButtonByName(name: String): Button {
+        return when (name) {
             LOWER_END -> {
                 buttonLowerEnd
             }

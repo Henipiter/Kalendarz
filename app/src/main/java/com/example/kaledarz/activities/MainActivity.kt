@@ -6,16 +6,16 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
-import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kaledarz.*
 import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.R
 import com.example.kaledarz.helpers.AlarmHelper
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
     private lateinit var alarmHelper: AlarmHelper
+    private lateinit var noRowsInfo: TextView
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
 
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         buttonNotify = findViewById(R.id.list_button)
         buttonSettings = findViewById(R.id.settings_button)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
+        noRowsInfo = findViewById(R.id.no_rows_info2)
 
         alarmHelper = AlarmHelper(this)
 
@@ -91,8 +93,10 @@ class MainActivity : AppCompatActivity() {
         noteList.clear()
         noteList.addAll(databaseHelper.readAllDataByDate(chooseDate))
         if (noteList.size == 0) {
-            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
+            noRowsInfo.isVisible = true
+        } else {
+            noRowsInfo.isVisible = false
+            Note.computeStatusForNoteList(noteList)
         }
-        Note.computeStatusForNoteList(noteList)
     }
 }

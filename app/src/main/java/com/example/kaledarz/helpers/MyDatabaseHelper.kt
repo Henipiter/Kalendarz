@@ -22,7 +22,6 @@ class MyDatabaseHelper(val context: Context?) :
         const val END_DATE_COLUMN = "end_date"
         const val START_TIME_COLUMN = "start_time"
         const val END_TIME_COLUMN = "end_time"
-        const val INTERVAL_COLUMN = "interval"
         const val CONTENT_COLUMN = "content"
         const val DONE_MARK_COLUMN = "done_mark"
         const val CREATION_DATE = "creation_date"
@@ -32,10 +31,9 @@ class MyDatabaseHelper(val context: Context?) :
         const val END_DATE_CURSOR_POSITION = 2
         const val START_TIME_CURSOR_POSITION = 3
         const val END_TIME_CURSOR_POSITION = 4
-        const val INTERVAL_CURSOR_POSITION = 5
-        const val CONTENT_CURSOR_POSITION = 6
-        const val DONE_MARK_CURSOR_POSITION = 7
-        const val CREATION_DATE_CURSOR_POSITION = 8
+        const val CONTENT_CURSOR_POSITION = 5
+        const val DONE_MARK_CURSOR_POSITION = 6
+        const val CREATION_DATE_CURSOR_POSITION = 7
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -46,7 +44,6 @@ class MyDatabaseHelper(val context: Context?) :
                         "$END_DATE_COLUMN DATE, " +
                         "$START_TIME_COLUMN  TEXT, " +
                         "$END_TIME_COLUMN  TEXT, " +
-                        "$INTERVAL_COLUMN  INTEGER, " +
                         "$CONTENT_COLUMN  TEXT, " +
                         "$DONE_MARK_COLUMN  INTEGER," +
                         "$CREATION_DATE DATE );")
@@ -70,7 +67,6 @@ class MyDatabaseHelper(val context: Context?) :
         contentValues.put(END_DATE_COLUMN, note.end_date)
         contentValues.put(START_TIME_COLUMN, note.start_time)
         contentValues.put(END_TIME_COLUMN, note.end_time)
-        contentValues.put(INTERVAL_COLUMN, note.interval)
         contentValues.put(CONTENT_COLUMN, note.content)
         contentValues.put(DONE_MARK_COLUMN, note.done)
         contentValues.put(CREATION_DATE, DateFormatHelper.getCurrentDateTimeForDatabase())
@@ -174,7 +170,6 @@ class MyDatabaseHelper(val context: Context?) :
             cursor.getString(END_DATE_CURSOR_POSITION),
             cursor.getString(START_TIME_CURSOR_POSITION),
             cursor.getString(END_TIME_CURSOR_POSITION),
-            cursor.getString(INTERVAL_CURSOR_POSITION).toInt(),
             cursor.getString(CONTENT_CURSOR_POSITION),
             strToBool(cursor.getString(DONE_MARK_CURSOR_POSITION)),
             cursor.getString(CREATION_DATE_CURSOR_POSITION),

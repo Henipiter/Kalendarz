@@ -41,7 +41,6 @@ class ShowElemActivity : AppCompatActivity() {
     lateinit var buttonEndDate: Button
     lateinit var buttonStartTime: Button
     lateinit var buttonEndTime: Button
-    lateinit var buttonInterval: Button
 
 
     private var calendar = Calendar.getInstance()
@@ -86,8 +85,6 @@ class ShowElemActivity : AppCompatActivity() {
             )
             picker!!.show()
         }
-
-        buttonInterval.setOnClickListener { showAddItemDialog(this@ShowElemActivity) }
 
         buttonStartDate.setOnClickListener {
             DatePickerDialog(
@@ -169,14 +166,17 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun addNoteToDatabase() {
         val myDB = MyDatabaseHelper(this)
+        var content = contentText.text.toString().trim()
+        if(content ==""){
+            content = "Reminder"
+        }
         val note = Note(
             null,
             buttonStartDate.text.toString().trim(),
             buttonEndDate.text.toString().trim(),
             buttonStartTime.text.toString().trim(),
             buttonEndTime.text.toString().trim(),
-            Integer.valueOf(buttonInterval.text.split(" ")[0].trim()),
-            contentText.text.toString().trim(),
+            content,
             false,
             "",
             Status.UNDONE
@@ -213,21 +213,6 @@ class ShowElemActivity : AppCompatActivity() {
             .setTitle("Date error")
             .setMessage(messageError)
             .setNegativeButton("OK", null)
-            .create()
-        dialog.show()
-    }
-
-    private fun showAddItemDialog(c: Context) {
-        val taskEditText = EditText(c)
-        taskEditText.inputType = InputType.TYPE_CLASS_NUMBER
-        val dialog: AlertDialog = AlertDialog.Builder(c)
-            .setTitle("Change interval time")
-            .setView(taskEditText)
-            .setPositiveButton("Save") { dialog, which ->
-                note.interval = taskEditText.text.toString().toInt()
-                buttonInterval.text = note.interval.toString() + " minutes"
-            }
-            .setNegativeButton("Cancel", null)
             .create()
         dialog.show()
     }
@@ -291,7 +276,6 @@ class ShowElemActivity : AppCompatActivity() {
             buttonEndDate.text = note.end_date
             buttonStartTime.text = note.start_time
             buttonEndTime.text = note.end_time
-            buttonInterval.text = note.interval.toString() + " minutes"
             contentText.setText(note.content)
         }
     }
@@ -330,7 +314,6 @@ class ShowElemActivity : AppCompatActivity() {
         enableEditText(contentText, false)
         buttonStartDate.text = note.start_date
         buttonEndDate.text = note.end_date
-        buttonInterval.text = note.interval.toString()
         contentText.setText(note.content)
         buttonStartTime.text = note.start_time
 
@@ -377,7 +360,6 @@ class ShowElemActivity : AppCompatActivity() {
         buttonDone.isEnabled = !bool
         buttonStartDate.isEnabled = bool
         buttonEndDate.isEnabled = bool
-        buttonInterval.isEnabled = bool
         buttonStartTime.isEnabled = bool
         buttonEndTime.isEnabled = bool
         contentText.isEnabled = bool
@@ -390,7 +372,6 @@ class ShowElemActivity : AppCompatActivity() {
         buttonDone = findViewById(R.id.done_button_2)
         buttonStartDate = findViewById(R.id.date_button_2)
         buttonEndDate = findViewById(R.id.date_button_3)
-        buttonInterval = findViewById(R.id.interval_button_2)
         buttonStartTime = findViewById(R.id.start_time_button_2)
         buttonEndTime = findViewById(R.id.end_time_button_)
         buttonEdit = findViewById(R.id.edit_button_2)

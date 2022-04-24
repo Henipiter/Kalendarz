@@ -1,26 +1,20 @@
 package com.example.kaledarz.activities
 
 import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.kaledarz.*
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
-import com.example.kaledarz.helpers.AlarmHelper
-import com.example.kaledarz.helpers.DateFormatHelper
-import com.example.kaledarz.helpers.MyDatabaseHelper
-import com.example.kaledarz.helpers.NotificationHelper
+import com.example.kaledarz.R
+import com.example.kaledarz.helpers.*
 
 class ShowElemActivity : AppCompatActivity() {
 
@@ -42,15 +36,12 @@ class ShowElemActivity : AppCompatActivity() {
     lateinit var buttonStartTime: Button
     lateinit var buttonEndTime: Button
 
-
-    private var calendar = Calendar.getInstance()
     private lateinit var notificationHelper: NotificationHelper
     private lateinit var alarmHelper: AlarmHelper
 
-    var picker: TimePickerDialog? = null
-
     private lateinit var myDB: MyDatabaseHelper
     private var note = Note()
+    private lateinit var pickerHelper: PickerHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         notificationHelper = NotificationHelper(this)
@@ -59,61 +50,23 @@ class ShowElemActivity : AppCompatActivity() {
         setContentView(R.layout.activity_show_elem)
         notificationHelper.createNotificationChannel()
         myDB = MyDatabaseHelper(this)
-
+        pickerHelper = PickerHelper(this@ShowElemActivity)
         findViews()
         getAndSetIntentData()
         buttonStartTime.setOnClickListener {
-            val hour = buttonStartTime.text.subSequence(0, 2).toString().toInt()
-            val minutes = buttonStartTime.text.subSequence(3, 5).toString().toInt()
-            picker = TimePickerDialog(
-                this@ShowElemActivity, { tp, sHour, sMinute ->
-                    buttonStartTime.text =
-                        DateFormatHelper.setHour(sHour) + ":" + DateFormatHelper.setMinutes(sMinute)
-                }, hour, minutes, true
-            )
-            picker!!.show()
+            pickerHelper.runTimePicker(buttonStartTime)
         }
 
         buttonEndTime.setOnClickListener {
-            val hour = buttonEndTime.text.subSequence(0, 2).toString().toInt()
-            val minutes = buttonEndTime.text.subSequence(3, 5).toString().toInt()
-            picker = TimePickerDialog(
-                this@ShowElemActivity, { tp, sHour, sMinute ->
-                    buttonEndTime.text =
-                        DateFormatHelper.setHour(sHour) + ":" + DateFormatHelper.setMinutes(sMinute)
-                }, hour, minutes, true
-            )
-            picker!!.show()
+            pickerHelper.runTimePicker(buttonEndTime)
         }
 
         buttonStartDate.setOnClickListener {
-            DatePickerDialog(
-                this@ShowElemActivity,
-                { view, year, monthOfYear, dayOfMonth ->
-                    calendar.set(Calendar.YEAR, year)
-                    calendar.set(Calendar.MONTH, monthOfYear)
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonStartDate.text = DateFormatHelper.updateDateInView(calendar)
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            pickerHelper.runDatePicker(buttonStartDate)
         }
 
         buttonEndDate.setOnClickListener {
-            DatePickerDialog(
-                this@ShowElemActivity,
-                { view, year, monthOfYear, dayOfMonth ->
-                    calendar.set(Calendar.YEAR, year)
-                    calendar.set(Calendar.MONTH, monthOfYear)
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonEndDate.text = DateFormatHelper.updateDateInView(calendar)
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            pickerHelper.runDatePicker(buttonEndDate)
         }
 
         buttonDelete.setOnClickListener {
@@ -167,7 +120,7 @@ class ShowElemActivity : AppCompatActivity() {
     private fun addNoteToDatabase() {
         val myDB = MyDatabaseHelper(this)
         var content = contentText.text.toString().trim()
-        if(content ==""){
+        if (content == "") {
             content = "Reminder"
         }
         val note = Note(
@@ -283,11 +236,9 @@ class ShowElemActivity : AppCompatActivity() {
     }
 
     private fun setHoursOnButtons() {
-        val cldr = Calendar.getInstance()
-        val hour = cldr[Calendar.HOUR_OF_DAY] + 1
-        val initHourValue = DateFormatHelper.setHour(hour)
-        buttonStartTime.text = DateFormatHelper.setHour(initHourValue.toInt()) + ":00"
-        buttonEndTime.text = DateFormatHelper.setHour(initHourValue.toInt() + 1) + ":00"
+        val hour = Calendar.getInstance()[Calendar.HOUR_OF_DAY] + 1
+        buttonStartTime.text = DateFormatHelper.makeFullHour(hour, 0)
+        buttonEndTime.text = DateFormatHelper.makeFullHour(hour + 1, 0)
     }
 
     private fun refreshDoneButton() {

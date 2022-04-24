@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.activities
 
 import android.app.Activity
 import android.content.Intent
@@ -11,15 +11,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kaledarz.Constants.Companion.CONTENT
-import com.example.kaledarz.Constants.Companion.LOWER_END
-import com.example.kaledarz.Constants.Companion.LOWER_START
-import com.example.kaledarz.Constants.Companion.NONE
-import com.example.kaledarz.Constants.Companion.UPPER_END
-import com.example.kaledarz.Constants.Companion.UPPER_START
+import com.example.kaledarz.*
+import com.example.kaledarz.DTO.Constants.Companion.CONTENT
+import com.example.kaledarz.DTO.Constants.Companion.LOWER_END
+import com.example.kaledarz.DTO.Constants.Companion.LOWER_START
+import com.example.kaledarz.DTO.Constants.Companion.NONE
+import com.example.kaledarz.DTO.Constants.Companion.UPPER_END
+import com.example.kaledarz.DTO.Constants.Companion.UPPER_START
+import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.DTO.Status
+import com.example.kaledarz.helpers.DateFormatHelper
+import com.example.kaledarz.helpers.MyDatabaseHelper
 
 
-class SegregatedList : AppCompatActivity() {
+class SegregatedListActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewEvent: RecyclerView
     private lateinit var customAdapter: CustomAdapter

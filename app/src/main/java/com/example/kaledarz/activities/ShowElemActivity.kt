@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.activities
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -14,6 +14,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.kaledarz.*
+import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.DTO.Status
+import com.example.kaledarz.helpers.AlarmHelper
+import com.example.kaledarz.helpers.DateFormatHelper
+import com.example.kaledarz.helpers.MyDatabaseHelper
+import com.example.kaledarz.helpers.NotificationHelper
 
 class ShowElemActivity : AppCompatActivity() {
 

@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.activities
 
 
 import android.content.Intent
@@ -10,6 +10,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kaledarz.*
+import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.helpers.AlarmHelper
+import com.example.kaledarz.helpers.DateFormatHelper
+import com.example.kaledarz.helpers.MyDatabaseHelper
 import java.util.*
 
 
@@ -17,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var calendar: CalendarView
     private lateinit var addNew: Button
     private lateinit var buttonNotify: Button
-    private lateinit var buttonStopNotify: Button
+    private lateinit var buttonSettings: Button
     private lateinit var recyclerViewEvent: RecyclerView
     private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
@@ -31,8 +36,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         calendar = findViewById(R.id.calendarView)
         addNew = findViewById(R.id.add_button)
-        buttonNotify = findViewById(R.id.notify_button)
-        buttonStopNotify = findViewById(R.id.notify_button_stop)
+        buttonNotify = findViewById(R.id.list_button)
+        buttonSettings = findViewById(R.id.settings_button)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
 
         alarmHelper = AlarmHelper(this)
@@ -52,11 +57,11 @@ class MainActivity : AppCompatActivity() {
         alarmHelper.setAlarmForNotes(noteList)
         customAdapter.notifyDataSetChanged()
         buttonNotify.setOnClickListener {
-            val intent = Intent(this, SegregatedList::class.java)
+            val intent = Intent(this, SegregatedListActivity::class.java)
             this.startActivity(intent)
         }
 
-        buttonStopNotify.setOnClickListener {
+        buttonSettings.setOnClickListener {
 
         }
 

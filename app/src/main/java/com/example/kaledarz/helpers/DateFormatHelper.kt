@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.helpers
 
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar

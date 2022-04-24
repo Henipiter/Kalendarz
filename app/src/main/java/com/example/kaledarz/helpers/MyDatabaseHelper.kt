@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.helpers
 
 import android.content.ContentValues
 import android.content.Context
@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import android.widget.Toast
+import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.DTO.Status
 
 class MyDatabaseHelper(val context: Context?) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {

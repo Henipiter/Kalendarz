@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.activities
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -10,12 +10,14 @@ import android.widget.CompoundButton
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import com.example.kaledarz.Constants.Companion.LOWER_START
-import com.example.kaledarz.Constants.Companion.LOWER_END
-import com.example.kaledarz.Constants.Companion.UPPER_START
-import com.example.kaledarz.Constants.Companion.UPPER_END
-import com.example.kaledarz.Constants.Companion.CONTENT
-import com.example.kaledarz.Constants.Companion.NONE
+import com.example.kaledarz.DTO.Constants.Companion.LOWER_START
+import com.example.kaledarz.DTO.Constants.Companion.LOWER_END
+import com.example.kaledarz.DTO.Constants.Companion.UPPER_START
+import com.example.kaledarz.DTO.Constants.Companion.UPPER_END
+import com.example.kaledarz.DTO.Constants.Companion.CONTENT
+import com.example.kaledarz.DTO.Constants.Companion.NONE
+import com.example.kaledarz.helpers.DateFormatHelper
+import com.example.kaledarz.R
 
 
 class FilterListActivity : AppCompatActivity() {

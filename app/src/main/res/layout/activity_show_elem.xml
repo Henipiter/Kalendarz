@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShowElemActivity">
+    tools:context=".activities.ShowElemActivity">
 
     <Button
         android:id="@+id/date_button_2"

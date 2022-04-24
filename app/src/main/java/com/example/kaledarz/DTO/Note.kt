@@ -1,4 +1,6 @@
-package com.example.kaledarz
+package com.example.kaledarz.DTO
+
+import com.example.kaledarz.helpers.DateFormatHelper
 
 class Note(
     var id: String?,

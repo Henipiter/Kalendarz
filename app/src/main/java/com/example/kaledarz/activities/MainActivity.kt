@@ -91,13 +91,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun storeDataInArrays() {
-        noteList.clear()
-        noteList.addAll(databaseHelper.readAllDataByDate(chooseDate))
-        if (noteList.size == 0) {
+
+        val list = ArrayList<Note>()
+        list.addAll(databaseHelper.readAllData())
+        if (list.size == 0) {
             noRowsInfo.isVisible = true
         } else {
             noRowsInfo.isVisible = false
+            filterNoteList(list, chooseDate)
             Note.computeStatusForNoteList(noteList)
+        }
+    }
+
+    private fun filterNoteList(list: ArrayList<Note>, chosenDate: String) {
+        noteList.clear()
+        for (note in list) {
+            val isAboveStart =
+                DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
+                    chosenDate, note.start_date, "dd-MM-yyyy"
+                )
+            val isUnderEnd =
+                DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
+                    note.end_date, chosenDate, "dd-MM-yyyy"
+                )
+            if (isAboveStart && isUnderEnd)
+                noteList.add(note)
         }
     }
 }

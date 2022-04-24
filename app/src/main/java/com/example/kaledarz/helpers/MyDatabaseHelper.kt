@@ -95,18 +95,6 @@ class MyDatabaseHelper(val context: Context?) :
         Log.e("aa", query1)
     }
 
-    fun readAllDataByDate(data: String): ArrayList<Note> {
-        val query =
-            "Select * from $TABLE_NAME where $START_DATE_COLUMN<='$data' and $END_DATE_COLUMN>='$data' ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
-        Log.e("query", query)
-        val db = this.readableDatabase
-        var cursor: Cursor? = null
-        if (db != null) {
-            cursor = db.rawQuery(query, null)
-        }
-        return cursorToNotes(cursor)
-    }
-
     fun readAllData(): ArrayList<Note> {
         val query = "Select * from $TABLE_NAME ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
         Log.e("query", query)

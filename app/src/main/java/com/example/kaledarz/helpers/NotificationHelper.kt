@@ -11,6 +11,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.R
+import com.example.kaledarz.activities.MainActivity
+import com.example.kaledarz.activities.ShowElemActivity
 
 class NotificationHelper(base: Context) : ContextWrapper(base) {
 

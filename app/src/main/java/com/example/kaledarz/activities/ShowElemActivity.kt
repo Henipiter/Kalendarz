@@ -54,7 +54,7 @@ class ShowElemActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         notificationHelper = NotificationHelper(this)
-        alarmHelper = AlarmHelper(this)
+        alarmHelper = AlarmHelper(applicationContext)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_elem)
         notificationHelper.createNotificationChannel()
@@ -138,7 +138,7 @@ class ShowElemActivity : AppCompatActivity() {
             refreshDoneButton()
             myDB.updateDone(note.id.toString(), note.done)
             if (note.done) {
-                alarmHelper.unsetAlarm(note.id!!, notificationHelper)
+                alarmHelper.unsetAlarm(note.id!!)
             } else {
                 alarmHelper.setAlarm(note)
             }
@@ -250,8 +250,6 @@ class ShowElemActivity : AppCompatActivity() {
     private fun getIntentForEditView() {
         if (intent.hasExtra("id")) {
             note.id = intent.getStringExtra("id").toString()
-        } else {
-            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -260,8 +258,6 @@ class ShowElemActivity : AppCompatActivity() {
         if (intent.hasExtra("date")) {
             buttonStartDate.text = intent.getStringExtra("date").toString()
             buttonEndDate.text = intent.getStringExtra("date").toString()
-        } else {
-            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -304,7 +300,7 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun deleteNoteAndAlarm() {
         val myDB = MyDatabaseHelper(this)
-        alarmHelper.unsetAlarm(note.id!!,notificationHelper)
+        alarmHelper.unsetAlarm(note.id!!)
         myDB.deleteEvent(note.id!!)
     }
 

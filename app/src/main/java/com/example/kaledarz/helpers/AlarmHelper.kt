@@ -34,7 +34,15 @@ class AlarmHelper(private val context: Context) {
         startAlarmToDeleteNotification(shouldDelete, note)
     }
 
-    fun unsetAlarm(id: String, notificationHelper: NotificationHelper) {
+    fun unsetAlarmForNotes(noteArray: ArrayList<Note>) {
+        for (note in noteArray) {
+            if (note.status == Status.UNDONE) {
+                unsetAlarm(note.id!!)
+            }
+        }
+    }
+
+    fun unsetAlarm(id: String) {
         cancelAlarm(id)
         notificationHelper.deleteNotification(id.toInt())
     }

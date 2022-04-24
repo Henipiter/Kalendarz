@@ -13,7 +13,12 @@ class Note(
     var creation_date: String,
     var status: Status
 ) {
-    constructor() : this("", "", "", "", "",  "", false, "", Status.UNDONE)
+
+    fun export(): String {
+        return "$start_date,$end_date,$start_time,$end_time,$content,$done,$status;"
+    }
+
+    constructor() : this("", "", "", "", "", "", false, "", Status.UNDONE)
 
 
     companion object {

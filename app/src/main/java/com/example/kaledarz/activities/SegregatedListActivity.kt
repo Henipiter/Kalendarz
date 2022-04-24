@@ -187,11 +187,10 @@ class SegregatedListActivity : AppCompatActivity() {
         futureList.clear()
         allList.clear()
         originalList.addAll(databaseHelper.readAllData())
-        if (originalList.size == 0) {
-            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
+        if (originalList.size != 0) {
+            applyFilter()
+            segregateNotes()
         }
-        applyFilter()
-        segregateNotes()
     }
 
     private fun applyFilter() {

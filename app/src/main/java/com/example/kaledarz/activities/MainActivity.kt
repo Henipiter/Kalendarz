@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
         noRowsInfo = findViewById(R.id.no_rows_info2)
 
-        alarmHelper = AlarmHelper(this)
+        alarmHelper = AlarmHelper(applicationContext)
 
         val calendarView = CalendarView(this)
         calendarView.setDate(System.currentTimeMillis(), false, true)
@@ -64,7 +64,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonSettings.setOnClickListener {
-
+            val intent = Intent(this, SettingsActivity::class.java)
+            this.startActivity(intent)
         }
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->

@@ -60,6 +60,12 @@ class MyDatabaseHelper(val context: Context?) :
         return result
     }
 
+    fun deleteAllRows() {
+        val db = this.writableDatabase
+        val query1 = "DELETE FROM $TABLE_NAME;"
+        db.execSQL(query1)
+    }
+
     fun addGame(note: Note) {
         val db = this.writableDatabase
         val contentValues = ContentValues()

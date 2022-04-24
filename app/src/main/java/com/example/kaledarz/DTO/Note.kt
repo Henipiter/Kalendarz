@@ -15,7 +15,7 @@ class Note(
 ) {
 
     fun export(): String {
-        return "$start_date,$end_date,$start_time,$end_time,$content,$done,$status;"
+        return "$start_date`$end_date`$start_time`$end_time`$content`$done`$status``\n``"
     }
 
     constructor() : this("", "", "", "", "", "", false, "", Status.UNDONE)

@@ -7,7 +7,7 @@
     tools:context=".activities.SettingsActivity">
 
     <Button
-        android:id="@+id/restart"
+        android:id="@+id/restart_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -17,22 +17,33 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/export"
+        android:id="@+id/export_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Export database"
+        android:text="Export"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/restart" />
+        app:layout_constraintTop_toBottomOf="@id/restart_button" />
 
     <Button
-        android:id="@+id/clear"
+        android:id="@+id/clear_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Clear database"
+        android:text="Clear whole calendar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/export" />
+        app:layout_constraintTop_toBottomOf="@id/import_button" />
+
+    <Button
+        android:id="@+id/import_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Import"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/export_button" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

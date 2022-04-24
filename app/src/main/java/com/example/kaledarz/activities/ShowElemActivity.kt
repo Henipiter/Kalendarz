@@ -183,7 +183,6 @@ class ShowElemActivity : AppCompatActivity() {
         )
         myDB.addGame(note)
         note.id = myDB.readLastRow().id
-        alarmHelper.setAlarm(note)
     }
 
     private fun finishAndReturnToMainActivity() {

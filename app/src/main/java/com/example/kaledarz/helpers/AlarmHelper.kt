@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.helpers
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -7,6 +7,8 @@ import android.content.Intent
 import android.icu.util.Calendar
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.DTO.Status
 
 class AlarmHelper(private val context: Context) {
 

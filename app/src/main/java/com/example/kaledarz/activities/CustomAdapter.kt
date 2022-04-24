@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.activities
 
 import android.app.Activity
 import android.content.Context
@@ -10,6 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.DTO.Status
+import com.example.kaledarz.R
 
 class CustomAdapter(
 

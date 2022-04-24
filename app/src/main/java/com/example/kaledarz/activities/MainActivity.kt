@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.activities
 
 
 import android.content.Intent
@@ -6,22 +6,28 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
-import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
+import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.R
+import com.example.kaledarz.helpers.AlarmHelper
+import com.example.kaledarz.helpers.DateFormatHelper
+import com.example.kaledarz.helpers.MyDatabaseHelper
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var calendar: CalendarView
     private lateinit var addNew: Button
     private lateinit var buttonNotify: Button
-    private lateinit var buttonStopNotify: Button
+    private lateinit var buttonSettings: Button
     private lateinit var recyclerViewEvent: RecyclerView
     private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
     private lateinit var alarmHelper: AlarmHelper
+    private lateinit var noRowsInfo: TextView
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
 
@@ -31,9 +37,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         calendar = findViewById(R.id.calendarView)
         addNew = findViewById(R.id.add_button)
-        buttonNotify = findViewById(R.id.notify_button)
-        buttonStopNotify = findViewById(R.id.notify_button_stop)
+        buttonNotify = findViewById(R.id.list_button)
+        buttonSettings = findViewById(R.id.settings_button)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
+        noRowsInfo = findViewById(R.id.no_rows_info2)
 
         alarmHelper = AlarmHelper(this)
 
@@ -52,11 +59,11 @@ class MainActivity : AppCompatActivity() {
         alarmHelper.setAlarmForNotes(noteList)
         customAdapter.notifyDataSetChanged()
         buttonNotify.setOnClickListener {
-            val intent = Intent(this, SegregatedList::class.java)
+            val intent = Intent(this, SegregatedListActivity::class.java)
             this.startActivity(intent)
         }
 
-        buttonStopNotify.setOnClickListener {
+        buttonSettings.setOnClickListener {
 
         }
 
@@ -86,8 +93,10 @@ class MainActivity : AppCompatActivity() {
         noteList.clear()
         noteList.addAll(databaseHelper.readAllDataByDate(chooseDate))
         if (noteList.size == 0) {
-            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
+            noRowsInfo.isVisible = true
+        } else {
+            noRowsInfo.isVisible = false
+            Note.computeStatusForNoteList(noteList)
         }
-        Note.computeStatusForNoteList(noteList)
     }
 }

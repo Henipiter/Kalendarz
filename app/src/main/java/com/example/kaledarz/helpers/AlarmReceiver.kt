@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.helpers
 
 import android.content.BroadcastReceiver
 import android.content.Context

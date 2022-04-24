@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.DTO
 
 class Constants {
 

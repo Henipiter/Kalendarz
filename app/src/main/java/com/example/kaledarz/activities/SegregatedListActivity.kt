@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.activities
 
 import android.app.Activity
 import android.content.Intent
@@ -11,27 +11,32 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kaledarz.Constants.Companion.CONTENT
-import com.example.kaledarz.Constants.Companion.LOWER_END
-import com.example.kaledarz.Constants.Companion.LOWER_START
-import com.example.kaledarz.Constants.Companion.NONE
-import com.example.kaledarz.Constants.Companion.UPPER_END
-import com.example.kaledarz.Constants.Companion.UPPER_START
+import com.example.kaledarz.*
+import com.example.kaledarz.DTO.Constants.Companion.CONTENT
+import com.example.kaledarz.DTO.Constants.Companion.LOWER_END
+import com.example.kaledarz.DTO.Constants.Companion.LOWER_START
+import com.example.kaledarz.DTO.Constants.Companion.NONE
+import com.example.kaledarz.DTO.Constants.Companion.UPPER_END
+import com.example.kaledarz.DTO.Constants.Companion.UPPER_START
+import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.DTO.Status
+import com.example.kaledarz.helpers.DateFormatHelper
+import com.example.kaledarz.helpers.MyDatabaseHelper
 
 
-class SegregatedList : AppCompatActivity() {
+class SegregatedListActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewEvent: RecyclerView
     private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
 
-    private var originalList: ArrayList<Note> = ArrayList()
-    private var allList: ArrayList<Note> = ArrayList()
-    private var showList: ArrayList<Note> = ArrayList()
-    private var doneList: ArrayList<Note> = ArrayList()
-    private var undoneList: ArrayList<Note> = ArrayList()
-    private var futureList: ArrayList<Note> = ArrayList()
-    private var pastList: ArrayList<Note> = ArrayList()
+    private var originalList = ArrayList<Note>()
+    private var allList = ArrayList<Note>()
+    private var showList = ArrayList<Note>()
+    private var doneList = ArrayList<Note>()
+    private var undoneList = ArrayList<Note>()
+    private var futureList = ArrayList<Note>()
+    private var pastList = ArrayList<Note>()
 
     private lateinit var buttonDone: ImageButton
     private lateinit var buttonUndone: ImageButton
@@ -56,7 +61,7 @@ class SegregatedList : AppCompatActivity() {
     private var filterUpperEnd = NONE
     private var filterContent = NONE
 
-    private var choose = Status.DONE
+    private var choose = Status.UNDONE
 
     private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -115,9 +120,7 @@ class SegregatedList : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         prepareArrays()
-        chooseArray(choose)
-        buttonDone.setBackgroundResource(R.color.selectedButtonColor)
-
+        choseButton(choose)
 
         buttonDone.setOnClickListener {
             choseButton(Status.DONE)
@@ -195,21 +198,24 @@ class SegregatedList : AppCompatActivity() {
         for (note in originalList) {
             val isLowerStartDateNoteIsValid = filterLowerStart == NONE ||
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        note.start_date!!, filterLowerStart, "dd-MM-yyyy"
+                        note.start_date, filterLowerStart, "dd-MM-yyyy"
                     )
             val isUpperStartDateNoteIsValid = filterUpperStart == NONE ||
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        filterUpperStart, note.start_date!!, "dd-MM-yyyy"
+                        filterUpperStart, note.start_date, "dd-MM-yyyy"
                     )
             val isLowerEndDateNoteIsValid = filterLowerEnd == NONE ||
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        note.end_date!!, filterLowerEnd, "dd-MM-yyyy"
+                        note.end_date, filterLowerEnd, "dd-MM-yyyy"
                     )
             val isUpperEndDateNoteIsValid = filterUpperEnd == NONE ||
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        filterUpperEnd, note.end_date!!, "dd-MM-yyyy"
+                        filterUpperEnd, note.end_date, "dd-MM-yyyy"
                     )
-            val isContentValid = filterContent==NONE || note.content!=null && note.content!!.contains(filterContent)
+            val isContentValid =
+                filterContent == NONE || note.content != null && note.content!!.contains(
+                    filterContent
+                )
             if (isLowerStartDateNoteIsValid && isUpperStartDateNoteIsValid
                 && isLowerEndDateNoteIsValid && isUpperEndDateNoteIsValid && isContentValid
             ) {

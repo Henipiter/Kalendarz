@@ -10,13 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Kaledarz">
         <activity
-            android:name=".FilterListActivity"
+            android:name=".activities.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".SegregatedList"
+            android:name=".activities.FilterListActivity"
             android:exported="false" />
-        <activity android:name=".ShowElemActivity" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".activities.SegregatedListActivity"
+            android:exported="false" />
+        <activity android:name=".activities.ShowElemActivity" />
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +27,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".helpers.AlarmReceiver" />
     </application>
 
 </manifest>

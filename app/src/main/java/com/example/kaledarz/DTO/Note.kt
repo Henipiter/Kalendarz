@@ -1,18 +1,19 @@
-package com.example.kaledarz
+package com.example.kaledarz.DTO
+
+import com.example.kaledarz.helpers.DateFormatHelper
 
 class Note(
     var id: String?,
-    var start_date: String?,
-    var end_date: String?,
-    var start_time: String?,
-    var end_time: String?,
-    var interval: Int?,
+    var start_date: String,
+    var end_date: String,
+    var start_time: String,
+    var end_time: String,
     var content: String?,
     var done: Boolean,
     var creation_date: String,
     var status: Status
 ) {
-    constructor() : this("", "", "", "", "", 0, "", false, "", Status.UNDONE)
+    constructor() : this("", "", "", "", "",  "", false, "", Status.UNDONE)
 
 
     companion object {

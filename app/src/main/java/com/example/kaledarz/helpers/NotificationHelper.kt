@@ -1,4 +1,4 @@
-package com.example.kaledarz
+package com.example.kaledarz.helpers
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,6 +9,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.R
 
 class NotificationHelper(base: Context) : ContextWrapper(base) {
 

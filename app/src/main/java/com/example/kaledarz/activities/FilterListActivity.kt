@@ -58,14 +58,9 @@ class FilterListActivity : AppCompatActivity() {
 
         receiveIntents()
         buttonExit.setOnClickListener {
-            if (switchContent.isChecked && textContent.text.toString() == "") {
-                val dialog: AlertDialog = AlertDialog.Builder(this)
-                    .setTitle("Content value error")
-                    .setMessage("Fill this field")
-                    .setNegativeButton("OK", null)
-                    .create()
-                dialog.show()
-            } else {
+
+
+            if (checkIfFiltersAreValid()) {
                 val returnIntent = addIntentAtConfirm()
                 setResult(RESULT_OK, returnIntent)
                 finish()
@@ -245,5 +240,68 @@ class FilterListActivity : AppCompatActivity() {
                 buttonUpperStart
             }
         }
+    }
+
+    private fun checkIfFiltersAreValid(): Boolean {
+
+        return checkStartDateFilter() && checkEndDateFilter() && checkContentFilter()
+    }
+
+    private fun checkStartDateFilter(): Boolean {
+        return checkDateFilter(
+            "Start",
+            switchLowerStart,
+            switchLowerStart,
+            buttonLowerStart,
+            buttonUpperStart
+        )
+    }
+
+    private fun checkEndDateFilter(): Boolean {
+        return checkDateFilter(
+            "Start",
+            switchLowerEnd,
+            switchLowerEnd,
+            buttonLowerEnd,
+            buttonUpperEnd
+        )
+    }
+
+    private fun checkDateFilter(
+        whichDate: String,
+        lowerSwitch: SwitchCompat,
+        upperSwitch: SwitchCompat,
+        lowerDate: Button,
+        upperDate: Button
+    ): Boolean {
+        if (lowerSwitch.isChecked && upperSwitch.isChecked &&
+            !DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
+                upperDate.text.toString(),
+                lowerDate.text.toString(),
+                "yyyy-MM-dd"
+            )
+        ) {
+            val dialog: AlertDialog = AlertDialog.Builder(this)
+                .setTitle("$whichDate date value error")
+                .setMessage("Lower limit is greater than upper limit")
+                .setNegativeButton("OK", null)
+                .create()
+            dialog.show()
+            return false
+        }
+        return true
+    }
+
+    private fun checkContentFilter(): Boolean {
+        if (switchContent.isChecked && textContent.text.toString() == "") {
+            val dialog: AlertDialog = AlertDialog.Builder(this)
+                .setTitle("Content value error")
+                .setMessage("Fill this field")
+                .setNegativeButton("OK", null)
+                .create()
+            dialog.show()
+            return false
+        }
+        return true
     }
 }

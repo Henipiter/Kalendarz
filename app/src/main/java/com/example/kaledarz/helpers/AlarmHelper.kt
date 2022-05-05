@@ -14,7 +14,6 @@ class AlarmHelper(private val context: Context) {
 
     private val notificationHelper = NotificationHelper(context)
 
-
     fun setAlarmForNotes(noteArray: ArrayList<Note>) {
         for (note in noteArray) {
             if (note.status == Status.UNDONE) {

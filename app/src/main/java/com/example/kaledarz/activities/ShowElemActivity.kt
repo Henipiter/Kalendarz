@@ -27,14 +27,14 @@ class ShowElemActivity : AppCompatActivity() {
 
     private var activityType = "ADD"
     private lateinit var contentText: EditText
-    lateinit var buttonAdd: Button
-    lateinit var buttonEdit: Button
-    lateinit var buttonDelete: Button
-    lateinit var buttonDone: Button
-    lateinit var buttonStartDate: Button
-    lateinit var buttonEndDate: Button
-    lateinit var buttonStartTime: Button
-    lateinit var buttonEndTime: Button
+    private lateinit var buttonAdd: Button
+    private lateinit var buttonEdit: Button
+    private lateinit var buttonDelete: Button
+    private lateinit var buttonDone: Button
+    private lateinit var buttonStartDate: Button
+    private lateinit var buttonEndDate: Button
+    private lateinit var buttonStartTime: Button
+    private lateinit var buttonEndTime: Button
 
     private lateinit var notificationHelper: NotificationHelper
     private lateinit var alarmHelper: AlarmHelper

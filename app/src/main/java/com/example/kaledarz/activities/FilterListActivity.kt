@@ -36,7 +36,6 @@ class FilterListActivity : AppCompatActivity() {
 
     private lateinit var textContent: EditText
 
-    private var calendar = Calendar.getInstance()
     private lateinit var pickerHelper: PickerHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {

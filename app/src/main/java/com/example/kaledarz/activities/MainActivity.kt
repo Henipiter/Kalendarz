@@ -2,6 +2,7 @@ package com.example.kaledarz.activities
 
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.R
 import com.example.kaledarz.helpers.AlarmHelper
@@ -31,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
 
+    private lateinit var myPref: SharedPreferences
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
         noRowsInfo = findViewById(R.id.no_rows_info2)
 
+        myPref = applicationContext.getSharedPreferences("run_alarms", MODE_PRIVATE)
         alarmHelper = AlarmHelper(applicationContext)
 
         val calendarView = CalendarView(this)
@@ -56,7 +61,10 @@ class MainActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         storeDataInArrays()
-        alarmHelper.setAlarmForNotes(noteList)
+
+        if (myPref.getString(Constants.ALARM_ON_OFF, "true") == "true") {
+            alarmHelper.setAlarmForNotes(noteList)
+        }
         customAdapter.notifyDataSetChanged()
         buttonNotify.setOnClickListener {
             val intent = Intent(this, SegregatedListActivity::class.java)

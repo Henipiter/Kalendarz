@@ -19,10 +19,10 @@ import com.example.kaledarz.helpers.MyDatabaseHelper
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var buttonRestart: Button
     private lateinit var buttonExport: Button
     private lateinit var buttonImport: Button
     private lateinit var buttonClear: Button
+    private lateinit var buttonSleep: Button
     private lateinit var databaseHelper: MyDatabaseHelper
     private var originalList = ArrayList<Note>()
 
@@ -32,18 +32,14 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        buttonRestart = findViewById(R.id.restart_button)
         buttonExport = findViewById(R.id.export_button)
         buttonImport = findViewById(R.id.import_button)
         buttonClear = findViewById(R.id.clear_button)
-
+        buttonSleep = findViewById(R.id.sleep_alarms)
 
         databaseHelper = MyDatabaseHelper(this)
         originalList.addAll(databaseHelper.readAllData())
 
-        buttonRestart.setOnClickListener {
-            cancelAndSetAllAlarms()
-        }
         buttonExport.setOnClickListener {
             exportDatabase()
         }
@@ -52,6 +48,10 @@ class SettingsActivity : AppCompatActivity() {
         }
         buttonClear.setOnClickListener {
             deleteAllRows()
+        }
+        buttonSleep.setOnClickListener {
+            val intent = Intent(this, SleepTimeActivity::class.java)
+            this.startActivity(intent)
         }
     }
 
@@ -86,6 +86,9 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun validateImportText(importText: String): Boolean {
+        if (importText.isEmpty()) {
+            return false
+        }
         val rows = importText.split("``\n``")
 
         val sb = StringBuilder()
@@ -131,13 +134,6 @@ class SettingsActivity : AppCompatActivity() {
         return true
     }
 
-
-    private fun cancelAndSetAllAlarms() {
-        val alarmHelper = AlarmHelper(applicationContext)
-        alarmHelper.unsetAlarmForNotes(originalList)
-        alarmHelper.setAlarmForNotes(originalList)
-        Toast.makeText(this, "Alarms restarted", Toast.LENGTH_SHORT).show()
-    }
 
     private fun exportDatabase() {
         val sb = StringBuilder()

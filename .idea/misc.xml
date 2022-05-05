@@ -9,6 +9,10 @@
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/done_image.xml" value="0.238" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/future_image.xml" value="0.1" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/ic_launcher_background.xml" value="0.112" />
+        <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/image_image_round_late.xml_late.xml" value="0.1" />
+        <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/image_square_done.xml" value="0.1" />
+        <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/image_square_future.xml" value="0.1" />
+        <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/image_square_undone.xml" value="0.1" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/late_image.xml" value="0.225" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/undone_image.xml" value="0.225" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/activity_filter_list.xml" value="0.264" />
@@ -16,6 +20,7 @@
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/activity_segregated_list.xml" value="0.4" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/activity_settings.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/activity_show_elem.xml" value="0.4" />
+        <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/activity_sleep_time.xml" value="0.264" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/my_row.xml" value="0.4" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/test_alert.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Henryk/Desktop/studia/Kalendarz/app/src/main/res/layout/activity_add_event.xml" value="0.2" />

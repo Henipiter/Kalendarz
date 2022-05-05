@@ -32,7 +32,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/all_image" />
+                android:src="@drawable/image_square_all" />
 
             <ImageButton
                 android:id="@+id/done_image_button"
@@ -44,7 +44,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/done_image" />
+                android:src="@drawable/image_square_done" />
 
 
             <ImageButton
@@ -57,7 +57,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/undone_image" />
+                android:src="@drawable/image_square_undone" />
 
             <ImageButton
                 android:id="@+id/past_image_button"
@@ -69,7 +69,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/late_image" />
+                android:src="@drawable/image_square_late" />
 
             <ImageButton
                 android:id="@+id/future_image_button"
@@ -81,7 +81,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/future_image" />
+                android:src="@drawable/image_square_future" />
         </TableRow>
     </TableLayout>
     <ImageButton

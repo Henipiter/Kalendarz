@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.SleepTimeActivity">
+
+    <Button
+        android:id="@+id/sleep_end_time_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="21:37"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/sleep_start_time_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="08:00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End sleep mode"
+        app:layout_constraintBottom_toTopOf="@+id/sleep_end_time_button"
+        app:layout_constraintEnd_toEndOf="@+id/sleep_end_time_button"
+        app:layout_constraintStart_toStartOf="@+id/sleep_end_time_button" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start sleep mode"
+        app:layout_constraintBottom_toTopOf="@+id/sleep_start_time_button"
+        app:layout_constraintEnd_toEndOf="@+id/sleep_start_time_button"
+        app:layout_constraintStart_toStartOf="@+id/sleep_start_time_button" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Time"
+        app:layout_constraintTop_toTopOf="@id/sleep_start_time_button"
+        app:layout_constraintEnd_toStartOf="@+id/sleep_end_time_button"
+        app:layout_constraintStart_toEndOf="@+id/sleep_start_time_button" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/turn_on_off_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:minHeight="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sleep_switch" />
+
+    <TextView
+        android:id="@+id/alarm_turn_on_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alarm are turn off"
+        android:textSize="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/turn_on_off_switch" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sleep_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:minHeight="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sleep_start_time_button" />
+    <Button
+        android:id="@+id/restart_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:text="Restart alarms and notifies"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+    <TextView
+        android:id="@+id/alarm_sleep_mode_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alarm sleep mode is off"
+        android:textSize="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sleep_switch" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

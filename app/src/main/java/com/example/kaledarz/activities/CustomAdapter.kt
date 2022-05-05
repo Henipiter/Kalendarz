@@ -83,16 +83,16 @@ class CustomAdapter(
     private fun getRightStatusImage(holder: MyViewHolder, note: Note) {
         when (note.status) {
             Status.DONE -> {
-                holder.imageDone.setImageResource(R.drawable.done_image)
+                holder.imageDone.setImageResource(R.drawable.image_round_done)
             }
             Status.UNDONE -> {
-                holder.imageDone.setImageResource(R.drawable.undone_image)
+                holder.imageDone.setImageResource(R.drawable.image_round_undone)
             }
             Status.PAST -> {
-                holder.imageDone.setImageResource(R.drawable.late_image)
+                holder.imageDone.setImageResource(R.drawable.image_round_late)
             }
             Status.FUTURE -> {
-                holder.imageDone.setImageResource(R.drawable.future_image)
+                holder.imageDone.setImageResource(R.drawable.image_round_future)
             }
             Status.ALL -> {
             }

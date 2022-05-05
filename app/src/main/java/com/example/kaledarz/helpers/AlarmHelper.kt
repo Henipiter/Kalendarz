@@ -15,6 +15,7 @@ class AlarmHelper(private val context: Context) {
     private val notificationHelper = NotificationHelper(context)
 
     fun setAlarmForNotes(noteArray: ArrayList<Note>) {
+        Note.computeStatusForNoteList(noteArray)
         for (note in noteArray) {
             if (note.status == Status.UNDONE) {
                 setAlarm(note)
@@ -61,6 +62,7 @@ class AlarmHelper(private val context: Context) {
             PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.timeInMillis, 86400000, pendingIntent)
     }
 
     private fun getTitle(note: Note): String {

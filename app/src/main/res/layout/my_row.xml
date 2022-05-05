@@ -99,7 +99,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/late_image" />
+                    app:srcCompat="@drawable/image_round_late" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

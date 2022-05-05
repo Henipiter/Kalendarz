@@ -9,5 +9,9 @@ class Constants {
         const val UPPER_END = "UPPER_END"
         const val CONTENT = "CONTENT"
         const val NONE = "<not_set>"
+
+        //PREFS
+        const val ALARM_ON_OFF = "run_alarm"
+        const val SLEEP_ON_OFF = "sleep_alarm"
     }
 }

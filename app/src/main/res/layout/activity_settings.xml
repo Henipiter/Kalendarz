@@ -7,16 +7,6 @@
     tools:context=".activities.SettingsActivity">
 
     <Button
-        android:id="@+id/restart_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Restart alarms and notifies"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
         android:id="@+id/export_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +14,19 @@
         android:text="Export"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/restart_button" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/import_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Import"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/export_button" />
+
 
     <Button
         android:id="@+id/clear_button"
@@ -36,14 +38,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/import_button" />
 
+
     <Button
-        android:id="@+id/import_button"
+        android:id="@+id/sleep_alarms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Import"
+        android:text="Alarm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/export_button" />
+        app:layout_constraintTop_toBottomOf="@id/clear_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="List"
+        android:text="@string/button_list"
         app:layout_constraintEnd_toStartOf="@+id/add_button"
         app:layout_constraintTop_toBottomOf="@+id/calendarView" />
 
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Settings"
+        android:text="@string/button_settings"
         app:layout_constraintEnd_toStartOf="@+id/list_button"
         app:layout_constraintTop_toBottomOf="@+id/calendarView" />
 
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Add new"
+        android:text="@string/button_add_new"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calendarView" />
 
@@ -49,7 +49,7 @@
         android:id="@+id/no_rows_info2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No rows found"
+        android:text="@string/alert_no_rows_found"
         android:textSize="50sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

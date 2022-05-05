@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:text="21:37"
+        android:text="@string/button_end_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
-        android:text="08:00"
+        android:text="@string/button_start_time"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,7 +31,7 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="End sleep mode"
+        android:text="@string/end_sleep_mode"
         app:layout_constraintBottom_toTopOf="@+id/sleep_end_time_button"
         app:layout_constraintEnd_toEndOf="@+id/sleep_end_time_button"
         app:layout_constraintStart_toStartOf="@+id/sleep_end_time_button" />
@@ -40,7 +40,7 @@
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start sleep mode"
+        android:text="@string/start_sleep_mode"
         app:layout_constraintBottom_toTopOf="@+id/sleep_start_time_button"
         app:layout_constraintEnd_toEndOf="@+id/sleep_start_time_button"
         app:layout_constraintStart_toStartOf="@+id/sleep_start_time_button" />
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Time"
+        android:text="@string/time"
         app:layout_constraintTop_toTopOf="@id/sleep_start_time_button"
         app:layout_constraintEnd_toStartOf="@+id/sleep_end_time_button"
         app:layout_constraintStart_toEndOf="@+id/sleep_start_time_button" />
@@ -69,8 +69,8 @@
         android:id="@+id/alarm_turn_on_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Alarm are turn off"
-        android:textSize="16dp"
+        android:text="@string/alarm_are_turn_off"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/turn_on_off_switch" />
@@ -89,7 +89,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="64dp"
-        android:text="Restart alarms and notifies"
+        android:text="@string/restart_alarms_and_notifies"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
@@ -97,8 +97,8 @@
         android:id="@+id/alarm_sleep_mode_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Alarm sleep mode is off"
-        android:textSize="16dp"
+        android:text="@string/alarm_sleep_mode_is_off"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sleep_switch" />

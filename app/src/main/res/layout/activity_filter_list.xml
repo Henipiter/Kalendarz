@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="Confirm"
+        android:text="@string/button_confirm"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:text="2020-07-09"
+        android:text="@string/button_start_date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:layout_marginEnd="32dp"
-        android:text="2020-07-10"
+        android:text="@string/button_end_date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/upper_start_date_button" />
 
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
-        android:text="2020-07-10"
+        android:text="@string/button_start_date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="64dp"
-        android:text="2020-07-10"
+        android:text="@string/button_end_date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/upper_start_date_button" />
 
@@ -61,7 +61,7 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upper limit"
+        android:text="@string/upper_limit"
         app:layout_constraintBottom_toTopOf="@+id/upper_start_date_button"
         app:layout_constraintEnd_toEndOf="@+id/upper_start_date_button"
         app:layout_constraintStart_toStartOf="@+id/upper_start_date_button" />
@@ -70,7 +70,7 @@
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lower limit"
+        android:text="@string/lower_limit"
         app:layout_constraintBottom_toTopOf="@+id/lower_start_date_button"
         app:layout_constraintEnd_toEndOf="@+id/lower_start_date_button"
         app:layout_constraintStart_toStartOf="@+id/lower_start_date_button" />
@@ -80,7 +80,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Start date"
+        android:text="@string/start_date"
         app:layout_constraintTop_toTopOf="@id/lower_start_date_button"
         app:layout_constraintEnd_toStartOf="@+id/upper_start_date_button"
         app:layout_constraintStart_toEndOf="@+id/lower_start_date_button" />
@@ -89,7 +89,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="End date"
+        android:text="@string/end_date"
         app:layout_constraintTop_toTopOf="@id/lower_end_date_button"
         app:layout_constraintEnd_toStartOf="@+id/upper_end_date_button"
         app:layout_constraintStart_toEndOf="@+id/lower_end_date_button" />

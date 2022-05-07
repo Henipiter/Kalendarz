@@ -35,8 +35,7 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
     fun createNotification(note: Note) {
         createNotification(
             note.id!!.toInt(),
-            "From (" + note.start_time + " " + note.start_date + ") to ("
-                    + note.end_time + " " + note.end_date + ")",
+            "To " + note.end_time + " " + note.end_date,
             note.content!!
         )
     }

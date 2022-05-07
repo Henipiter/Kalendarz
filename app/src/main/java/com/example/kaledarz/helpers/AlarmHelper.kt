@@ -17,7 +17,7 @@ class AlarmHelper(private val context: Context) {
     fun setAlarmForNotes(noteArray: ArrayList<Note>) {
         Note.computeStatusForNoteList(noteArray)
         for (note in noteArray) {
-            if (note.status == Status.UNDONE) {
+            if (note.status == Status.UNDONE || note.status == Status.FUTURE) {
                 setAlarm(note)
             }
         }
@@ -62,11 +62,11 @@ class AlarmHelper(private val context: Context) {
             PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.timeInMillis, 86400000, pendingIntent)
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.timeInMillis, 86400000, pendingIntent)
     }
 
     private fun getTitle(note: Note): String {
-        return note.start_time + " " + note.start_date + " - " + note.end_time + " " + note.end_date
+        return "To " + note.end_time + " " + note.end_date
     }
 
     private fun cancelAlarm(id: String) {
@@ -92,7 +92,7 @@ class AlarmHelper(private val context: Context) {
             Log.e("Alarm", "Alarm to to push notification")
             startAlarm(
                 DateFormatHelper.getCalendarFromStrings(
-                    note.start_date!!, note.start_time!!
+                    note.start_date, note.start_time
                 ), note, "SET"
             )
         } else {

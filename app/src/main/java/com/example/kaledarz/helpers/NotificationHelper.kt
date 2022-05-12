@@ -42,7 +42,8 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
 
     fun createNotification(id: Int, title: String, content: String) {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.bbb)
+
+            .setSmallIcon(R.drawable.icon3)
             .setContentTitle(title)
             .setContentText(content)
             .setStyle(NotificationCompat.BigTextStyle().bigText(content))

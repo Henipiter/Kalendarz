@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Kaledarz">
         <activity
-            android:name=".activities.SleepTimeActivity"
+            android:name=".activities.AlarmSettingActivity"
             android:exported="false" />
         <activity
             android:name=".activities.SettingsActivity"

@@ -3,16 +3,20 @@ package com.example.kaledarz.helpers
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.icu.util.Calendar
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 
 class AlarmHelper(private val context: Context) {
 
     private val notificationHelper = NotificationHelper(context)
+    private var myPref = context.getSharedPreferences("run_alarms", MODE_PRIVATE)
+
 
     fun setAlarmForNotes(noteArray: ArrayList<Note>) {
         Note.computeStatusForNoteList(noteArray)
@@ -61,8 +65,15 @@ class AlarmHelper(private val context: Context) {
         val pendingIntent =
             PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
-//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.timeInMillis, 86400000, pendingIntent)
+
+        if (myPref.getString(Constants.ALARM_EXACT, "false") == "false") {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
+        } else {
+            alarmManager.setAlarmClock(
+                AlarmManager.AlarmClockInfo(c.timeInMillis, pendingIntent),
+                pendingIntent
+            )
+        }
     }
 
     private fun getTitle(note: Note): String {

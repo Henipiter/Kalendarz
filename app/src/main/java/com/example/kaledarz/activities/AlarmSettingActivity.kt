@@ -15,15 +15,17 @@ import com.example.kaledarz.helpers.AlarmHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 import com.example.kaledarz.helpers.PickerHelper
 
-class SleepTimeActivity : AppCompatActivity() {
+class AlarmSettingActivity : AppCompatActivity() {
 
     private lateinit var buttonRestart: Button
     private lateinit var buttonStartDate: Button
     private lateinit var buttonStartTime: Button
     private lateinit var switchSleep: SwitchCompat
     private lateinit var switchOnOff: SwitchCompat
+    private lateinit var switchExact: SwitchCompat
     private lateinit var sleepText: TextView
     private lateinit var onOffText: TextView
+    private lateinit var exactText: TextView
 
     private lateinit var pickerHelper: PickerHelper
 
@@ -37,27 +39,31 @@ class SleepTimeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sleep_time)
+        setContentView(R.layout.activity_alarm_settings)
 
         buttonRestart = findViewById(R.id.restart_button)
-        pickerHelper = PickerHelper(this@SleepTimeActivity)
+        pickerHelper = PickerHelper(this@AlarmSettingActivity)
         buttonStartDate = findViewById(R.id.sleep_end_time_button)
         buttonStartTime = findViewById(R.id.sleep_start_time_button)
 
         switchSleep = findViewById(R.id.sleep_switch)
         switchOnOff = findViewById(R.id.turn_on_off_switch)
+        switchExact = findViewById(R.id.turn_on_off_exact)
 
         sleepText = findViewById(R.id.alarm_sleep_mode_text)
         onOffText = findViewById(R.id.alarm_turn_on_text)
+        exactText = findViewById(R.id.exact_turn_on_text)
 
         myPref = applicationContext.getSharedPreferences("run_alarms", MODE_PRIVATE)
         alarmHelper = AlarmHelper(applicationContext)
 
         val sleepOnOffPref = myPref.getString(Constants.SLEEP_ON_OFF, "false") == "true"
         val alarmOnOffPref = myPref.getString(Constants.ALARM_ON_OFF, "false") == "true"
+        val alarmExactPref = myPref.getString(Constants.ALARM_EXACT, "false") == "true"
 
         switchSleep.isChecked = sleepOnOffPref
         switchOnOff.isChecked = alarmOnOffPref
+        switchExact.isChecked = alarmExactPref
         if (sleepOnOffPref) {
             switchOnOffAlarmBehaviour(alarmOnOffPref)
             switchOnOffSleepBehaviour(sleepOnOffPref)
@@ -82,7 +88,13 @@ class SleepTimeActivity : AppCompatActivity() {
 
         switchOnOff.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
             switchOnOffAlarmBehaviour(value)
+            myPref.edit().putString(Constants.ALARM_EXACT, "false").apply()
             myPref.edit().putString(Constants.ALARM_ON_OFF, value.toString()).apply()
+        }
+
+        switchExact.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
+            myPref.edit().putString(Constants.ALARM_EXACT, value.toString()).apply()
+            cancelAndSetAllAlarms()
         }
 
         switchSleep.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
@@ -94,15 +106,17 @@ class SleepTimeActivity : AppCompatActivity() {
 
     private fun switchOnOffAlarmBehaviour(value: Boolean) {
         switchSleep.isEnabled = value
+        switchExact.isEnabled = value
         onOffText.text = getInfoForOnOff(value)
 
         buttonRestart.isEnabled = value
         setButtons(value)
         if (value) {
-
             alarmHelper.setAlarmForNotes(originalList)
         } else {
+
             switchSleep.isChecked = false
+            switchExact.isChecked = false
             alarmHelper.unsetAlarmForNotes(originalList)
         }
     }

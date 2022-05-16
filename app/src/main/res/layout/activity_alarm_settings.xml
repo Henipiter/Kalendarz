@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SleepTimeActivity">
+    tools:context=".activities.AlarmSettingActivity">
 
     <Button
         android:id="@+id/sleep_end_time_button"
@@ -63,7 +63,7 @@
         android:minHeight="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sleep_switch" />
+        app:layout_constraintTop_toBottomOf="@+id/turn_on_off_exact" />
 
     <TextView
         android:id="@+id/alarm_turn_on_text"
@@ -74,6 +74,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/turn_on_off_switch" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/turn_on_off_exact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:minHeight="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sleep_switch" />
+
+    <TextView
+        android:id="@+id/exact_turn_on_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/alarm_inexact"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/turn_on_off_exact" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/sleep_switch"

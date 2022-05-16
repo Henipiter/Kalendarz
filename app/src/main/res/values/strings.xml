@@ -35,4 +35,5 @@
     <string name="alarm_are_turn_off">Alarm are turn off</string>
     <string name="title">Title</string>
     <string name="done">Done</string>
+    <string name="alarm_inexact">Alarm inexact</string>
 </resources>

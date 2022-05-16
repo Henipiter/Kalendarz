@@ -50,7 +50,7 @@ class SettingsActivity : AppCompatActivity() {
             deleteAllRows()
         }
         buttonSleep.setOnClickListener {
-            val intent = Intent(this, SleepTimeActivity::class.java)
+            val intent = Intent(this, AlarmSettingActivity::class.java)
             this.startActivity(intent)
         }
     }

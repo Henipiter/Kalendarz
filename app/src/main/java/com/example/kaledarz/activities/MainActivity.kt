@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var databaseHelper: MyDatabaseHelper
     private lateinit var alarmHelper: AlarmHelper
     private lateinit var noRowsInfo: TextView
+    private lateinit var imageMute: ImageView
     private var chooseDate = "2020-01-01"
     private var noteList: ArrayList<Note> = ArrayList()
 
@@ -45,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         buttonSettings = findViewById(R.id.settings_button)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
         noRowsInfo = findViewById(R.id.no_rows_info2)
+        imageMute = findViewById(R.id.imageMute)
 
         myPref = applicationContext.getSharedPreferences("run_alarms", MODE_PRIVATE)
         alarmHelper = AlarmHelper(applicationContext)
@@ -99,14 +102,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun storeDataInArrays() {
-
-        val list = ArrayList<Note>()
-        list.addAll(databaseHelper.readAllData())
-        if (list.size == 0) {
+        filterNoteList(databaseHelper.readAllData(), chooseDate)
+        if (noteList.size == 0) {
             noRowsInfo.isVisible = true
+            imageMute.isVisible = myPref.getString(Constants.ALARM_ON_OFF, "false") != "true"
         } else {
+            imageMute.isVisible = false
             noRowsInfo.isVisible = false
-            filterNoteList(list, chooseDate)
             Note.computeStatusForNoteList(noteList)
         }
     }

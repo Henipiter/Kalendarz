@@ -26,7 +26,7 @@ class CustomAdapter(
 ) : RecyclerView.Adapter<CustomAdapter.MyViewHolder>() {
     var position = 0
 
-    private lateinit var myPref: SharedPreferences
+
 
     class MyViewHolder(
         var itemView: View,
@@ -63,7 +63,7 @@ class CustomAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        myPref = context.getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
+        val myPref = context.getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
 
         holder.imageMute.isVisible = myPref.getString(Constants.ALARM_ON_OFF, "false") != "true"
         this.position = position

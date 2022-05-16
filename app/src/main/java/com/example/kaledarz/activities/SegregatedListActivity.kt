@@ -5,13 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kaledarz.*
+import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Constants.Companion.CONTENT
 import com.example.kaledarz.DTO.Constants.Companion.LOWER_END
 import com.example.kaledarz.DTO.Constants.Companion.LOWER_START
@@ -48,6 +51,7 @@ class SegregatedListActivity : AppCompatActivity() {
     private lateinit var buttonRefresh: ImageButton
 
     private lateinit var noRowsInfoText: TextView
+    private lateinit var imageMute: ImageView
     private lateinit var lowerStartDateText: TextView
     private lateinit var lowerEndDateText: TextView
     private lateinit var upperStartDateText: TextView
@@ -100,6 +104,7 @@ class SegregatedListActivity : AppCompatActivity() {
         buttonRefresh = findViewById(R.id.refresh_button)
 
         noRowsInfoText = findViewById(R.id.no_rows_info)
+        imageMute = findViewById(R.id.imageMute2)
         lowerStartDateText = findViewById(R.id.text_lower_start_date)
         lowerEndDateText = findViewById(R.id.text_end_lower_date)
         upperStartDateText = findViewById(R.id.text_upper_start_date)
@@ -243,9 +248,12 @@ class SegregatedListActivity : AppCompatActivity() {
             }
         }
         if (showList.size == 0) {
-            noRowsInfoText.visibility = View.VISIBLE
+            noRowsInfoText.isVisible = true
+            val myPref = applicationContext.getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
+            imageMute.isVisible = myPref.getString(Constants.ALARM_ON_OFF, "false") != "true"
         } else {
-            noRowsInfoText.visibility = View.GONE
+            noRowsInfoText.isVisible = false
+            imageMute.isVisible = false
         }
         customAdapter.notifyDataSetChanged()
 

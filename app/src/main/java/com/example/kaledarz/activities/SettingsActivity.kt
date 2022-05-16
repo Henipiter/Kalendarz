@@ -22,7 +22,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var buttonExport: Button
     private lateinit var buttonImport: Button
     private lateinit var buttonClear: Button
-    private lateinit var buttonSleep: Button
+    private lateinit var buttonAlarm: Button
     private lateinit var databaseHelper: MyDatabaseHelper
     private var originalList = ArrayList<Note>()
 
@@ -35,7 +35,7 @@ class SettingsActivity : AppCompatActivity() {
         buttonExport = findViewById(R.id.export_button)
         buttonImport = findViewById(R.id.import_button)
         buttonClear = findViewById(R.id.clear_button)
-        buttonSleep = findViewById(R.id.sleep_alarms)
+        buttonAlarm = findViewById(R.id.sleep_alarms)
 
         databaseHelper = MyDatabaseHelper(this)
         originalList.addAll(databaseHelper.readAllData())
@@ -49,7 +49,7 @@ class SettingsActivity : AppCompatActivity() {
         buttonClear.setOnClickListener {
             deleteAllRows()
         }
-        buttonSleep.setOnClickListener {
+        buttonAlarm.setOnClickListener {
             val intent = Intent(this, AlarmSettingActivity::class.java)
             this.startActivity(intent)
         }

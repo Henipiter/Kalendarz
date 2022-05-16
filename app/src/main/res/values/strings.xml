@@ -27,7 +27,7 @@
     <string name="start_time">Start time</string>
     <string name="end_time">End time</string>
     <string name="remind_about">Remind about</string>
-    <string name="restart_alarms_and_notifies">Restart alarms and notifies</string>
+    <string name="restart_alarms_and_notifies">Reset</string>
     <string name="alarm_sleep_mode_is_off">Alarm sleep mode is off</string>
     <string name="end_sleep_mode">End sleep mode</string>
     <string name="start_sleep_mode">Start sleep mode</string>

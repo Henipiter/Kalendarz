@@ -18,12 +18,8 @@ import com.example.kaledarz.helpers.PickerHelper
 class AlarmSettingActivity : AppCompatActivity() {
 
     private lateinit var buttonRestart: Button
-    private lateinit var buttonStartDate: Button
-    private lateinit var buttonStartTime: Button
-    private lateinit var switchSleep: SwitchCompat
     private lateinit var switchOnOff: SwitchCompat
     private lateinit var switchExact: SwitchCompat
-    private lateinit var sleepText: TextView
     private lateinit var onOffText: TextView
     private lateinit var exactText: TextView
 
@@ -43,47 +39,28 @@ class AlarmSettingActivity : AppCompatActivity() {
 
         buttonRestart = findViewById(R.id.restart_button)
         pickerHelper = PickerHelper(this@AlarmSettingActivity)
-        buttonStartDate = findViewById(R.id.sleep_end_time_button)
-        buttonStartTime = findViewById(R.id.sleep_start_time_button)
 
-        switchSleep = findViewById(R.id.sleep_switch)
         switchOnOff = findViewById(R.id.turn_on_off_switch)
         switchExact = findViewById(R.id.turn_on_off_exact)
 
-        sleepText = findViewById(R.id.alarm_sleep_mode_text)
         onOffText = findViewById(R.id.alarm_turn_on_text)
         exactText = findViewById(R.id.exact_turn_on_text)
 
         myPref = applicationContext.getSharedPreferences("run_alarms", MODE_PRIVATE)
         alarmHelper = AlarmHelper(applicationContext)
 
-        val sleepOnOffPref = myPref.getString(Constants.SLEEP_ON_OFF, "false") == "true"
         val alarmOnOffPref = myPref.getString(Constants.ALARM_ON_OFF, "false") == "true"
         val alarmExactPref = myPref.getString(Constants.ALARM_EXACT, "false") == "true"
 
-        switchSleep.isChecked = sleepOnOffPref
         switchOnOff.isChecked = alarmOnOffPref
         switchExact.isChecked = alarmExactPref
-        if (sleepOnOffPref) {
-            switchOnOffAlarmBehaviour(alarmOnOffPref)
-            switchOnOffSleepBehaviour(sleepOnOffPref)
-        } else {
-            switchOnOffSleepBehaviour(sleepOnOffPref)
-            switchOnOffAlarmBehaviour(alarmOnOffPref)
-        }
+        switchOnOffAlarmBehaviour(alarmOnOffPref)
 
         databaseHelper = MyDatabaseHelper(this)
         originalList.addAll(databaseHelper.readAllData())
 
         buttonRestart.setOnClickListener {
             cancelAndSetAllAlarms()
-        }
-
-        buttonStartTime.setOnClickListener {
-            pickerHelper.runTimePicker(buttonStartTime)
-        }
-        buttonStartDate.setOnClickListener {
-            pickerHelper.runTimePicker(buttonStartDate)
         }
 
         switchOnOff.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
@@ -97,33 +74,19 @@ class AlarmSettingActivity : AppCompatActivity() {
             cancelAndSetAllAlarms()
         }
 
-        switchSleep.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
-            switchOnOffSleepBehaviour(value)
-            myPref.edit().putString(Constants.SLEEP_ON_OFF, value.toString()).apply()
-
-        }
     }
 
     private fun switchOnOffAlarmBehaviour(value: Boolean) {
-        switchSleep.isEnabled = value
         switchExact.isEnabled = value
         onOffText.text = getInfoForOnOff(value)
 
         buttonRestart.isEnabled = value
-        setButtons(value)
         if (value) {
             alarmHelper.setAlarmForNotes(originalList)
         } else {
-
-            switchSleep.isChecked = false
             switchExact.isChecked = false
             alarmHelper.unsetAlarmForNotes(originalList)
         }
-    }
-
-    private fun switchOnOffSleepBehaviour(value: Boolean) {
-        sleepText.text = getInfoForSleep(value)
-        setButtons(!value)
     }
 
     private fun cancelAndSetAllAlarms() {
@@ -132,22 +95,10 @@ class AlarmSettingActivity : AppCompatActivity() {
         Toast.makeText(this, "Alarms restarted", Toast.LENGTH_SHORT).show()
     }
 
-    private fun setButtons(boolean: Boolean) {
-        buttonStartDate.isEnabled = boolean
-        buttonStartTime.isEnabled = boolean
-    }
-
     private fun getInfoForOnOff(value: Boolean): String {
         if (value) {
             return "Alarms are turn on"
         }
         return "Alarms are turn off"
-    }
-
-    private fun getInfoForSleep(value: Boolean): String {
-        if (value) {
-            return "Sleep mode is turn on"
-        }
-        return "Sleep mode is turn off"
     }
 }

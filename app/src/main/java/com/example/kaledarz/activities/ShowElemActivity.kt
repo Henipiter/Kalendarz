@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kaledarz.DTO.Note
@@ -26,6 +27,7 @@ class ShowElemActivity : AppCompatActivity() {
     }
 
     private var activityType = "ADD"
+    private lateinit var textDuplicate: TextView
     private lateinit var contentText: EditText
     private lateinit var buttonAdd: Button
     private lateinit var buttonEdit: Button
@@ -35,6 +37,8 @@ class ShowElemActivity : AppCompatActivity() {
     private lateinit var buttonEndDate: Button
     private lateinit var buttonStartTime: Button
     private lateinit var buttonEndTime: Button
+    private lateinit var buttonDuplicateNumber: Button
+    private lateinit var buttonDuplicate: Button
 
     private lateinit var notificationHelper: NotificationHelper
     private lateinit var alarmHelper: AlarmHelper
@@ -101,7 +105,6 @@ class ShowElemActivity : AppCompatActivity() {
         }
 
         buttonAdd.setOnClickListener {
-
             if (DateFormatHelper.isCorrectDate(
                     buttonStartDate.text.toString(),
                     buttonEndDate.text.toString(),
@@ -109,21 +112,52 @@ class ShowElemActivity : AppCompatActivity() {
                     buttonEndTime.text.toString()
                 )
             ) {
+                note = createNote()
                 addNoteToDatabase()
+                addDuplicatedNotes()
                 finish()
             } else {
                 showErrorDateDialog(this@ShowElemActivity)
             }
         }
+
+        buttonDuplicateNumber.setOnClickListener {
+            val popUpManager = PopUpManager(this)
+            popUpManager.getNumber(
+                buttonDuplicateNumber.text.toString().toInt(),
+                layoutInflater.inflate(R.layout.number_picker, null),
+                buttonDuplicateNumber
+            )
+        }
+
+        buttonDuplicate.setOnClickListener {
+            val intent = Intent(this, ShowElemActivity::class.java)
+            intent.putExtra("type", "ADD")
+            intent.putExtra("start_date", buttonStartDate.text.toString())
+            intent.putExtra("end_date", buttonEndDate.text.toString())
+            intent.putExtra("start_time", buttonStartTime.text.toString())
+            intent.putExtra("end_time", buttonEndTime.text.toString())
+            intent.putExtra("content", contentText.text.toString())
+            this.startActivity(intent)
+            finish()
+        }
     }
 
-    private fun addNoteToDatabase() {
-        val myDB = MyDatabaseHelper(this)
+    private fun addDuplicatedNotes() {
+        for (i in 1..buttonDuplicateNumber.text.toString().toInt()) {
+            note.start_date = DateFormatHelper.getNextDayFromString(note.start_date)
+            note.end_date = DateFormatHelper.getNextDayFromString(note.end_date)
+            addNoteToDatabase()
+        }
+    }
+
+    private fun createNote(): Note {
+
         var content = contentText.text.toString().trim()
         if (content == "") {
             content = "Reminder"
         }
-        val note = Note(
+        return Note(
             null,
             buttonStartDate.text.toString().trim(),
             buttonEndDate.text.toString().trim(),
@@ -134,6 +168,10 @@ class ShowElemActivity : AppCompatActivity() {
             "",
             Status.UNDONE
         )
+    }
+
+    private fun addNoteToDatabase() {
+        val myDB = MyDatabaseHelper(this)
         myDB.addGame(note)
         note.id = myDB.readLastRow().id
     }
@@ -206,6 +244,21 @@ class ShowElemActivity : AppCompatActivity() {
             buttonStartDate.text = intent.getStringExtra("date").toString()
             buttonEndDate.text = intent.getStringExtra("date").toString()
         }
+        if (intent.hasExtra("start_date")) {
+            buttonStartDate.text = intent.getStringExtra("start_date").toString()
+        }
+        if (intent.hasExtra("end_date")) {
+            buttonEndDate.text = intent.getStringExtra("end_date").toString()
+        }
+        if (intent.hasExtra("start_time")) {
+            buttonStartTime.text = intent.getStringExtra("start_time").toString()
+        }
+        if (intent.hasExtra("end_time")) {
+            buttonEndTime.text = intent.getStringExtra("end_time").toString()
+        }
+        if (intent.hasExtra("content")) {
+            contentText.setText(intent.getStringExtra("content").toString())
+        }
     }
 
     private fun storeDataInArrays() {
@@ -224,6 +277,7 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun editNoteAndExit() {
         deleteNoteAndAlarm()
+        note = createNote()
         addNoteToDatabase()
         enableButtonIfSave()
         finish()
@@ -232,7 +286,7 @@ class ShowElemActivity : AppCompatActivity() {
     private fun setHoursOnButtons() {
         val hour = Calendar.getInstance()[Calendar.HOUR_OF_DAY] + 1
         buttonStartTime.text = DateFormatHelper.makeFullHour(hour, 0)
-        buttonEndTime.text = DateFormatHelper.makeFullHour(hour + 1, 0)
+        buttonEndTime.text = DateFormatHelper.makeFullHour(23, 0)
     }
 
     private fun refreshDoneButton() {
@@ -266,14 +320,21 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEdit.visibility = View.GONE
         buttonDelete.visibility = View.GONE
         buttonDone.visibility = View.GONE
+        buttonDuplicate.visibility = View.GONE
         buttonAdd.visibility = View.VISIBLE
+        buttonDuplicateNumber.visibility = View.VISIBLE
+        textDuplicate.visibility = View.VISIBLE
     }
 
     private fun showEditViewButton() {
         buttonEdit.visibility = View.VISIBLE
         buttonDelete.visibility = View.VISIBLE
         buttonDone.visibility = View.VISIBLE
+        buttonDuplicate.visibility = View.VISIBLE
         buttonAdd.visibility = View.GONE
+        buttonDuplicateNumber.visibility = View.GONE
+        textDuplicate.visibility = View.GONE
+
     }
 
     private fun enableEditText(editText: EditText, bool: Boolean) {
@@ -298,6 +359,7 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun enableButtonIfEdit(bool: Boolean) {
         buttonDone.isEnabled = !bool
+        buttonDuplicate.isEnabled = !bool
         buttonStartDate.isEnabled = bool
         buttonEndDate.isEnabled = bool
         buttonStartTime.isEnabled = bool
@@ -316,5 +378,9 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEndTime = findViewById(R.id.end_time_button_)
         buttonEdit = findViewById(R.id.edit_button_2)
         buttonAdd = findViewById(R.id.add_button_2)
+        buttonDuplicateNumber = findViewById(R.id.duplication_number_button)
+        textDuplicate = findViewById(R.id.textView15)
+        buttonDuplicate = findViewById(R.id.duplication_button)
+
     }
 }

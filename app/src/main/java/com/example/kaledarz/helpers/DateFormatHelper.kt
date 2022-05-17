@@ -10,7 +10,6 @@ class DateFormatHelper {
         private var locale = Locale.US
 
         fun getCalendarFromStrings(date: String, clock: String): Calendar {
-
             val calendar = Calendar.getInstance()
             calendar.set(Calendar.DAY_OF_MONTH, date.split("-")[0].toInt())
             calendar.set(Calendar.MONTH, date.split("-")[1].toInt() - 1)
@@ -19,6 +18,12 @@ class DateFormatHelper {
             calendar.set(Calendar.MINUTE, clock.split(":")[1].toInt())
             calendar.set(Calendar.SECOND, 0)
             return calendar
+        }
+
+        fun getNextDayFromString(date: String): String {
+            val calendar = getCalendarFromStrings(date, "00:00")
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+            return makeFullDate(calendar)
         }
 
         fun isEndDateGreaterThanStartDate(startDate: String, endDate: String): Boolean {
@@ -58,12 +63,7 @@ class DateFormatHelper {
                             isEndTimeGreaterThanStartTime(startTime, endTime))
         }
 
-        fun updateDateInView(calendar: Calendar): String {
-            val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
-            return sdf.format(calendar.time)
-        }
-
-        fun makeTwoCipherNumber(time: Int): String {
+        private fun makeTwoCipherNumber(time: Int): String {
             return if (time.toString().length == 1) {
                 "0$time"
             } else {
@@ -78,6 +78,14 @@ class DateFormatHelper {
         fun makeFullDate(year: Int, month: Int, day: Int): String {
             return makeTwoCipherNumber(day) + "-" +
                     makeTwoCipherNumber(month) + "-" + year
+        }
+
+        private fun makeFullDate(calendar: Calendar): String {
+            return makeFullDate(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH) + 1,
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
         }
 
         fun getCurrentDateTimeForDatabase(): String? {

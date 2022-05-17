@@ -79,9 +79,39 @@
         android:width="200dp"
         android:text="@string/button_add"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.525"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/contentText_2" />
+
+    <Button
+        android:id="@+id/duplication_number_button"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="32dp"
+        android:width="200dp"
+        android:text="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_button_2" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Duplicate in next days"
+        app:layout_constraintBottom_toTopOf="@+id/duplication_number_button"
+        app:layout_constraintStart_toStartOf="@+id/duplication_number_button" />
+
+
+    <Button
+        android:id="@+id/duplication_button"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:width="200dp"
+        android:text="Duplicate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_button_2" />
 
     <Button
         android:id="@+id/edit_button_2"

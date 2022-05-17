@@ -10,13 +10,13 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Dialog Title"
+        android:background="@color/green_500"
+        android:gravity="center"
+        android:padding="15dp"
+        android:textColor="#fff"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:gravity="center"
-        android:background="@color/green_500"
-        android:textColor="#fff"
-        android:padding="15dp"/>
+        tools:text="Dialog Title" />
 
     <EditText
         android:id="@+id/edit_text"

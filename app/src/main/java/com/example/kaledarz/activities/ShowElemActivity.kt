@@ -286,7 +286,7 @@ class ShowElemActivity : AppCompatActivity() {
     private fun setHoursOnButtons() {
         val hour = Calendar.getInstance()[Calendar.HOUR_OF_DAY] + 1
         buttonStartTime.text = DateFormatHelper.makeFullHour(hour, 0)
-        buttonEndTime.text = DateFormatHelper.makeFullHour(23, 0)
+        buttonEndTime.text = DateFormatHelper.makeFullHour(23, 59)
     }
 
     private fun refreshDoneButton() {

@@ -110,7 +110,7 @@ class ShowElemActivity : AppCompatActivity() {
                 )
             ) {
                 addNoteToDatabase()
-                finishAndReturnToMainActivity()
+                finish()
             } else {
                 showErrorDateDialog(this@ShowElemActivity)
             }
@@ -136,12 +136,6 @@ class ShowElemActivity : AppCompatActivity() {
         )
         myDB.addGame(note)
         note.id = myDB.readLastRow().id
-    }
-
-    private fun finishAndReturnToMainActivity() {
-        finish()
-        val homepage = Intent(this, MainActivity::class.java)
-        startActivity(homepage)
     }
 
 
@@ -175,7 +169,7 @@ class ShowElemActivity : AppCompatActivity() {
             .setMessage("Are you sure to delete that event?")
             .setPositiveButton("Delete") { dialog, which ->
                 deleteNoteAndAlarm()
-                finishAndReturnToMainActivity()
+                finish()
             }
             .setNegativeButton("Cancel", null)
             .create()
@@ -232,7 +226,7 @@ class ShowElemActivity : AppCompatActivity() {
         deleteNoteAndAlarm()
         addNoteToDatabase()
         enableButtonIfSave()
-        finishAndReturnToMainActivity()
+        finish()
     }
 
     private fun setHoursOnButtons() {

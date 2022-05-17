@@ -81,6 +81,11 @@ class SegregatedListActivity : AppCompatActivity() {
             choseButton(choose)
         }
 
+    override fun onResume() {
+        super.onResume()
+        choseButton(choose)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_segregated_list)

@@ -37,6 +37,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var myPref: SharedPreferences
 
+    override fun onResume() {
+        super.onResume()
+        storeDataInArrays()
+        customAdapter.notifyDataSetChanged()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +56,6 @@ class MainActivity : AppCompatActivity() {
 
         myPref = applicationContext.getSharedPreferences("run_alarms", MODE_PRIVATE)
         alarmHelper = AlarmHelper(applicationContext)
-
-        val calendarView = CalendarView(this)
-        calendarView.setDate(System.currentTimeMillis(), false, true)
 
         chooseDate = DateFormatHelper.getTodayDate(calendar.date)
         databaseHelper = MyDatabaseHelper(this)

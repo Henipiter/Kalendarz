@@ -26,12 +26,17 @@ class DateFormatHelper {
             return makeFullDate(calendar)
         }
 
+        fun isEndDateGreaterAndEqualThanStartDate(startDate: String, endDate: String): Boolean {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
+            return sdf.parse(startDate) <= sdf.parse(endDate)
+        }
+
         fun isEndDateGreaterThanStartDate(startDate: String, endDate: String): Boolean {
             val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
             return sdf.parse(startDate) < sdf.parse(endDate)
         }
 
-        private fun isEndDateEqualToStartDate(startDate: String, endDate: String): Boolean {
+        fun isEndDateEqualToStartDate(startDate: String, endDate: String): Boolean {
             val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
             return sdf.parse(startDate) == sdf.parse(endDate)
         }

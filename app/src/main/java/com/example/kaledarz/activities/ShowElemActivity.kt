@@ -3,6 +3,7 @@ package com.example.kaledarz.activities
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
@@ -46,6 +47,7 @@ class ShowElemActivity : AppCompatActivity() {
     private lateinit var myDB: MyDatabaseHelper
     private var note = Note()
     private lateinit var pickerHelper: PickerHelper
+    private var isRedButtonSet=false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         notificationHelper = NotificationHelper(this)
@@ -105,20 +107,7 @@ class ShowElemActivity : AppCompatActivity() {
         }
 
         buttonAdd.setOnClickListener {
-            if (DateFormatHelper.isCorrectDate(
-                    buttonStartDate.text.toString(),
-                    buttonEndDate.text.toString(),
-                    buttonStartTime.text.toString(),
-                    buttonEndTime.text.toString()
-                )
-            ) {
-                note = createNote()
-                addNoteToDatabase()
-                addDuplicatedNotes()
-                finish()
-            } else {
-                showErrorDateDialog(this@ShowElemActivity)
-            }
+            validDatesAndAddNote()
         }
 
         buttonDuplicateNumber.setOnClickListener {
@@ -176,22 +165,51 @@ class ShowElemActivity : AppCompatActivity() {
         note.id = myDB.readLastRow().id
     }
 
+    private fun setRedButtonIfDatesWrong() {
+        isRedButtonSet = if (checkRightDate()) {
+            buttonEndDate.setBackgroundColor(Color.parseColor("#0FB104"))
+            if (checkRightHour()) {
+                buttonEndTime.setBackgroundColor(Color.parseColor("#0FB104"))
+                false
+            } else {
+                buttonEndTime.setBackgroundColor(Color.parseColor("#910000"))
+                true
+            }
+        } else {
+            buttonEndDate.setBackgroundColor(Color.parseColor("#910000"))
+            buttonEndTime.setBackgroundColor(Color.parseColor("#0FB104"))
+            true
+        }
+    }
+
+    private fun checkRightDate(): Boolean {
+        return DateFormatHelper.isEndDateGreaterAndEqualThanStartDate(
+            buttonStartDate.text.toString(),
+            buttonEndDate.text.toString()
+        )
+    }
+
+    private fun checkRightHour(): Boolean {
+        return DateFormatHelper.isEndDateEqualToStartDate(
+            buttonStartDate.text.toString(),
+            buttonStartDate.text.toString()
+        ) && DateFormatHelper.isEndTimeGreaterThanStartTime(
+            buttonStartTime.text.toString(),
+            buttonEndTime.text.toString()
+        ) || DateFormatHelper.isEndDateGreaterThanStartDate(
+            buttonStartDate.text.toString(),
+            buttonEndDate.text.toString()
+        )
+    }
 
     private fun showErrorDateDialog(c: Context) {
         var messageError = ""
-        if (!DateFormatHelper.isEndDateGreaterThanStartDate(
-                buttonStartDate.text.toString(),
-                buttonEndDate.text.toString()
-            )
-        ) {
+        if (!checkRightDate()) {
             messageError = "Start date is later than end date"
         }
-        if (!DateFormatHelper.isEndTimeGreaterThanStartTime(
-                buttonStartTime.text.toString(),
-                buttonEndTime.text.toString()
-            )
+        if (!checkRightHour()
         ) {
-            messageError = "End time is not later than start date"
+            messageError = "End time is not later than start time"
         }
         val dialog: AlertDialog = AlertDialog.Builder(c)
             .setTitle("Date error")
@@ -277,10 +295,19 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun editNoteAndExit() {
         deleteNoteAndAlarm()
-        note = createNote()
-        addNoteToDatabase()
-        enableButtonIfSave()
-        finish()
+        validDatesAndAddNote()
+    }
+
+    private fun validDatesAndAddNote(){
+        setRedButtonIfDatesWrong()
+        if (!isRedButtonSet) {
+            note = createNote()
+            addNoteToDatabase()
+            addDuplicatedNotes()
+            finish()
+        } else {
+            showErrorDateDialog(this@ShowElemActivity)
+        }
     }
 
     private fun setHoursOnButtons() {

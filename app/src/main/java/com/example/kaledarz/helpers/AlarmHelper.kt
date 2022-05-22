@@ -3,21 +3,25 @@ package com.example.kaledarz.helpers
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.icu.util.Calendar
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 
 class AlarmHelper(private val context: Context) {
 
     private val notificationHelper = NotificationHelper(context)
+    private var myPref = context.getSharedPreferences("run_alarms", MODE_PRIVATE)
 
 
     fun setAlarmForNotes(noteArray: ArrayList<Note>) {
+        Note.computeStatusForNoteList(noteArray)
         for (note in noteArray) {
-            if (note.status == Status.UNDONE) {
+            if (note.status == Status.UNDONE || note.status == Status.FUTURE) {
                 setAlarm(note)
             }
         }
@@ -34,7 +38,15 @@ class AlarmHelper(private val context: Context) {
         startAlarmToDeleteNotification(shouldDelete, note)
     }
 
-    fun unsetAlarm(id: String, notificationHelper: NotificationHelper) {
+    fun unsetAlarmForNotes(noteArray: ArrayList<Note>) {
+        for (note in noteArray) {
+            if (note.status == Status.UNDONE) {
+                unsetAlarm(note.id!!)
+            }
+        }
+    }
+
+    fun unsetAlarm(id: String) {
         cancelAlarm(id)
         notificationHelper.deleteNotification(id.toInt())
     }
@@ -53,11 +65,19 @@ class AlarmHelper(private val context: Context) {
         val pendingIntent =
             PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
+
+        if (myPref.getString(Constants.ALARM_EXACT, "false") == "false") {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
+        } else {
+            alarmManager.setAlarmClock(
+                AlarmManager.AlarmClockInfo(c.timeInMillis, pendingIntent),
+                pendingIntent
+            )
+        }
     }
 
     private fun getTitle(note: Note): String {
-        return note.start_time + " " + note.start_date + " - " + note.end_time + " " + note.end_date
+        return "To " + note.end_time + " " + note.end_date
     }
 
     private fun cancelAlarm(id: String) {
@@ -83,7 +103,7 @@ class AlarmHelper(private val context: Context) {
             Log.e("Alarm", "Alarm to to push notification")
             startAlarm(
                 DateFormatHelper.getCalendarFromStrings(
-                    note.start_date!!, note.start_time!!
+                    note.start_date, note.start_time
                 ), note, "SET"
             )
         } else {

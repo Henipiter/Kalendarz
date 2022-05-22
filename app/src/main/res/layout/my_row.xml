@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="160dp"
                     android:layout_marginBottom="0dp"
-                    android:text="19:00"
+                    android:text="@string/end_time"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="@color/defaultTextColor"
@@ -48,7 +48,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="0dp"
                     android:textColor="@color/defaultTextColor"
-                    android:text="14:02:2022"
+                    android:text="@string/end_date"
                     android:textSize="10sp"
                     app:layout_constraintStart_toEndOf="@+id/time_end"
                     app:layout_constraintBottom_toBottomOf="parent" />
@@ -60,7 +60,7 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="0dp"
                     android:textColor="@color/defaultTextColor"
-                    android:text="9:00"
+                    android:text="@string/start_time"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +73,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="0dp"
                     android:textColor="@color/defaultTextColor"
-                    android:text="14:02:2022"
+                    android:text="@string/start_date"
                     android:textSize="10sp"
                     app:layout_constraintStart_toEndOf="@+id/time_start"
                     app:layout_constraintBottom_toBottomOf="parent" />
@@ -85,7 +85,7 @@
                     android:layout_marginTop="0dp"
                     android:layout_marginStart="4dp"
                     android:textColor="@color/defaultTextColor"
-                    android:text="TextView"
+                    android:text="@string/title"
                     android:textSize="20sp"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +99,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/late_image" />
+                    app:srcCompat="@drawable/image_round_late" />
+
+                <ImageView
+                    android:id="@+id/imageMute"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="6dp"
+                    app:layout_constraintEnd_toStartOf="@id/imageDone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/mute" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

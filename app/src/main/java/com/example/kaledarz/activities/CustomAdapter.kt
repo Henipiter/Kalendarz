@@ -3,13 +3,17 @@ package com.example.kaledarz.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
@@ -22,6 +26,8 @@ class CustomAdapter(
 ) : RecyclerView.Adapter<CustomAdapter.MyViewHolder>() {
     var position = 0
 
+
+
     class MyViewHolder(
         var itemView: View,
         var time_start: TextView = itemView.findViewById(R.id.time_start),
@@ -30,7 +36,8 @@ class CustomAdapter(
         var date_end: TextView = itemView.findViewById(R.id.date_end),
         var content: TextView = itemView.findViewById(R.id.content_1),
         var mainLayout: ConstraintLayout = itemView.findViewById(R.id.mainLayout),
-        var imageDone: ImageView = itemView.findViewById(R.id.imageDone)
+        var imageDone: ImageView = itemView.findViewById(R.id.imageDone),
+        var imageMute: ImageView = itemView.findViewById(R.id.imageMute)
     ) : RecyclerView.ViewHolder(itemView)
 
     companion object {
@@ -55,13 +62,12 @@ class CustomAdapter(
         return "$trimmedDescription..."
     }
 
-    private fun setRightDoneImage() {
-
-    }
-
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        val myPref = context.getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
+
+        holder.imageMute.isVisible = myPref.getString(Constants.ALARM_ON_OFF, "false") != "true"
         this.position = position
-        setRightDoneImage()
+
         holder.time_start.text = noteList[position].start_time
         holder.date_start.text = noteList[position].start_date
         holder.time_end.text = noteList[position].end_time
@@ -83,16 +89,16 @@ class CustomAdapter(
     private fun getRightStatusImage(holder: MyViewHolder, note: Note) {
         when (note.status) {
             Status.DONE -> {
-                holder.imageDone.setImageResource(R.drawable.done_image)
+                holder.imageDone.setImageResource(R.drawable.image_round_done)
             }
             Status.UNDONE -> {
-                holder.imageDone.setImageResource(R.drawable.undone_image)
+                holder.imageDone.setImageResource(R.drawable.image_round_undone)
             }
             Status.PAST -> {
-                holder.imageDone.setImageResource(R.drawable.late_image)
+                holder.imageDone.setImageResource(R.drawable.image_round_late)
             }
             Status.FUTURE -> {
-                holder.imageDone.setImageResource(R.drawable.future_image)
+                holder.imageDone.setImageResource(R.drawable.image_round_future)
             }
             Status.ALL -> {
             }

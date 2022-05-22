@@ -56,8 +56,13 @@ class MyDatabaseHelper(val context: Context?) :
 
     fun deleteEvent(id: String): Boolean {
         val db = this.writableDatabase
-        val result = db.delete(TABLE_NAME, "$ID_COLUMN=$id", null) > 0
-        return result
+        return db.delete(TABLE_NAME, "$ID_COLUMN=$id", null) > 0
+    }
+
+    fun deleteAllRows() {
+        val db = this.writableDatabase
+        val query1 = "DELETE FROM $TABLE_NAME;"
+        db.execSQL(query1)
     }
 
     fun addGame(note: Note) {
@@ -81,28 +86,17 @@ class MyDatabaseHelper(val context: Context?) :
 
     fun updateDone(id: String, value: Boolean) {
         var bool = 0
-        if (value)
+        if (value) {
             bool = 1
+        }
         val db = this.writableDatabase
-        val query1 = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN = $bool where $ID_COLUMN = '$id'"
+        val query1 = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN = $bool WHERE $ID_COLUMN = '$id'"
         db.execSQL(query1)
         Log.e("aa", query1)
     }
 
-    fun readAllDataByDate(data: String): ArrayList<Note> {
-        val query =
-            "Select * from $TABLE_NAME where $START_DATE_COLUMN<='$data' and $END_DATE_COLUMN>='$data' ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
-        Log.e("query", query)
-        val db = this.readableDatabase
-        var cursor: Cursor? = null
-        if (db != null) {
-            cursor = db.rawQuery(query, null)
-        }
-        return cursorToNotes(cursor)
-    }
-
     fun readAllData(): ArrayList<Note> {
-        val query = "Select * from $TABLE_NAME ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
+        val query = "SELECT * FROM $TABLE_NAME ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
         Log.e("query", query)
         val db = this.readableDatabase
         var cursor: Cursor? = null
@@ -113,7 +107,7 @@ class MyDatabaseHelper(val context: Context?) :
     }
 
     fun readOneData(id: String): Note {
-        val query = "Select * from $TABLE_NAME where $ID_COLUMN='$id';"
+        val query = "SELECT * FROM $TABLE_NAME WHERE $ID_COLUMN='$id';"
         Log.e("query", query)
         val db = this.readableDatabase
         var cursor: Cursor? = null
@@ -124,7 +118,7 @@ class MyDatabaseHelper(val context: Context?) :
     }
 
     fun readLastRow(): Note {
-        val query = "Select * from $TABLE_NAME order by $CREATION_DATE LIMIT 1;"
+        val query = "SELECT * FROM $TABLE_NAME ORDER BY $CREATION_DATE LIMIT 1;"
         val db = this.readableDatabase
         var cursor: Cursor? = null
         if (db != null) {

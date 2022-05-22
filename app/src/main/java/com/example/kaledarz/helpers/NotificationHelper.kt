@@ -11,6 +11,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.R
+import com.example.kaledarz.activities.MainActivity
+import com.example.kaledarz.activities.ShowElemActivity
 
 class NotificationHelper(base: Context) : ContextWrapper(base) {
 
@@ -33,15 +35,15 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
     fun createNotification(note: Note) {
         createNotification(
             note.id!!.toInt(),
-            "From (" + note.start_time + " " + note.start_date + ") to ("
-                    + note.end_time + " " + note.end_date + ")",
+            "To " + note.end_time + " " + note.end_date,
             note.content!!
         )
     }
 
     fun createNotification(id: Int, title: String, content: String) {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.bbb)
+
+            .setSmallIcon(R.drawable.icon3)
             .setContentTitle(title)
             .setContentText(content)
             .setStyle(NotificationCompat.BigTextStyle().bigText(content))

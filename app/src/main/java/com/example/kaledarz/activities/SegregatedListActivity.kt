@@ -1,17 +1,18 @@
 package com.example.kaledarz.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kaledarz.*
+import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Constants.Companion.CONTENT
 import com.example.kaledarz.DTO.Constants.Companion.LOWER_END
 import com.example.kaledarz.DTO.Constants.Companion.LOWER_START
@@ -20,6 +21,7 @@ import com.example.kaledarz.DTO.Constants.Companion.UPPER_END
 import com.example.kaledarz.DTO.Constants.Companion.UPPER_START
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
+import com.example.kaledarz.R
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 
@@ -31,12 +33,7 @@ class SegregatedListActivity : AppCompatActivity() {
     private lateinit var databaseHelper: MyDatabaseHelper
 
     private var originalList = ArrayList<Note>()
-    private var allList = ArrayList<Note>()
     private var showList = ArrayList<Note>()
-    private var doneList = ArrayList<Note>()
-    private var undoneList = ArrayList<Note>()
-    private var futureList = ArrayList<Note>()
-    private var pastList = ArrayList<Note>()
 
     private lateinit var buttonDone: ImageButton
     private lateinit var buttonUndone: ImageButton
@@ -45,9 +42,9 @@ class SegregatedListActivity : AppCompatActivity() {
     private lateinit var buttonAll: ImageButton
 
     private lateinit var buttonFilter: ImageButton
-    private lateinit var buttonRefresh: ImageButton
 
     private lateinit var noRowsInfoText: TextView
+    private lateinit var imageMute: ImageView
     private lateinit var lowerStartDateText: TextView
     private lateinit var lowerEndDateText: TextView
     private lateinit var upperStartDateText: TextView
@@ -81,9 +78,13 @@ class SegregatedListActivity : AppCompatActivity() {
                     textContent.text = filterContent
                 }
             }
-            prepareArrays()
             choseButton(choose)
         }
+
+    override fun onResume() {
+        super.onResume()
+        choseButton(choose)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,9 +98,9 @@ class SegregatedListActivity : AppCompatActivity() {
         buttonAll = findViewById(R.id.all_image_button)
 
         buttonFilter = findViewById(R.id.filter_button)
-        buttonRefresh = findViewById(R.id.refresh_button)
 
         noRowsInfoText = findViewById(R.id.no_rows_info)
+        imageMute = findViewById(R.id.imageMute2)
         lowerStartDateText = findViewById(R.id.text_lower_start_date)
         lowerEndDateText = findViewById(R.id.text_end_lower_date)
         upperStartDateText = findViewById(R.id.text_upper_start_date)
@@ -119,8 +120,33 @@ class SegregatedListActivity : AppCompatActivity() {
         recyclerViewEvent.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        prepareArrays()
         choseButton(choose)
+
+        buttonDone.setOnLongClickListener {
+            choseButton(Status.DONE)
+            deleteAllRows(Status.DONE)
+            true
+        }
+        buttonUndone.setOnLongClickListener {
+            choseButton(Status.UNDONE)
+            deleteAllRows(Status.UNDONE)
+            true
+        }
+        buttonPast.setOnLongClickListener {
+            choseButton(Status.PAST)
+            deleteAllRows(Status.PAST)
+            true
+        }
+        buttonFuture.setOnLongClickListener {
+            choseButton(Status.FUTURE)
+            deleteAllRows(Status.FUTURE)
+            true
+        }
+        buttonAll.setOnLongClickListener {
+            choseButton(Status.ALL)
+            deleteAllRows(Status.ALL)
+            true
+        }
 
         buttonDone.setOnClickListener {
             choseButton(Status.DONE)
@@ -138,10 +164,6 @@ class SegregatedListActivity : AppCompatActivity() {
             choseButton(Status.ALL)
         }
 
-        buttonRefresh.setOnClickListener {
-            prepareArrays()
-            choseButton(choose)
-        }
         buttonFilter.setOnClickListener {
             val intent = Intent(this, FilterListActivity::class.java)
             intent.putExtra(LOWER_START, filterLowerStart)
@@ -153,11 +175,34 @@ class SegregatedListActivity : AppCompatActivity() {
         }
     }
 
+    private fun deleteAllRows(status: Status) {
+
+        val dialog: AlertDialog = AlertDialog.Builder(this)
+            .setTitle("Delete notes")
+            .setMessage("Are you sure to delete notes with status $status?")
+            .setNegativeButton("CANCEL", null)
+            .setNeutralButton("CLEAR") { dialog, which ->
+                deleteAllFromList()
+                choseButton(choose)
+            }
+            .create()
+        dialog.show()
+    }
+
+
+    private fun deleteAllFromList() {
+        val myDatabaseHelper = MyDatabaseHelper(this)
+        for (note in showList) {
+            myDatabaseHelper.deleteEvent(note.id!!)
+        }
+    }
+
     private fun choseButton(choose: Status) {
         getButtonStatus(this.choose).setBackgroundResource(R.color.buttonColor)
         this.choose = choose
         getButtonStatus(choose).setBackgroundResource(R.color.selectedButtonColor)
-        chooseArray(choose)
+        prepareArrays(choose)
+        chooseArray()
     }
 
 
@@ -167,31 +212,6 @@ class SegregatedListActivity : AppCompatActivity() {
         } else {
             NONE
         }
-    }
-
-    private fun getButtonStatus(choose: Status): ImageButton {
-        return when (choose) {
-            Status.DONE -> buttonDone
-            Status.UNDONE -> buttonUndone
-            Status.PAST -> buttonPast
-            Status.FUTURE -> buttonFuture
-            Status.ALL -> buttonAll
-        }
-    }
-
-    private fun prepareArrays() {
-        originalList.clear()
-        doneList.clear()
-        undoneList.clear()
-        pastList.clear()
-        futureList.clear()
-        allList.clear()
-        originalList.addAll(databaseHelper.readAllData())
-        if (originalList.size == 0) {
-            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show()
-        }
-        applyFilter()
-        segregateNotes()
     }
 
     private fun applyFilter() {
@@ -216,60 +236,52 @@ class SegregatedListActivity : AppCompatActivity() {
                 filterContent == NONE || note.content != null && note.content!!.contains(
                     filterContent
                 )
-            if (isLowerStartDateNoteIsValid && isUpperStartDateNoteIsValid
-                && isLowerEndDateNoteIsValid && isUpperEndDateNoteIsValid && isContentValid
+            if (!(isLowerStartDateNoteIsValid && isUpperStartDateNoteIsValid
+                && isLowerEndDateNoteIsValid && isUpperEndDateNoteIsValid && isContentValid)
             ) {
-                allList.add(note)
+                originalList.remove(note)
             }
         }
     }
 
-    private fun chooseArray(status: Status) {
-        showList.clear()
-        when (status) {
-            Status.DONE -> {
-                showList.addAll(doneList)
-            }
-            Status.UNDONE -> {
-                showList.addAll(undoneList)
-            }
-            Status.PAST -> {
-                showList.addAll(pastList)
-            }
-            Status.FUTURE -> {
-                showList.addAll(futureList)
-            }
-            Status.ALL -> {
-                showList.addAll(allList)
-            }
-        }
+    private fun chooseArray() {
         if (showList.size == 0) {
-            noRowsInfoText.visibility = View.VISIBLE
+            noRowsInfoText.isVisible = true
+            val myPref = applicationContext.getSharedPreferences("run_alarms", MODE_PRIVATE)
+            imageMute.isVisible = myPref.getString(Constants.ALARM_ON_OFF, "false") != "true"
         } else {
-            noRowsInfoText.visibility = View.GONE
+            noRowsInfoText.isVisible = false
+            imageMute.isVisible = false
         }
         customAdapter.notifyDataSetChanged()
 
     }
 
-    private fun segregateNotes() {
-        Note.computeStatusForNoteList(allList)
-        for (note in allList) {
-            when (note.status) {
-                Status.DONE -> {
-                    doneList.add(note)
-                }
-                Status.UNDONE -> {
-                    undoneList.add(note)
-                }
-                Status.PAST -> {
-                    pastList.add(note)
-                }
-                Status.FUTURE -> {
-                    futureList.add(note)
-                }
-                Status.ALL -> {
-                }
+    private fun getButtonStatus(choose: Status): ImageButton {
+        return when (choose) {
+            Status.DONE -> buttonDone
+            Status.UNDONE -> buttonUndone
+            Status.PAST -> buttonPast
+            Status.FUTURE -> buttonFuture
+            Status.ALL -> buttonAll
+        }
+    }
+
+    private fun prepareArrays(status: Status) {
+        originalList.clear()
+        showList.clear()
+        originalList.addAll(databaseHelper.readAllData())
+        if (originalList.size != 0) {
+            applyFilter()
+            segregateNotes(status)
+        }
+    }
+
+    private fun segregateNotes(status: Status) {
+        Note.computeStatusForNoteList(originalList)
+        for (note in originalList) {
+            if (note.status == status || status == Status.ALL) {
+                showList.add(note)
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.example.kaledarz.activities
 
 import android.app.AlertDialog
-import android.app.DatePickerDialog
 import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -10,14 +9,15 @@ import android.widget.CompoundButton
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import com.example.kaledarz.DTO.Constants.Companion.LOWER_START
-import com.example.kaledarz.DTO.Constants.Companion.LOWER_END
-import com.example.kaledarz.DTO.Constants.Companion.UPPER_START
-import com.example.kaledarz.DTO.Constants.Companion.UPPER_END
 import com.example.kaledarz.DTO.Constants.Companion.CONTENT
+import com.example.kaledarz.DTO.Constants.Companion.LOWER_END
+import com.example.kaledarz.DTO.Constants.Companion.LOWER_START
 import com.example.kaledarz.DTO.Constants.Companion.NONE
-import com.example.kaledarz.helpers.DateFormatHelper
+import com.example.kaledarz.DTO.Constants.Companion.UPPER_END
+import com.example.kaledarz.DTO.Constants.Companion.UPPER_START
 import com.example.kaledarz.R
+import com.example.kaledarz.helpers.DateFormatHelper
+import com.example.kaledarz.helpers.PickerHelper
 
 
 class FilterListActivity : AppCompatActivity() {
@@ -36,12 +36,13 @@ class FilterListActivity : AppCompatActivity() {
 
     private lateinit var textContent: EditText
 
-    private var calendar = Calendar.getInstance()
+    private lateinit var pickerHelper: PickerHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_filter_list)
 
+        pickerHelper = PickerHelper(this@FilterListActivity)
         buttonExit = findViewById(R.id.button_exit)
         buttonUpperStart = findViewById(R.id.upper_start_date_button)
         buttonUpperEnd = findViewById(R.id.upper_end_date_button)
@@ -68,63 +69,19 @@ class FilterListActivity : AppCompatActivity() {
         }
 
         buttonLowerStart.setOnClickListener {
-            DatePickerDialog(
-                this@FilterListActivity,
-                { view, year, monthOfYear, dayOfMonth ->
-                    calendar.set(Calendar.YEAR, year)
-                    calendar.set(Calendar.MONTH, monthOfYear)
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonLowerStart.text = DateFormatHelper.updateDateInView(calendar)
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            pickerHelper.runTimePicker(buttonLowerStart)
         }
 
         buttonLowerEnd.setOnClickListener {
-            DatePickerDialog(
-                this@FilterListActivity,
-                { view, year, monthOfYear, dayOfMonth ->
-                    calendar.set(Calendar.YEAR, year)
-                    calendar.set(Calendar.MONTH, monthOfYear)
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonLowerEnd.text = DateFormatHelper.updateDateInView(calendar)
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            pickerHelper.runTimePicker(buttonLowerEnd)
         }
 
         buttonUpperStart.setOnClickListener {
-            DatePickerDialog(
-                this@FilterListActivity,
-                { view, year, monthOfYear, dayOfMonth ->
-                    calendar.set(Calendar.YEAR, year)
-                    calendar.set(Calendar.MONTH, monthOfYear)
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonUpperStart.text = DateFormatHelper.updateDateInView(calendar)
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            pickerHelper.runTimePicker(buttonUpperStart)
         }
 
         buttonUpperEnd.setOnClickListener {
-            DatePickerDialog(
-                this@FilterListActivity,
-                { view, year, monthOfYear, dayOfMonth ->
-                    calendar.set(Calendar.YEAR, year)
-                    calendar.set(Calendar.MONTH, monthOfYear)
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    buttonUpperEnd.text = DateFormatHelper.updateDateInView(calendar)
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            pickerHelper.runTimePicker(buttonUpperEnd)
         }
 
         switchLowerEnd.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->

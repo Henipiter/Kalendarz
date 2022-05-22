@@ -2,6 +2,7 @@ package com.example.kaledarz.helpers
 
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import java.text.ParseException
 import java.util.*
 
 class DateFormatHelper {
@@ -9,7 +10,6 @@ class DateFormatHelper {
         private var locale = Locale.US
 
         fun getCalendarFromStrings(date: String, clock: String): Calendar {
-
             val calendar = Calendar.getInstance()
             calendar.set(Calendar.DAY_OF_MONTH, date.split("-")[0].toInt())
             calendar.set(Calendar.MONTH, date.split("-")[1].toInt() - 1)
@@ -20,6 +20,12 @@ class DateFormatHelper {
             return calendar
         }
 
+        fun getNextDayFromString(date: String): String {
+            val calendar = getCalendarFromStrings(date, "00:00")
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+            return makeFullDate(calendar)
+        }
+
         fun isEndDateGreaterThanStartDate(startDate: String, endDate: String): Boolean {
             val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
             return sdf.parse(startDate) < sdf.parse(endDate)
@@ -28,6 +34,17 @@ class DateFormatHelper {
         private fun isEndDateEqualToStartDate(startDate: String, endDate: String): Boolean {
             val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
             return sdf.parse(startDate) == sdf.parse(endDate)
+        }
+
+        fun validate(dateStr: String, dateFormat: String): Boolean {
+            val sdf = SimpleDateFormat(dateFormat, locale)
+            sdf.isLenient = false
+            try {
+                sdf.parse(dateStr)
+            } catch (e: ParseException) {
+                return false
+            }
+            return true
         }
 
         fun isEndTimeGreaterThanStartTime(startTime: String, endTime: String): Boolean {
@@ -46,12 +63,7 @@ class DateFormatHelper {
                             isEndTimeGreaterThanStartTime(startTime, endTime))
         }
 
-        fun updateDateInView(calendar: Calendar): String {
-            val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
-            return sdf.format(calendar.time)
-        }
-
-        fun setHour(time: Int): String {
+        private fun makeTwoCipherNumber(time: Int): String {
             return if (time.toString().length == 1) {
                 "0$time"
             } else {
@@ -59,12 +71,21 @@ class DateFormatHelper {
             }
         }
 
-        fun setMinutes(sMinute: Int): String {
-            return if (sMinute.toString().length == 1) {
-                "0$sMinute"
-            } else {
-                sMinute.toString()
-            }
+        fun makeFullHour(hour: Int, minute: Int): String {
+            return makeTwoCipherNumber(hour) + ":" + makeTwoCipherNumber(minute)
+        }
+
+        fun makeFullDate(year: Int, month: Int, day: Int): String {
+            return makeTwoCipherNumber(day) + "-" +
+                    makeTwoCipherNumber(month) + "-" + year
+        }
+
+        private fun makeFullDate(calendar: Calendar): String {
+            return makeFullDate(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH) + 1,
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
         }
 
         fun getCurrentDateTimeForDatabase(): String? {
@@ -80,7 +101,11 @@ class DateFormatHelper {
             return sdf.parse(date1) > sdf.parse(date2)
         }
 
-        fun isFirstDateGreaterAndEqualToSecond(date1: String, date2: String, pattern:String): Boolean {
+        fun isFirstDateGreaterAndEqualToSecond(
+            date1: String,
+            date2: String,
+            pattern: String
+        ): Boolean {
             val sdf = SimpleDateFormat(pattern, locale)
             return sdf.parse(date1) >= sdf.parse(date2)
         }

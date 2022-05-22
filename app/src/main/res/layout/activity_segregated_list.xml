@@ -32,7 +32,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/all_image" />
+                android:src="@drawable/image_square_all" />
 
             <ImageButton
                 android:id="@+id/done_image_button"
@@ -44,7 +44,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/done_image" />
+                android:src="@drawable/image_square_done" />
 
 
             <ImageButton
@@ -57,7 +57,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/undone_image" />
+                android:src="@drawable/image_square_undone" />
 
             <ImageButton
                 android:id="@+id/past_image_button"
@@ -69,7 +69,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/late_image" />
+                android:src="@drawable/image_square_late" />
 
             <ImageButton
                 android:id="@+id/future_image_button"
@@ -81,7 +81,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/future_image" />
+                android:src="@drawable/image_square_future" />
         </TableRow>
     </TableLayout>
     <ImageButton
@@ -92,15 +92,6 @@
         app:srcCompat="?android:attr/actionModeWebSearchDrawable"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tableRow" />
-
-    <ImageButton
-        android:id="@+id/refresh_button"
-        android:layout_width="@dimen/box_size"
-        android:layout_height="@dimen/box_size"
-        android:layout_marginEnd="36dp"
-        app:srcCompat="@android:drawable/stat_notify_sync_noanim"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tableRow"/>
 
     <TextView
         android:id="@+id/textView"
@@ -239,10 +230,23 @@
         android:layout_height="wrap_content"
         android:text="No rows found"
         android:textSize="50sp"
+        android:textColor="@color/selectedButtonColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageMute2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="6dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/no_rows_info"
+        app:srcCompat="@drawable/mute"
+        app:tint="@color/selectedButtonColor"
+        />
 
 
 

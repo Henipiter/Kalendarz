@@ -30,6 +30,8 @@ class ShowElemActivity : AppCompatActivity() {
     private var activityType = "ADD"
     private lateinit var textDuplicate: TextView
     private lateinit var textNextDays: TextView
+    private lateinit var textView8: TextView
+    private lateinit var textView3: TextView
     private lateinit var contentText: EditText
     private lateinit var buttonAdd: Button
     private lateinit var buttonEdit: Button
@@ -169,17 +171,17 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun setRedButtonIfDatesWrong() {
         isRedButtonSet = if (checkRightDate()) {
-            buttonEndDate.setBackgroundColor(Color.parseColor("#0FB104"))
+            textView8.setBackgroundColor(0x00000000)
             if (checkRightHour()) {
-                buttonEndTime.setBackgroundColor(Color.parseColor("#0FB104"))
+                textView3.setBackgroundColor(0x00000000)
                 false
             } else {
-                buttonEndTime.setBackgroundColor(Color.parseColor("#910000"))
+                textView3.setBackgroundColor(Color.parseColor("#910000"))
                 true
             }
         } else {
-            buttonEndDate.setBackgroundColor(Color.parseColor("#910000"))
-            buttonEndTime.setBackgroundColor(Color.parseColor("#0FB104"))
+            textView8.setBackgroundColor(Color.parseColor("#910000"))
+            textView3.setBackgroundColor(0x00000000)
             true
         }
     }
@@ -339,7 +341,8 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEndDate.text = note.end_date
         contentText.setText(note.content)
         buttonStartTime.text = note.start_time
-
+        buttonEndDate.setBackgroundResource(android.R.drawable.btn_default);
+        buttonEndTime.setBackgroundResource(android.R.drawable.btn_default);
         enableButtonIfEdit(false)
         buttonEdit.text = EDIT_INFO
         buttonDelete.text = DELETE_INFO
@@ -413,6 +416,8 @@ class ShowElemActivity : AppCompatActivity() {
         textDuplicate = findViewById(R.id.textView15)
         textNextDays = findViewById(R.id.nextDaysInfo)
         buttonDuplicate = findViewById(R.id.duplication_button)
+        textView8 = findViewById(R.id.textView8)
+        textView3 = findViewById(R.id.textView3)
 
     }
 }

@@ -24,7 +24,7 @@ import com.example.kaledarz.helpers.MyDatabaseHelper
 class MainActivity : AppCompatActivity() {
     private lateinit var calendar: CalendarView
     private lateinit var addNew: Button
-    private lateinit var buttonNotify: Button
+    private lateinit var buttonList: Button
     private lateinit var buttonSettings: Button
     private lateinit var recyclerViewEvent: RecyclerView
     private lateinit var customAdapter: CustomAdapter
@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         storeDataInArrays()
+        if (myPref.getString(Constants.ALARM_ON_OFF, "true") == "true") {
+            alarmHelper.setAlarmForNotes(noteList)
+        }
         customAdapter.notifyDataSetChanged()
     }
 
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         calendar = findViewById(R.id.calendarView)
         addNew = findViewById(R.id.add_button)
-        buttonNotify = findViewById(R.id.list_button)
+        buttonList = findViewById(R.id.list_button)
         buttonSettings = findViewById(R.id.settings_button)
         recyclerViewEvent = findViewById(R.id.recyclerViewEvent)
         noRowsInfo = findViewById(R.id.no_rows_info2)
@@ -71,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             alarmHelper.setAlarmForNotes(noteList)
         }
         customAdapter.notifyDataSetChanged()
-        buttonNotify.setOnClickListener {
+        buttonList.setOnClickListener {
             val intent = Intent(this, SegregatedListActivity::class.java)
             this.startActivity(intent)
         }

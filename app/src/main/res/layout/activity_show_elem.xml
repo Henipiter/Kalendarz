@@ -101,6 +101,13 @@
         app:layout_constraintBottom_toTopOf="@+id/duplication_number_button"
         app:layout_constraintStart_toStartOf="@+id/duplication_number_button" />
 
+    <TextView
+        android:id="@+id/nextDaysInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Duplicate in next days"
+        app:layout_constraintTop_toBottomOf="@+id/duplication_number_button"
+        app:layout_constraintStart_toStartOf="@+id/duplication_number_button" />
 
     <Button
         android:id="@+id/duplication_button"

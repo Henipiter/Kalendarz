@@ -29,6 +29,7 @@ class ShowElemActivity : AppCompatActivity() {
 
     private var activityType = "ADD"
     private lateinit var textDuplicate: TextView
+    private lateinit var textNextDays: TextView
     private lateinit var contentText: EditText
     private lateinit var buttonAdd: Button
     private lateinit var buttonEdit: Button
@@ -47,7 +48,7 @@ class ShowElemActivity : AppCompatActivity() {
     private lateinit var myDB: MyDatabaseHelper
     private var note = Note()
     private lateinit var pickerHelper: PickerHelper
-    private var isRedButtonSet=false
+    private var isRedButtonSet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         notificationHelper = NotificationHelper(this)
@@ -58,6 +59,7 @@ class ShowElemActivity : AppCompatActivity() {
         myDB = MyDatabaseHelper(this)
         pickerHelper = PickerHelper(this@ShowElemActivity)
         findViews()
+        textNextDays.text = ""
         getAndSetIntentData()
         buttonStartTime.setOnClickListener {
             pickerHelper.runTimePicker(buttonStartTime)
@@ -115,7 +117,7 @@ class ShowElemActivity : AppCompatActivity() {
             popUpManager.getNumber(
                 buttonDuplicateNumber.text.toString().toInt(),
                 layoutInflater.inflate(R.layout.number_picker, null),
-                buttonDuplicateNumber
+                buttonDuplicateNumber, buttonStartDate.text.toString(), textNextDays
             )
         }
 
@@ -298,7 +300,7 @@ class ShowElemActivity : AppCompatActivity() {
         validDatesAndAddNote()
     }
 
-    private fun validDatesAndAddNote(){
+    private fun validDatesAndAddNote() {
         setRedButtonIfDatesWrong()
         if (!isRedButtonSet) {
             note = createNote()
@@ -351,6 +353,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonAdd.visibility = View.VISIBLE
         buttonDuplicateNumber.visibility = View.VISIBLE
         textDuplicate.visibility = View.VISIBLE
+        textNextDays.visibility = View.VISIBLE
     }
 
     private fun showEditViewButton() {
@@ -361,6 +364,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonAdd.visibility = View.GONE
         buttonDuplicateNumber.visibility = View.GONE
         textDuplicate.visibility = View.GONE
+        textNextDays.visibility = View.GONE
 
     }
 
@@ -407,6 +411,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonAdd = findViewById(R.id.add_button_2)
         buttonDuplicateNumber = findViewById(R.id.duplication_number_button)
         textDuplicate = findViewById(R.id.textView15)
+        textNextDays = findViewById(R.id.nextDaysInfo)
         buttonDuplicate = findViewById(R.id.duplication_button)
 
     }

@@ -21,8 +21,12 @@ class DateFormatHelper {
         }
 
         fun getNextDayFromString(date: String): String {
+            return getNextDayFromString(date, 1)
+        }
+
+        fun getNextDayFromString(date: String, numOfDays: Int): String {
             val calendar = getCalendarFromStrings(date, "00:00")
-            calendar.add(Calendar.DAY_OF_MONTH, 1)
+            calendar.add(Calendar.DAY_OF_MONTH, numOfDays)
             return makeFullDate(calendar)
         }
 

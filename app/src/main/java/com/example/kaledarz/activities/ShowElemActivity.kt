@@ -3,6 +3,7 @@ package com.example.kaledarz.activities
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
@@ -28,6 +29,9 @@ class ShowElemActivity : AppCompatActivity() {
 
     private var activityType = "ADD"
     private lateinit var textDuplicate: TextView
+    private lateinit var textNextDays: TextView
+    private lateinit var textView8: TextView
+    private lateinit var textView3: TextView
     private lateinit var contentText: EditText
     private lateinit var buttonAdd: Button
     private lateinit var buttonEdit: Button
@@ -46,6 +50,7 @@ class ShowElemActivity : AppCompatActivity() {
     private lateinit var myDB: MyDatabaseHelper
     private var note = Note()
     private lateinit var pickerHelper: PickerHelper
+    private var isRedButtonSet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         notificationHelper = NotificationHelper(this)
@@ -56,6 +61,7 @@ class ShowElemActivity : AppCompatActivity() {
         myDB = MyDatabaseHelper(this)
         pickerHelper = PickerHelper(this@ShowElemActivity)
         findViews()
+        textNextDays.text = ""
         getAndSetIntentData()
         buttonStartTime.setOnClickListener {
             pickerHelper.runTimePicker(buttonStartTime)
@@ -105,20 +111,7 @@ class ShowElemActivity : AppCompatActivity() {
         }
 
         buttonAdd.setOnClickListener {
-            if (DateFormatHelper.isCorrectDate(
-                    buttonStartDate.text.toString(),
-                    buttonEndDate.text.toString(),
-                    buttonStartTime.text.toString(),
-                    buttonEndTime.text.toString()
-                )
-            ) {
-                note = createNote()
-                addNoteToDatabase()
-                addDuplicatedNotes()
-                finish()
-            } else {
-                showErrorDateDialog(this@ShowElemActivity)
-            }
+            validDatesAndAddNote()
         }
 
         buttonDuplicateNumber.setOnClickListener {
@@ -126,7 +119,7 @@ class ShowElemActivity : AppCompatActivity() {
             popUpManager.getNumber(
                 buttonDuplicateNumber.text.toString().toInt(),
                 layoutInflater.inflate(R.layout.number_picker, null),
-                buttonDuplicateNumber
+                buttonDuplicateNumber, buttonStartDate.text.toString(), textNextDays
             )
         }
 
@@ -176,22 +169,51 @@ class ShowElemActivity : AppCompatActivity() {
         note.id = myDB.readLastRow().id
     }
 
+    private fun setRedButtonIfDatesWrong() {
+        isRedButtonSet = if (checkRightDate()) {
+            textView8.setBackgroundColor(0x00000000)
+            if (checkRightHour()) {
+                textView3.setBackgroundColor(0x00000000)
+                false
+            } else {
+                textView3.setBackgroundColor(Color.parseColor("#910000"))
+                true
+            }
+        } else {
+            textView8.setBackgroundColor(Color.parseColor("#910000"))
+            textView3.setBackgroundColor(0x00000000)
+            true
+        }
+    }
+
+    private fun checkRightDate(): Boolean {
+        return DateFormatHelper.isEndDateGreaterAndEqualThanStartDate(
+            buttonStartDate.text.toString(),
+            buttonEndDate.text.toString()
+        )
+    }
+
+    private fun checkRightHour(): Boolean {
+        return DateFormatHelper.isEndDateEqualToStartDate(
+            buttonStartDate.text.toString(),
+            buttonStartDate.text.toString()
+        ) && DateFormatHelper.isEndTimeGreaterThanStartTime(
+            buttonStartTime.text.toString(),
+            buttonEndTime.text.toString()
+        ) || DateFormatHelper.isEndDateGreaterThanStartDate(
+            buttonStartDate.text.toString(),
+            buttonEndDate.text.toString()
+        )
+    }
 
     private fun showErrorDateDialog(c: Context) {
         var messageError = ""
-        if (!DateFormatHelper.isEndDateGreaterThanStartDate(
-                buttonStartDate.text.toString(),
-                buttonEndDate.text.toString()
-            )
-        ) {
+        if (!checkRightDate()) {
             messageError = "Start date is later than end date"
         }
-        if (!DateFormatHelper.isEndTimeGreaterThanStartTime(
-                buttonStartTime.text.toString(),
-                buttonEndTime.text.toString()
-            )
+        if (!checkRightHour()
         ) {
-            messageError = "End time is not later than start date"
+            messageError = "End time is not later than start time"
         }
         val dialog: AlertDialog = AlertDialog.Builder(c)
             .setTitle("Date error")
@@ -277,10 +299,19 @@ class ShowElemActivity : AppCompatActivity() {
 
     private fun editNoteAndExit() {
         deleteNoteAndAlarm()
-        note = createNote()
-        addNoteToDatabase()
-        enableButtonIfSave()
-        finish()
+        validDatesAndAddNote()
+    }
+
+    private fun validDatesAndAddNote() {
+        setRedButtonIfDatesWrong()
+        if (!isRedButtonSet) {
+            note = createNote()
+            addNoteToDatabase()
+            addDuplicatedNotes()
+            finish()
+        } else {
+            showErrorDateDialog(this@ShowElemActivity)
+        }
     }
 
     private fun setHoursOnButtons() {
@@ -310,7 +341,8 @@ class ShowElemActivity : AppCompatActivity() {
         buttonEndDate.text = note.end_date
         contentText.setText(note.content)
         buttonStartTime.text = note.start_time
-
+        buttonEndDate.setBackgroundResource(android.R.drawable.btn_default);
+        buttonEndTime.setBackgroundResource(android.R.drawable.btn_default);
         enableButtonIfEdit(false)
         buttonEdit.text = EDIT_INFO
         buttonDelete.text = DELETE_INFO
@@ -324,6 +356,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonAdd.visibility = View.VISIBLE
         buttonDuplicateNumber.visibility = View.VISIBLE
         textDuplicate.visibility = View.VISIBLE
+        textNextDays.visibility = View.VISIBLE
     }
 
     private fun showEditViewButton() {
@@ -334,6 +367,7 @@ class ShowElemActivity : AppCompatActivity() {
         buttonAdd.visibility = View.GONE
         buttonDuplicateNumber.visibility = View.GONE
         textDuplicate.visibility = View.GONE
+        textNextDays.visibility = View.GONE
 
     }
 
@@ -380,7 +414,10 @@ class ShowElemActivity : AppCompatActivity() {
         buttonAdd = findViewById(R.id.add_button_2)
         buttonDuplicateNumber = findViewById(R.id.duplication_number_button)
         textDuplicate = findViewById(R.id.textView15)
+        textNextDays = findViewById(R.id.nextDaysInfo)
         buttonDuplicate = findViewById(R.id.duplication_button)
+        textView8 = findViewById(R.id.textView8)
+        textView3 = findViewById(R.id.textView3)
 
     }
 }

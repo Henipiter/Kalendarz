@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Henryk/AppData/Local/Android/Sdk/platforms/android-30/data/res/drawable/btn_default.xml" value="0.1405" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.112" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/all_image.xml" value="0.1375" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/drawable/app_icon_foreground.xml" value="0.1485" />
@@ -25,7 +26,7 @@
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/activity_sleep_time.xml" value="0.17525773195876287" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/list_manager_button.xml" value="0.2" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/my_row.xml" value="0.36198662846227314" />
-        <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/number_picker.xml" value="0.1" />
+        <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/number_picker.xml" value="0.264" />
         <entry key="..\:/Users/Henryk/Desktop/Kalendarz/app/src/main/res/layout/test_alert.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Henryk/Desktop/studia/Kalendarz/app/src/main/res/layout/activity_add_event.xml" value="0.2" />
         <entry key="..\:/Users/Henryk/Desktop/studia/Kalendarz/app/src/main/res/layout/activity_main.xml" value="0.4" />

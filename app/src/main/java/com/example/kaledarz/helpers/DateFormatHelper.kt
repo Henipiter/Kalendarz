@@ -21,9 +21,18 @@ class DateFormatHelper {
         }
 
         fun getNextDayFromString(date: String): String {
+            return getNextDayFromString(date, 1)
+        }
+
+        fun getNextDayFromString(date: String, numOfDays: Int): String {
             val calendar = getCalendarFromStrings(date, "00:00")
-            calendar.add(Calendar.DAY_OF_MONTH, 1)
+            calendar.add(Calendar.DAY_OF_MONTH, numOfDays)
             return makeFullDate(calendar)
+        }
+
+        fun isEndDateGreaterAndEqualThanStartDate(startDate: String, endDate: String): Boolean {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
+            return sdf.parse(startDate) <= sdf.parse(endDate)
         }
 
         fun isEndDateGreaterThanStartDate(startDate: String, endDate: String): Boolean {
@@ -31,7 +40,7 @@ class DateFormatHelper {
             return sdf.parse(startDate) < sdf.parse(endDate)
         }
 
-        private fun isEndDateEqualToStartDate(startDate: String, endDate: String): Boolean {
+        fun isEndDateEqualToStartDate(startDate: String, endDate: String): Boolean {
             val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
             return sdf.parse(startDate) == sdf.parse(endDate)
         }

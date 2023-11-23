@@ -67,7 +67,7 @@ class AlarmHelper(private val context: Context) {
 
 
         if (myPref.getString(Constants.ALARM_EXACT, "false") == "false") {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
         } else {
             alarmManager.setAlarmClock(
                 AlarmManager.AlarmClockInfo(c.timeInMillis, pendingIntent),

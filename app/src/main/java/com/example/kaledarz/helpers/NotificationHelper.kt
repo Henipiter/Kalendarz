@@ -50,8 +50,7 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
-            .addAction(R.drawable.all, "GO TO NOTE", getPendingIntentToNote(id))
-            .addAction(R.drawable.all, "GO TO APP", getPendingIntentToMain(id))
+            .setContentIntent(getPendingIntentToNote(id))
 
         with(NotificationManagerCompat.from(this)) {
             notify(id, builder.build())

@@ -85,8 +85,7 @@ class DateFormatHelper {
         }
 
         fun makeFullDate(year: Int, month: Int, day: Int): String {
-            return makeTwoCipherNumber(day) + "-" +
-                    makeTwoCipherNumber(month) + "-" + year
+            return makeTwoCipherNumber(day) + "-" + makeTwoCipherNumber(month) + "-" + year
         }
 
         private fun makeFullDate(calendar: Calendar): String {

@@ -97,8 +97,8 @@ class AlarmSettingActivity : AppCompatActivity() {
 
     private fun getInfoForOnOff(value: Boolean): String {
         if (value) {
-            return "Alarms are turn on"
+            return "Alarms are turned on"
         }
-        return "Alarms are turn off"
+        return "Alarms are turned off"
     }
 }

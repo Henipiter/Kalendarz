@@ -62,10 +62,10 @@
 
     <Button
         android:id="@+id/done_button_2"
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:width="200dp"
+        android:layout_marginHorizontal="100dp"
         android:text="@string/button_done"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,10 +73,10 @@
 
     <Button
         android:id="@+id/add_button_2"
-        android:layout_width="180dp"
+        android:layout_width="0dp"
+        android:layout_marginHorizontal="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:width="200dp"
         android:text="@string/button_add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -84,12 +84,12 @@
 
     <Button
         android:id="@+id/duplication_number_button"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginStart="32dp"
-        android:width="200dp"
+        android:paddingHorizontal="50dp"
         android:text="0"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_button_2" />
 
@@ -99,6 +99,7 @@
         android:layout_height="wrap_content"
         android:text="Duplicate in next days"
         app:layout_constraintBottom_toTopOf="@+id/duplication_number_button"
+        app:layout_constraintEnd_toEndOf="@+id/duplication_number_button"
         app:layout_constraintStart_toStartOf="@+id/duplication_number_button" />
 
     <TextView
@@ -106,13 +107,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Duplicate in next days"
-        app:layout_constraintTop_toBottomOf="@+id/duplication_number_button"
-        app:layout_constraintStart_toStartOf="@+id/duplication_number_button" />
+        app:layout_constraintEnd_toEndOf="@+id/duplication_number_button"
+        app:layout_constraintStart_toStartOf="@+id/duplication_number_button"
+        app:layout_constraintTop_toBottomOf="@+id/duplication_number_button" />
 
     <Button
         android:id="@+id/duplication_button"
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="100dp"
         android:layout_marginTop="24dp"
         android:width="200dp"
         android:text="Duplicate"
@@ -120,26 +123,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_button_2" />
 
+    <Space
+        android:id="@+id/space"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/edit_button_2"
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp"
-        android:width="200dp"
         android:text="@string/button_edit"
         app:layout_constraintBottom_toTopOf="@+id/done_button_2"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/space"/>
 
     <Button
         android:id="@+id/delete_button_2"
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp"
-        android:width="200dp"
         android:text="@string/button_delete"
         app:layout_constraintBottom_toTopOf="@+id/done_button_2"
+        app:layout_constraintStart_toStartOf="@id/space"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView

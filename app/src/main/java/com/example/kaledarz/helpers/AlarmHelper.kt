@@ -1,5 +1,6 @@
 package com.example.kaledarz.helpers
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -51,6 +52,7 @@ class AlarmHelper(private val context: Context) {
         notificationHelper.deleteNotification(id.toInt())
     }
 
+    @SuppressLint("ScheduleExactAlarm")
     private fun startAlarm(c: Calendar, note: Note, mode: String) {
         val alarmManager = context.getSystemService(AppCompatActivity.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
@@ -63,7 +65,7 @@ class AlarmHelper(private val context: Context) {
             id *= -1
         }
         val pendingIntent =
-            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
 
         if (myPref.getString(Constants.ALARM_EXACT, "false") == "false") {
@@ -89,7 +91,7 @@ class AlarmHelper(private val context: Context) {
             context,
             id.toInt(),
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.cancel(pendingIntent)
     }

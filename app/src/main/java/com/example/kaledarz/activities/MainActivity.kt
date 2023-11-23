@@ -3,13 +3,19 @@ package com.example.kaledarz.activities
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -97,6 +103,14 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("date", chooseDate)
             this.startActivity(intent)
         }
+
+        if (!allPermissionsGranted()) {
+            requestAppPermissions()
+        }
+    }
+
+    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -132,5 +146,42 @@ class MainActivity : AppCompatActivity() {
             if (isAboveStart && isUnderEnd)
                 noteList.add(note)
         }
+    }
+
+    private fun requestAppPermissions() {
+        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+
+    }
+
+    private val activityResultLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        )
+        { permissions ->
+            var permissionGranted = true
+            permissions.entries.forEach {
+                if (it.key in REQUIRED_PERMISSIONS && !it.value)
+                    permissionGranted = false
+            }
+            if (!permissionGranted) {
+                Toast.makeText(
+                    this,
+                    "Permission request denied",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+    companion object {
+        private const val TAG = "Notifications"
+
+
+        private val REQUIRED_PERMISSIONS =
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mutableListOf(android.Manifest.permission.POST_NOTIFICATIONS).toTypedArray()
+            } else {
+                arrayOf()
+            }
     }
 }

@@ -136,14 +136,18 @@ class SettingsActivity : AppCompatActivity() {
 
 
     private fun exportDatabase() {
-        val sb = StringBuilder()
+//        val mapper = ObjectMapper()
+//        val serialized = mapper.writeValueAsString(originalList)
 
-        for (note in originalList) {
-            sb.append(note.export())
-        }
-        val finalString = sb.toString().replace(" ", "_")
+        val serialized = "dwa"
+//        val sb = StringBuilder()
+//
+//        for (note in originalList) {
+//            sb.append(note.export())
+//        }
+//        val finalString = sb.toString().replace(" ", "_")
 
-        if (sb.isEmpty()) {
+        if (serialized.isEmpty()) {
             val dialog: AlertDialog = AlertDialog.Builder(this)
                 .setTitle("Exporting failure")
                 .setMessage("Nothing to export")
@@ -153,10 +157,10 @@ class SettingsActivity : AppCompatActivity() {
         } else {
             val dialog: AlertDialog = AlertDialog.Builder(this)
                 .setTitle("Exporting success")
-                .setMessage(finalString)
+                .setMessage(serialized)
                 .setNegativeButton("OK", null)
                 .setNeutralButton("COPY") { dialog, which ->
-                    copyToClipboard(sb.toString())
+                    copyToClipboard(serialized.toString())
                     Toast.makeText(this, "Text copied to clipboard", Toast.LENGTH_SHORT).show()
                 }
                 .create()

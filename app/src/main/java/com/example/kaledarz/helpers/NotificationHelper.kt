@@ -1,23 +1,27 @@
 package com.example.kaledarz.helpers
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.R
-import com.example.kaledarz.activities.MainActivity
 import com.example.kaledarz.activities.ShowElemActivity
 
 class NotificationHelper(base: Context) : ContextWrapper(base) {
-
+    private val context = base
     private val CHANNEL_ID = "channelID"
 
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = getString(R.string.channel_name)
@@ -52,10 +56,15 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
             .setOngoing(true)
             .setContentIntent(getPendingIntentToNote(id))
 
-        with(NotificationManagerCompat.from(this)) {
-            notify(id, builder.build())
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            with(NotificationManagerCompat.from(this)) {
+                notify(id, builder.build())
+            }
         }
     }
+
 
     private fun getPendingIntentToNote(id: Int): PendingIntent {
         val intentToNote = Intent(this, ShowElemActivity::class.java).apply {
@@ -63,14 +72,12 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
         }
         intentToNote.putExtra("type", "EDIT")
         intentToNote.putExtra("id", id.toString())
-        return PendingIntent.getActivity(this, id, intentToNote, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
-
-    fun getPendingIntentToMain(id: Int): PendingIntent {
-        val intentToNote = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        return PendingIntent.getActivity(this, id, intentToNote, PendingIntent.FLAG_IMMUTABLE)
+        return PendingIntent.getActivity(
+            this,
+            id,
+            intentToNote,
+            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     fun deleteNotification(id: Int) {

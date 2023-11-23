@@ -3,6 +3,7 @@
     package="com.example.kaledarz">
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/app_icon"
@@ -23,7 +24,8 @@
             android:name=".activities.SegregatedListActivity"
             android:exported="false" />
         <activity android:name=".activities.ShowElemActivity" />
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

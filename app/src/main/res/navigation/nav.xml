@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav"
+    app:startDestination="@id/calendarFragment">
+
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.example.kaledarz.activities.CalendarFragment"
+        android:label="fragment_calendar"
+        tools:layout="@layout/fragment_calendar">
+        <action
+            android:id="@+id/action_calendarFragment_to_elementFragment"
+            app:destination="@id/elementFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.kaledarz.activities.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_alarmSettingFragment"
+            app:destination="@id/alarmSettingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.example.kaledarz.activities.ListFragment"
+        android:label="fragment_list"
+        tools:layout="@layout/fragment_list">
+        <action
+            android:id="@+id/action_listFragment_to_elementFragment"
+            app:destination="@id/elementFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/alarmSettingFragment"
+        android:name="com.example.kaledarz.activities.AlarmSettingFragment"
+        android:label="fragment_alarm_setting"
+        tools:layout="@layout/fragment_alarm_setting" />
+    <fragment
+        android:id="@+id/elementFragment"
+        android:name="com.example.kaledarz.activities.ElementFragment"
+        android:label="fragment_element"
+        tools:layout="@layout/fragment_element">
+        <action
+            android:id="@+id/action_elementFragment_self"
+            app:destination="@id/elementFragment" />
+
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="type"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="date"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="start_date"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="end_date"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="start_time"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="end_time"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="content"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+</navigation>

@@ -1,63 +1,73 @@
 package com.example.kaledarz.activities
 
 import android.app.AlertDialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.Navigation
+import com.example.kaledarz.helpers.ApplicationContext
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
+import com.example.kaledarz.databinding.FragmentSettingsBinding
 import com.example.kaledarz.helpers.AlarmHelper
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
-    private lateinit var buttonExport: Button
-    private lateinit var buttonImport: Button
-    private lateinit var buttonClear: Button
-    private lateinit var buttonAlarm: Button
+
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var databaseHelper: MyDatabaseHelper
     private var originalList = ArrayList<Note>()
+    private  var alarmHelper: AlarmHelper? = null
 
     private var invalidRowsInfo = ""
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
-        buttonExport = findViewById(R.id.export_button)
-        buttonImport = findViewById(R.id.import_button)
-        buttonClear = findViewById(R.id.clear_button)
-        buttonAlarm = findViewById(R.id.sleep_alarms)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        databaseHelper = MyDatabaseHelper(this)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ApplicationContext.context?.let {
+            alarmHelper = AlarmHelper(it)
+        }
+        databaseHelper = MyDatabaseHelper(requireContext())
+
         originalList.addAll(databaseHelper.readAllData())
 
-        buttonExport.setOnClickListener {
+        binding.exportButton.setOnClickListener {
             exportDatabase()
         }
-        buttonImport.setOnClickListener {
+        binding.importButton.setOnClickListener {
             importDatabase()
         }
-        buttonClear.setOnClickListener {
+        binding.clearButton.setOnClickListener {
             deleteAllRows()
         }
-        buttonAlarm.setOnClickListener {
-            val intent = Intent(this, AlarmSettingActivity::class.java)
-            this.startActivity(intent)
+        binding.sleepAlarms.setOnClickListener {
+            Navigation.findNavController(it)
+                .navigate(R.id.action_settingsFragment_to_alarmSettingFragment)
         }
     }
 
     private fun importDatabase() {
         var dialog: AlertDialog? = null
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(requireContext())
         val view = layoutInflater.inflate(R.layout.test_alert, null)
         val title: TextView = view.findViewById(R.id.title)
         val content: EditText = view.findViewById(R.id.edit_text)
@@ -70,7 +80,7 @@ class SettingsActivity : AppCompatActivity() {
             if (isValid) {
                 dialog?.dismiss()
             } else {
-                val dialogFailure: AlertDialog = AlertDialog.Builder(this)
+                val dialogFailure: AlertDialog = AlertDialog.Builder(requireContext())
                     .setTitle("Importing failure")
                     .setMessage("Given rows are invalid: $invalidRowsInfo")
                     .setNegativeButton("OK", null)
@@ -148,20 +158,20 @@ class SettingsActivity : AppCompatActivity() {
 //        val finalString = sb.toString().replace(" ", "_")
 
         if (serialized.isEmpty()) {
-            val dialog: AlertDialog = AlertDialog.Builder(this)
+            val dialog: AlertDialog = AlertDialog.Builder(requireContext())
                 .setTitle("Exporting failure")
                 .setMessage("Nothing to export")
                 .setNegativeButton("OK", null)
                 .create()
             dialog.show()
         } else {
-            val dialog: AlertDialog = AlertDialog.Builder(this)
+            val dialog: AlertDialog = AlertDialog.Builder(requireContext())
                 .setTitle("Exporting success")
                 .setMessage(serialized)
                 .setNegativeButton("OK", null)
                 .setNeutralButton("COPY") { dialog, which ->
                     copyToClipboard(serialized.toString())
-                    Toast.makeText(this, "Text copied to clipboard", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Text copied to clipboard", Toast.LENGTH_SHORT).show()
                 }
                 .create()
             dialog.show()
@@ -169,25 +179,23 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun copyToClipboard(text: String) {
-        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("label", text)
-        clipboard.setPrimaryClip(clip)
+        Toast.makeText(requireContext(), "Feature is not handled", Toast.LENGTH_SHORT).show()
+
+//        val clipboard = getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
+//        val clip = ClipData.newPlainText("label", text)
+//        clipboard.setPrimaryClip(clip)
     }
 
     private fun deleteAllRows() {
-        val dialog: AlertDialog = AlertDialog.Builder(this)
+        val dialog: AlertDialog = AlertDialog.Builder(requireContext())
             .setTitle("Delete all notes")
             .setMessage("Are you sure to delete all notes?")
             .setNegativeButton("CANCEL", null)
             .setNeutralButton("CLEAR") { dialog, which ->
-                val alarmHelper = AlarmHelper(applicationContext)
-                alarmHelper.unsetAlarmForNotes(originalList)
-                databaseHelper.deleteAllRows()
-                Toast.makeText(this, "All notes has been deleted", Toast.LENGTH_SHORT).show()
 
-                finish()
-                val homepage = Intent(this, MainActivity::class.java)
-                startActivity(homepage)
+                alarmHelper?.unsetAlarmForNotes(originalList)
+                databaseHelper.deleteAllRows()
+                Toast.makeText(requireContext(), "All notes has been deleted", Toast.LENGTH_SHORT).show()
             }
             .create()
         dialog.show()

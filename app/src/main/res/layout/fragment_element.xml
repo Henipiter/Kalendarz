@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ShowElemActivity">
+    tools:context=".activities.ElementFragment">
 
     <Button
-        android:id="@+id/date_button_2"
+        android:id="@+id/start_date_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -17,17 +17,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/date_button_3"
+        android:id="@+id/end_date_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:text="@string/button_end_date"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_button_2" />
+        app:layout_constraintTop_toBottomOf="@id/start_date_button" />
 
     <Button
-        android:id="@+id/start_time_button_2"
+        android:id="@+id/start_time_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -37,17 +37,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/end_time_button_"
+        android:id="@+id/end_time_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:text="@string/button_end_time"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/start_time_button_2" />
+        app:layout_constraintTop_toBottomOf="@id/start_time_button" />
 
     <EditText
-        android:id="@+id/contentText_2"
+        android:id="@+id/contentText"
         android:layout_width="351dp"
         android:layout_height="227dp"
         android:layout_marginStart="32dp"
@@ -58,10 +58,10 @@
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/end_time_button_" />
+        app:layout_constraintTop_toBottomOf="@+id/end_time_button" />
 
     <Button
-        android:id="@+id/done_button_2"
+        android:id="@+id/done_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -72,7 +72,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/add_button_2"
+        android:id="@+id/add_button"
         android:layout_width="0dp"
         android:layout_marginHorizontal="100dp"
         android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
         android:text="@string/button_add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contentText_2" />
+        app:layout_constraintTop_toBottomOf="@+id/contentText" />
 
     <Button
         android:id="@+id/duplication_number_button"
@@ -91,10 +91,10 @@
         android:text="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_button_2" />
+        app:layout_constraintTop_toBottomOf="@+id/add_button" />
 
     <TextView
-        android:id="@+id/textView15"
+        android:id="@+id/duplicate_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Duplicate in next days"
@@ -121,7 +121,7 @@
         android:text="Duplicate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_button_2" />
+        app:layout_constraintTop_toBottomOf="@+id/add_button" />
 
     <Space
         android:id="@+id/space"
@@ -133,75 +133,74 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/edit_button_2"
+        android:id="@+id/edit_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp"
         android:text="@string/button_edit"
-        app:layout_constraintBottom_toTopOf="@+id/done_button_2"
+        app:layout_constraintBottom_toTopOf="@+id/done_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/space"/>
 
     <Button
-        android:id="@+id/delete_button_2"
+        android:id="@+id/delete_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp"
         android:text="@string/button_delete"
-        app:layout_constraintBottom_toTopOf="@+id/done_button_2"
+        app:layout_constraintBottom_toTopOf="@+id/done_button"
         app:layout_constraintStart_toStartOf="@id/space"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/startDateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="0dp"
         android:text="@string/start_date"
-        app:layout_constraintBottom_toTopOf="@+id/date_button_2"
+        app:layout_constraintBottom_toTopOf="@+id/start_date_button"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/endDateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="0dp"
         android:text="@string/end_date"
-        app:layout_constraintBottom_toTopOf="@+id/date_button_3"
+        app:layout_constraintBottom_toTopOf="@+id/end_date_button"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/startTimeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="0dp"
         android:text="@string/start_time"
-        app:layout_constraintBottom_toTopOf="@+id/start_time_button_2"
+        app:layout_constraintBottom_toTopOf="@+id/start_time_button"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/endTimeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="0dp"
         android:text="@string/end_time"
-        app:layout_constraintBottom_toTopOf="@+id/end_time_button_"
+        app:layout_constraintBottom_toTopOf="@+id/end_time_button"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="0dp"
         android:text="@string/remind_about"
-        app:layout_constraintBottom_toTopOf="@+id/contentText_2"
+        app:layout_constraintBottom_toTopOf="@+id/contentText"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

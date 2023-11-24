@@ -6,16 +6,17 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavDeepLinkBuilder
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.R
-import com.example.kaledarz.activities.ShowElemActivity
+import com.example.kaledarz.activities.MainActivity
 
 class NotificationHelper(base: Context) : ContextWrapper(base) {
     private val context = base
@@ -67,17 +68,16 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
 
 
     private fun getPendingIntentToNote(id: Int): PendingIntent {
-        val intentToNote = Intent(this, ShowElemActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        intentToNote.putExtra("type", "EDIT")
-        intentToNote.putExtra("id", id.toString())
-        return PendingIntent.getActivity(
-            this,
-            id,
-            intentToNote,
-            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        val bundle = Bundle()
+        bundle.putString("type", "EDIT")
+        bundle.putString("id", id.toString())
+
+        return NavDeepLinkBuilder(context)
+            .setComponentName(MainActivity::class.java)
+            .setGraph(R.navigation.nav)
+            .setDestination(R.id.elementFragment)
+            .setArguments(bundle)
+            .createPendingIntent()
     }
 
     fun deleteNotification(id: Int) {

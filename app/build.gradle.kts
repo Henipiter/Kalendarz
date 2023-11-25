@@ -41,7 +41,7 @@ android {
 
 dependencies {
 
-//    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0")
 
 
     implementation ("androidx.core:core-ktx:1.12.0")

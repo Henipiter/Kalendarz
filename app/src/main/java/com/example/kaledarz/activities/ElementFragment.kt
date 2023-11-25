@@ -72,7 +72,7 @@ class ElementFragment : Fragment() {
 
         binding.nextDaysInfo.text = ""
         getAndSetIntentData()
-        binding.toolbar.setNavigationOnClickListener { view ->
+        binding.toolbar.setNavigationOnClickListener { _ ->
             when (activityType) {
                 "EDIT" -> {
                     if (binding.doneButton.isEnabled == true) {

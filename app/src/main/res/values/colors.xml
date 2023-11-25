@@ -15,4 +15,6 @@
     <color name="buttonColor">@color/gray</color>
     <color name="selectedButtonColor">@color/lightGray</color>
     <color name="buttonColorRed">@color/red</color>
+    <color name="navigationGrayBackground">#2D2D2D</color>
+    <color name="navigationGrayFont">#AAAAAA</color>
 </resources>

@@ -8,6 +8,7 @@
         android:layout_height="wrap_content"
         android:title="Edit"
         android:icon="@drawable/edit"
+        android:iconTint="@color/white"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/duplicate"
@@ -15,6 +16,7 @@
         android:layout_height="wrap_content"
         android:title="Duplicate"
         android:icon="@drawable/copy"
+        android:iconTint="@color/white"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/delete"
@@ -22,5 +24,6 @@
         android:layout_height="wrap_content"
         android:title="Delete"
         android:icon="@drawable/delete"
+        android:iconTint="@color/white"
         app:showAsAction="ifRoom" />
 </menu>

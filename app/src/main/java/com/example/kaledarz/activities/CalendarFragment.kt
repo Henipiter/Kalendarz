@@ -50,6 +50,8 @@ class CalendarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.toolbar.inflateMenu(R.menu.top_menu_calendar)
+
         myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
         alarmHelper = AlarmHelper(requireContext())
 
@@ -87,7 +89,7 @@ class CalendarFragment : Fragment() {
             customAdapter.notifyDataSetChanged()
         }
 
-        binding.topAppBar.setOnMenuItemClickListener {
+        binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.add -> {
                     val action = CalendarFragmentDirections.actionCalendarFragmentToElementFragment(

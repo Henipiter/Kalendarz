@@ -8,6 +8,7 @@
         android:layout_height="wrap_content"
         android:title="Clear filter"
         android:icon="@drawable/clear_filter"
+        android:iconTint="@color/white"
         android:visible="false"
         app:showAsAction="always" />
     <item
@@ -16,5 +17,6 @@
         android:layout_height="wrap_content"
         android:title="Filter"
         android:icon="@drawable/filter"
+        android:iconTint="@color/white"
         app:showAsAction="always" />
 </menu>

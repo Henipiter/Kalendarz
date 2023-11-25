@@ -1,6 +1,9 @@
 package com.example.kaledarz.activities
 
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context.CLIPBOARD_SERVICE
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,6 +25,8 @@ import com.example.kaledarz.helpers.AlarmHelper
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 import com.example.kaledarz.helpers.PickerHelper
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 
 class SettingsFragment : Fragment() {
 
@@ -132,6 +137,12 @@ class SettingsFragment : Fragment() {
             val isValid = validateImportText(content.text.toString())
             if (isValid) {
                 dialog?.dismiss()
+
+                originalList.forEach {
+                    databaseHelper.addGame(it)
+                }
+
+
             } else {
                 val dialogFailure: AlertDialog = AlertDialog.Builder(requireContext())
                     .setTitle("Importing failure")
@@ -152,64 +163,41 @@ class SettingsFragment : Fragment() {
         if (importText.isEmpty()) {
             return false
         }
-        val rows = importText.split("``\n``")
-
+        val mapper = ObjectMapper()
         val sb = StringBuilder()
-        for (i in rows.indices) {
-            if (rows[i] != "" && !validateRow(rows[i])) {
-                sb.append(i)
+        originalList = mapper.readValue(importText)
+        for ((index, note) in originalList.withIndex()) {
+            if (!validateNote(note)) {
+                sb.append(index)
                 sb.append(",")
             }
         }
-        invalidRowsInfo = sb.substring(0, sb.length - 1).toString()
+        invalidRowsInfo = sb.toString()
         return invalidRowsInfo.isEmpty()
-
     }
 
-    private fun validateRow(row: String): Boolean {
-        val fields = row.split("`")
-        if (fields.size != 7) {
+    private fun validateNote(note: Note): Boolean {
+        if (!DateFormatHelper.validate(note.start_date, "dd-MM-yyyy")) {
             return false
         }
-        if (!DateFormatHelper.validate(fields[0], "dd-MM-yyyy")) {
+        if (!DateFormatHelper.validate(note.end_date, "dd-MM-yyyy")) {
             return false
         }
-        if (!DateFormatHelper.validate(fields[1], "dd-MM-yyyy")) {
+        if (!DateFormatHelper.validate(note.start_time, "HH:mm")) {
             return false
         }
-        if (!DateFormatHelper.validate(fields[2], "HH:mm")) {
+        if (!DateFormatHelper.validate(note.start_time, "HH:mm")) {
             return false
         }
-        if (!DateFormatHelper.validate(fields[3], "HH:mm")) {
-            return false
-        }
-        if (!DateFormatHelper.validate(fields[3], "HH:mm")) {
-            return false
-        }
-        if (fields[4] == "false" || fields[4] == "true") {
-            return false
-        }
-        if (fields[5] == Status.UNDONE.name || fields[5] == Status.DONE.name ||
-            fields[5] == Status.PAST.name || fields[5] == Status.FUTURE.name
-        ) {
+        if (!Status.values().map { it.name }.contains(note.status.name)) {
             return false
         }
         return true
     }
 
-
     private fun exportDatabase() {
-//        val mapper = ObjectMapper()
-//        val serialized = mapper.writeValueAsString(originalList)
-
-        val serialized = "dwa"
-//        val sb = StringBuilder()
-//
-//        for (note in originalList) {
-//            sb.append(note.export())
-//        }
-//        val finalString = sb.toString().replace(" ", "_")
-
+        val mapper = ObjectMapper()
+        val serialized = mapper.writeValueAsString(originalList)
         if (serialized.isEmpty()) {
             val dialog: AlertDialog = AlertDialog.Builder(requireContext())
                 .setTitle("Exporting failure")
@@ -222,9 +210,13 @@ class SettingsFragment : Fragment() {
                 .setTitle("Exporting success")
                 .setMessage(serialized)
                 .setNegativeButton("OK", null)
-                .setNeutralButton("COPY") { dialog, which ->
+                .setNeutralButton("COPY") { _, _ ->
                     copyToClipboard(serialized.toString())
-                    Toast.makeText(requireContext(), "Text copied to clipboard", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        requireContext(),
+                        "Text copied to clipboard",
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
                 .create()
@@ -234,10 +226,9 @@ class SettingsFragment : Fragment() {
 
     private fun copyToClipboard(text: String) {
         Toast.makeText(requireContext(), "Feature is not handled", Toast.LENGTH_SHORT).show()
-
-//        val clipboard = getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
-//        val clip = ClipData.newPlainText("label", text)
-//        clipboard.setPrimaryClip(clip)
+        val clipboard = activity?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("label", text)
+        clipboard.setPrimaryClip(clip)
     }
 
     private fun deleteAllRows() {
@@ -249,7 +240,11 @@ class SettingsFragment : Fragment() {
 
                 alarmHelper?.unsetAlarmForNotes(originalList)
                 databaseHelper.deleteAllRows()
-                Toast.makeText(requireContext(), "All notes has been deleted", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    requireContext(),
+                    "All notes has been deleted",
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
             .create()

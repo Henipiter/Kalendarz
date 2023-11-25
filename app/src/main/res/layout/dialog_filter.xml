@@ -15,35 +15,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lower_start_date_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="20dp"
         android:hint="Lower start date"
-        app:endIconDrawable="@drawable/date"
         app:endIconMode="custom"
+        app:endIconDrawable="@drawable/date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:startIconDrawable="@drawable/clear">
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/lower_start_date_input"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:inputType="date"
-            android:padding="13dp"
-            tools:ignore="LabelFor" />
+            android:inputType="date" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/upper_start_date_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
@@ -56,21 +54,18 @@
         app:layout_constraintTop_toBottomOf="@id/lower_start_date_layout"
         app:startIconDrawable="@drawable/clear">
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/upper_start_date_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:inputType="date"
-            android:padding="13dp"
-            tools:ignore="LabelFor" />
+            android:inputType="date" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lower_end_date_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
@@ -83,19 +78,16 @@
         app:layout_constraintTop_toBottomOf="@id/upper_start_date_layout"
         app:startIconDrawable="@drawable/clear">
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/lower_end_date_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:inputType="date"
-            android:padding="13dp"
-            tools:ignore="LabelFor" />
+            android:inputType="date" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/upper_end_date_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
@@ -108,37 +100,34 @@
         app:layout_constraintTop_toBottomOf="@id/lower_end_date_layout"
         app:startIconDrawable="@drawable/clear">
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/upper_end_date_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:inputType="date"
-            android:padding="13dp"
-            tools:ignore="LabelFor" />
+            android:inputType="date" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/content_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="20dp"
         android:hint="Content"
+        app:startIconDrawable="@drawable/clear"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/upper_end_date_layout">
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/content_input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textMultiLine"
-            android:padding="13dp"
-            tools:ignore="LabelFor" />
+            android:inputType="textMultiLine" />
     </com.google.android.material.textfield.TextInputLayout>
     <Button
         android:id="@+id/confirm_button"

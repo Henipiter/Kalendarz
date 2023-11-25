@@ -13,8 +13,6 @@
         android:background="@color/green_700"
         app:titleTextColor="@color/white"
         app:title="Title"
-        app:titleMarginStart="30dp"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -47,6 +47,7 @@ class FilterDialog(
         binding.upperStartDateInput.setText(dateFilter.upperStartDate)
         binding.lowerEndDateInput.setText(dateFilter.lowerEndDate)
         binding.upperEndDateInput.setText(dateFilter.upperEndDate)
+        binding.contentInput.setText(dateFilter.content)
 
         pickerHelper = PickerHelper(requireContext())
 

@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">Kaledarz</string>
-    <string name="channel_description">desc</string>
-    <string name="channel_name">nazwa</string>
+    <string name="app_name">Calendar</string>
+    <string name="channel_description">Notifications of notes in calendar</string>
+    <string name="channel_name">Notifications</string>
     <string name="saved_high_score_key">ee</string>
     <string name="button_export">Export</string>
     <string name="button_import">Import</string>
-    <string name="button_clear_data">Clear whole calendar</string>
+    <string name="button_clear_data">Clear data</string>
     <string name="button_alarm_setting">Alarm</string>
     <string name="button_confirm">Confirm</string>
     <string name="button_start_date">2020–07–09</string>
@@ -32,7 +32,7 @@
     <string name="end_sleep_mode">End sleep mode</string>
     <string name="start_sleep_mode">Start sleep mode</string>
     <string name="time">Time</string>
-    <string name="alarm_are_turn_off">Alarm are turn off</string>
+    <string name="alarm_are_turn_off">Alarm are turned off</string>
     <string name="title">Title</string>
     <string name="done">Done</string>
     <string name="alarm_inexact">Alarm inexact</string>

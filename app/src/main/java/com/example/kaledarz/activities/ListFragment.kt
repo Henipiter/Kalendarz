@@ -11,12 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.DateFilter
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
 import com.example.kaledarz.databinding.FragmentListBinding
+import com.example.kaledarz.helpers.AlarmHelper
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 
@@ -30,6 +32,7 @@ class ListFragment : Fragment() {
     private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
     private var dateFilter = DateFilter()
+    private var alarmHelper: AlarmHelper? = null
 
     private var originalList = ArrayList<Note>()
     private var showList = ArrayList<Note>()
@@ -54,10 +57,35 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
         databaseHelper = MyDatabaseHelper(requireContext())
+        alarmHelper = AlarmHelper(requireContext())
 
+
+        binding.toolbar.inflateMenu(R.menu.top_menu_list)
+        myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.filter -> {
+                    FilterDialog(dateFilter) {
+                        if (it != DateFilter()) {
+                            binding.toolbar.menu.findItem(R.id.clear_filter).isVisible = true
+                        }
+                        dateFilter = it
+                        applyFilterAndGetData()
+                    }.show(childFragmentManager, "TAG")
+                    true
+                }
+
+                R.id.clear_filter -> {
+                    dateFilter = DateFilter()
+                    applyFilterAndGetData()
+                    it.isVisible = false
+                    true
+                }
+
+                else -> false
+            }
+        }
 
         customAdapter = CustomAdapter(requireContext(), showList) { id ->
             val action = ListFragmentDirections.actionListFragmentToElementFragment(
@@ -73,7 +101,11 @@ class ListFragment : Fragment() {
             Navigation.findNavController(requireView()).navigate(action)
 
         }
+        binding.recyclerViewSegregated.adapter = customAdapter
+        binding.recyclerViewSegregated.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
+        applyFilterAndGetData()
         choseButton(choose)
 
         binding.doneImageButton.setOnLongClickListener {
@@ -118,13 +150,6 @@ class ListFragment : Fragment() {
             choseButton(Status.ALL)
         }
 
-        binding.filterButton.setOnClickListener {
-            FilterDialog(dateFilter) {
-                dateFilter = it
-                applyFilterAndGetData()
-            }.show(childFragmentManager, "TAG")
-
-        }
     }
 
     private fun applyFilterAndGetData() {
@@ -161,6 +186,7 @@ class ListFragment : Fragment() {
     private fun deleteAllFromList() {
         val myDatabaseHelper = MyDatabaseHelper(requireContext())
         for (note in showList) {
+            alarmHelper?.unsetAlarm(note.id!!)
             myDatabaseHelper.deleteEvent(note.id!!)
         }
     }

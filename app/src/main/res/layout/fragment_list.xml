@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".activities.ListFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/app_icon_background"
+        app:title="Title"
+        app:titleMarginStart="30dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TableLayout
         android:id="@+id/tableRow"
@@ -14,7 +25,7 @@
         android:paddingVertical="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/toolbar    ">
 
         <TableRow
             android:layout_width="match_parent"
@@ -85,14 +96,13 @@
         </TableRow>
     </TableLayout>
 
-    <ImageButton
+    <Space
         android:id="@+id/filter_button"
         android:layout_width="@dimen/box_size"
         android:layout_height="@dimen/box_size"
         android:layout_marginStart="36dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tableRow"
-        app:srcCompat="?android:attr/actionModeWebSearchDrawable" />
+        app:layout_constraintTop_toBottomOf="@id/tableRow" />
 
     <TextView
         android:id="@+id/textView"
@@ -205,26 +215,19 @@
         app:layout_constraintTop_toBottomOf="@id/textView" />
 
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSegregated"
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:fadeScrollbars="false"
-        android:paddingTop="2dp"
+        android:padding="10dp"
+        android:layout_marginTop="36dp"
+        android:scrollbarSize="5dp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewSegregated"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/content_text" />
 
     <TextView
         android:id="@+id/no_rows_info"

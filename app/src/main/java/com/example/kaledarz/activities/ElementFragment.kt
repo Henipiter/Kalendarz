@@ -59,6 +59,7 @@ class ElementFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.toolbar.inflateMenu(R.menu.top_menu_element_display)
+        binding.toolbar.setNavigationIcon(R.drawable.back)
 
 
         notificationHelper = NotificationHelper(requireContext())
@@ -74,9 +75,14 @@ class ElementFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener { view ->
             when (activityType) {
                 "EDIT" -> {
-                    clearToolbarMenu()
-                    binding.toolbar.inflateMenu(R.menu.top_menu_element_display)
-                    enableButtonIfCancel()
+                    if (binding.doneButton.isEnabled == true) {
+                        Navigation.findNavController(binding.root).popBackStack()
+                    } else {
+                        clearToolbarMenu()
+                        binding.toolbar.inflateMenu(R.menu.top_menu_element_display)
+                        binding.toolbar.setNavigationIcon(R.drawable.back)
+                        enableButtonIfCancel()
+                    }
                 }
 
                 "ADD" -> {
@@ -90,6 +96,7 @@ class ElementFragment : Fragment() {
                 R.id.duplicate -> {
                     clearToolbarMenu()
                     binding.toolbar.inflateMenu(R.menu.top_menu_element_edit)
+                    binding.toolbar.setNavigationIcon(R.drawable.clear)
 
                     val action = ElementFragmentDirections.actionElementFragmentSelf(
                         id = null,
@@ -113,6 +120,7 @@ class ElementFragment : Fragment() {
                 R.id.edit -> {
                     clearToolbarMenu()
                     binding.toolbar.inflateMenu(R.menu.top_menu_element_edit)
+                    binding.toolbar.setNavigationIcon(R.drawable.clear)
 
                     enableButtonIfEdit()
                     true
@@ -175,20 +183,6 @@ class ElementFragment : Fragment() {
                 binding.nextDaysInfo
             )
         }
-
-//        binding.duplicationButton.setOnClickListener {
-//            val action = ElementFragmentDirections.actionElementFragmentSelf(
-//                id = null,
-//                type = "ADD",
-//                content = binding.contentText.text.toString(),
-//                date = null,
-//                startDate = binding.startDateButton.text.toString(),
-//                endDate = binding.endDateButton.text.toString(),
-//                startTime = binding.startTimeButton.text.toString(),
-//                endTime = binding.endTimeButton.text.toString()
-//            )
-//            Navigation.findNavController(requireView()).navigate(action)
-//        }
     }
 
     private fun addDuplicatedNotes() {
@@ -283,9 +277,6 @@ class ElementFragment : Fragment() {
             .setTitle("Are you sure?")
             .setMessage("Are you sure to delete that event?")
             .setPositiveButton("Delete") { _, _ ->
-
-                clearToolbarMenu()
-                binding.toolbar.inflateMenu(R.menu.top_menu_element_edit)
                 deleteNoteAndAlarm()
                 Navigation.findNavController(binding.root).popBackStack()
             }
@@ -301,6 +292,7 @@ class ElementFragment : Fragment() {
                 "EDIT" -> {
                     clearToolbarMenu()
                     binding.toolbar.inflateMenu(R.menu.top_menu_element_display)
+                    binding.toolbar.setNavigationIcon(R.drawable.back)
                     getIntentForEditView()
                     showEditViewButton()
                     enableButtonIfEdit(false)
@@ -311,11 +303,12 @@ class ElementFragment : Fragment() {
                 "ADD" -> {
                     clearToolbarMenu()
                     binding.toolbar.inflateMenu(R.menu.top_menu_element_edit)
+                    binding.toolbar.setNavigationIcon(R.drawable.clear)
 
+                    setHoursOnButtons()
                     getIntentForAddView()
                     hideEditViewButton()
                     enableButtonIfEdit()
-                    setHoursOnButtons()
                 }
             }
         }

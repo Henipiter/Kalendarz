@@ -17,7 +17,6 @@ import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
 import com.example.kaledarz.databinding.FragmentListBinding
-import com.example.kaledarz.helpers.ApplicationContext
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 
@@ -55,10 +54,8 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ApplicationContext.context?.let {
-            myPref = it.getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
-        }
 
+        myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
         databaseHelper = MyDatabaseHelper(requireContext())
 
 
@@ -130,7 +127,7 @@ class ListFragment : Fragment() {
         }
     }
 
-    private fun applyFilterAndGetData(){
+    private fun applyFilterAndGetData() {
         filterLowerStart = getValueFromIntentIfSet(dateFilter.lowerStartDate)
         filterLowerEnd = getValueFromIntentIfSet(dateFilter.lowerEndDate)
         filterUpperStart = getValueFromIntentIfSet(dateFilter.upperStartDate)
@@ -145,6 +142,7 @@ class ListFragment : Fragment() {
 
         choseButton(choose)
     }
+
     private fun deleteAllRows(status: Status) {
 
         val dialog: AlertDialog = AlertDialog.Builder(requireContext())

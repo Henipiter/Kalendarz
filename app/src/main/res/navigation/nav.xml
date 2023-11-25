@@ -57,26 +57,32 @@
         <argument
             android:name="date"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="" />
         <argument
             android:name="start_date"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="" />
         <argument
             android:name="end_date"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="" />
         <argument
             android:name="start_time"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="" />
         <argument
             android:name="end_time"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="" />
         <argument
             android:name="content"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="" />
     </fragment>
 </navigation>

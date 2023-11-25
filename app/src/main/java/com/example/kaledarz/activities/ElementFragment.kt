@@ -7,16 +7,15 @@ import android.graphics.Color
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
-import com.example.kaledarz.helpers.ApplicationContext
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
@@ -52,20 +51,90 @@ class ElementFragment : Fragment() {
         return binding.root
     }
 
+    fun clearToolbarMenu() {
+        binding.toolbar.menu.clear()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.toolbar.inflateMenu(R.menu.top_menu_element_display)
+
+
         notificationHelper = NotificationHelper(requireContext())
-        ApplicationContext.context?.let {
-            myPref = it.getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
-            alarmHelper = AlarmHelper(it)
-        }
+        myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
+        alarmHelper = AlarmHelper(requireContext())
+
         notificationHelper.createNotificationChannel()
         myDB = MyDatabaseHelper(requireContext())
         pickerHelper = PickerHelper(requireContext())
 
         binding.nextDaysInfo.text = ""
         getAndSetIntentData()
+        binding.toolbar.setNavigationOnClickListener { view ->
+            when (activityType) {
+                "EDIT" -> {
+                    clearToolbarMenu()
+                    binding.toolbar.inflateMenu(R.menu.top_menu_element_display)
+                    enableButtonIfCancel()
+                }
+
+                "ADD" -> {
+                    Navigation.findNavController(binding.root).popBackStack()
+                }
+            }
+        }
+
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.duplicate -> {
+                    clearToolbarMenu()
+                    binding.toolbar.inflateMenu(R.menu.top_menu_element_edit)
+
+                    val action = ElementFragmentDirections.actionElementFragmentSelf(
+                        id = null,
+                        type = "ADD",
+                        content = binding.contentText.text.toString(),
+                        date = null,
+                        startDate = binding.startDateButton.text.toString(),
+                        endDate = binding.endDateButton.text.toString(),
+                        startTime = binding.startTimeButton.text.toString(),
+                        endTime = binding.endTimeButton.text.toString()
+                    )
+                    Navigation.findNavController(requireView()).navigate(action)
+                    true
+                }
+
+                R.id.delete -> {
+                    showDeleteConfirmDialog(requireContext())
+                    true
+                }
+
+                R.id.edit -> {
+                    clearToolbarMenu()
+                    binding.toolbar.inflateMenu(R.menu.top_menu_element_edit)
+
+                    enableButtonIfEdit()
+                    true
+                }
+
+                R.id.confirm -> {
+                    when (activityType) {
+                        "EDIT" -> {
+                            editNoteAndExit()
+                        }
+
+                        "ADD" -> {
+                            validDatesAndAddNote()
+                        }
+                    }
+                    true
+                }
+
+                else -> false
+            }
+        }
+
         binding.startTimeButton.setOnClickListener {
             pickerHelper.runTimePicker(binding.startTimeButton)
         }
@@ -82,22 +151,6 @@ class ElementFragment : Fragment() {
             pickerHelper.runDatePicker(binding.endDateButton)
         }
 
-        binding.deleteButton.setOnClickListener {
-            binding.doneButton.isEnabled = true
-            if (binding.deleteButton.text == CANCEL_INFO) { //CANCEL
-                enableButtonIfCancel()
-            } else {  //DELETE
-                showDeleteConfirmDialog(requireContext())
-            }
-        }
-
-        binding.editButton.setOnClickListener {
-            if (binding.editButton.text != SAVE_INFO) { //EDIT
-                enableButtonIfEdit()
-            } else { //SAVE
-                editNoteAndExit()
-            }
-        }
 
         binding.doneButton.setOnClickListener {
             note.done = !note.done
@@ -111,9 +164,6 @@ class ElementFragment : Fragment() {
             Navigation.findNavController(binding.root).popBackStack()
         }
 
-        binding.addButton.setOnClickListener {
-            validDatesAndAddNote()
-        }
 
         binding.duplicationNumberButton.setOnClickListener {
             val popUpManager = PopUpManager(requireContext())
@@ -126,19 +176,19 @@ class ElementFragment : Fragment() {
             )
         }
 
-        binding.duplicationButton.setOnClickListener {
-            val action = ElementFragmentDirections.actionElementFragmentSelf(
-                id = null,
-                type = "ADD",
-                content = binding.contentText.text.toString(),
-                date = null,
-                startDate = binding.startDateButton.text.toString(),
-                endDate = binding.endDateButton.text.toString(),
-                startTime = binding.startTimeButton.text.toString(),
-                endTime = binding.endTimeButton.text.toString()
-            )
-            Navigation.findNavController(requireView()).navigate(action)
-        }
+//        binding.duplicationButton.setOnClickListener {
+//            val action = ElementFragmentDirections.actionElementFragmentSelf(
+//                id = null,
+//                type = "ADD",
+//                content = binding.contentText.text.toString(),
+//                date = null,
+//                startDate = binding.startDateButton.text.toString(),
+//                endDate = binding.endDateButton.text.toString(),
+//                startTime = binding.startTimeButton.text.toString(),
+//                endTime = binding.endTimeButton.text.toString()
+//            )
+//            Navigation.findNavController(requireView()).navigate(action)
+//        }
     }
 
     private fun addDuplicatedNotes() {
@@ -233,6 +283,9 @@ class ElementFragment : Fragment() {
             .setTitle("Are you sure?")
             .setMessage("Are you sure to delete that event?")
             .setPositiveButton("Delete") { _, _ ->
+
+                clearToolbarMenu()
+                binding.toolbar.inflateMenu(R.menu.top_menu_element_edit)
                 deleteNoteAndAlarm()
                 Navigation.findNavController(binding.root).popBackStack()
             }
@@ -246,6 +299,8 @@ class ElementFragment : Fragment() {
             activityType = it
             when (activityType) {
                 "EDIT" -> {
+                    clearToolbarMenu()
+                    binding.toolbar.inflateMenu(R.menu.top_menu_element_display)
                     getIntentForEditView()
                     showEditViewButton()
                     enableButtonIfEdit(false)
@@ -254,6 +309,9 @@ class ElementFragment : Fragment() {
                 }
 
                 "ADD" -> {
+                    clearToolbarMenu()
+                    binding.toolbar.inflateMenu(R.menu.top_menu_element_edit)
+
                     getIntentForAddView()
                     hideEditViewButton()
                     enableButtonIfEdit()
@@ -353,27 +411,17 @@ class ElementFragment : Fragment() {
         binding.endDateButton.setBackgroundResource(android.R.drawable.btn_default)
         binding.endTimeButton.setBackgroundResource(android.R.drawable.btn_default)
         enableButtonIfEdit(false)
-        binding.editButton.text = EDIT_INFO
-        binding.deleteButton.text = DELETE_INFO
     }
 
     private fun hideEditViewButton() {
-        binding.editButton.visibility = View.GONE
-        binding.deleteButton.visibility = View.GONE
         binding.doneButton.visibility = View.GONE
-        binding.duplicationButton.visibility = View.GONE
-        binding.addButton.visibility = View.VISIBLE
         binding.duplicationNumberButton.visibility = View.VISIBLE
         binding.duplicateText.visibility = View.VISIBLE
         binding.nextDaysInfo.visibility = View.VISIBLE
     }
 
     private fun showEditViewButton() {
-        binding.editButton.visibility = View.VISIBLE
-        binding.deleteButton.visibility = View.VISIBLE
         binding.doneButton.visibility = View.VISIBLE
-        binding.duplicationButton.visibility = View.VISIBLE
-        binding.addButton.visibility = View.GONE
         binding.duplicationNumberButton.visibility = View.GONE
         binding.duplicateText.visibility = View.GONE
         binding.nextDaysInfo.visibility = View.GONE
@@ -388,21 +436,16 @@ class ElementFragment : Fragment() {
 
     private fun enableButtonIfSave() {
         enableEditText(binding.contentText, false)
-        binding.editButton.text = EDIT_INFO
-        binding.deleteButton.text = DELETE_INFO
         binding.doneButton.isEnabled = true
     }
 
     private fun enableButtonIfEdit() {
         enableEditText(binding.contentText, true)
-        binding.editButton.text = SAVE_INFO
-        binding.deleteButton.text = CANCEL_INFO
         enableButtonIfEdit(true)
     }
 
     private fun enableButtonIfEdit(bool: Boolean) {
         binding.doneButton.isEnabled = !bool
-        binding.duplicationButton.isEnabled = !bool
         binding.startDateButton.isEnabled = bool
         binding.endDateButton.isEnabled = bool
         binding.startTimeButton.isEnabled = bool
@@ -410,10 +453,4 @@ class ElementFragment : Fragment() {
         binding.contentText.isEnabled = bool
     }
 
-    companion object {
-        private const val EDIT_INFO = "EDIT"
-        private const val CANCEL_INFO = "CANCEL"
-        private const val DELETE_INFO = "DELETE"
-        private const val SAVE_INFO = "SAVE"
-    }
 }

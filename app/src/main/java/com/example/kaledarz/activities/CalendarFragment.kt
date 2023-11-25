@@ -1,6 +1,5 @@
 package com.example.kaledarz.activities
 
-import android.R
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
@@ -19,9 +18,9 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
+import com.example.kaledarz.R
 import com.example.kaledarz.databinding.FragmentCalendarBinding
 import com.example.kaledarz.helpers.AlarmHelper
-import com.example.kaledarz.helpers.ApplicationContext
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 
@@ -50,18 +49,14 @@ class CalendarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ApplicationContext.context?.let {
-            myPref = it.getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
-            alarmHelper = AlarmHelper(it)
-        }
 
-
-
+        myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
+        alarmHelper = AlarmHelper(requireContext())
 
         chooseDate = DateFormatHelper.getTodayDate(binding.calendarView.date)
         databaseHelper = MyDatabaseHelper(requireContext())
 
-        customAdapter = CustomAdapter(requireContext(), noteList){id->
+        customAdapter = CustomAdapter(requireContext(), noteList) { id ->
             val action = CalendarFragmentDirections.actionCalendarFragmentToElementFragment(
                 id = id,
                 type = "EDIT",
@@ -92,20 +87,27 @@ class CalendarFragment : Fragment() {
             customAdapter.notifyDataSetChanged()
         }
 
-        binding.addButton.setOnClickListener {
-            val action = CalendarFragmentDirections.actionCalendarFragmentToElementFragment(
-                id = null,
-                type = "ADD",
-                content = null,
-                date = chooseDate,
-                startDate = null,
-                endDate = null,
-                startTime = null,
-                endTime = null
-            )
-            Navigation.findNavController(requireView()).navigate(action)
+        binding.topAppBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.add -> {
+                    val action = CalendarFragmentDirections.actionCalendarFragmentToElementFragment(
+                        id = null,
+                        type = "ADD",
+                        content = null,
+                        date = chooseDate,
+                        startDate = null,
+                        endDate = null,
+                        startTime = null,
+                        endTime = null
+                    )
+                    Navigation.findNavController(requireView()).navigate(action)
+                    true
+                }
 
+                else -> false
+            }
         }
+
 
         if (!allPermissionsGranted()) {
             requestAppPermissions()

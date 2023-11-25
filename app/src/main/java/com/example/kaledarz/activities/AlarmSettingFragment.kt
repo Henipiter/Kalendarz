@@ -2,14 +2,13 @@ package com.example.kaledarz.activities
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.kaledarz.helpers.ApplicationContext
+import androidx.fragment.app.Fragment
 import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.databinding.FragmentAlarmSettingBinding
@@ -39,11 +38,9 @@ class AlarmSettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ApplicationContext.context?.let {
-            myPref = it.getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
-            alarmHelper = AlarmHelper(it)
-        }
 
+        myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
+        alarmHelper = AlarmHelper(requireContext())
 
         pickerHelper = PickerHelper(requireContext())
 
@@ -57,7 +54,7 @@ class AlarmSettingFragment : Fragment() {
         databaseHelper = MyDatabaseHelper(requireContext())
         originalList.addAll(databaseHelper.readAllData())
 
-            binding.restartButton.setOnClickListener {
+        binding.restartButton.setOnClickListener {
             cancelAndSetAllAlarms()
         }
 
@@ -76,6 +73,7 @@ class AlarmSettingFragment : Fragment() {
             cancelAndSetAllAlarms()
         }
     }
+
     private fun switchOnOffAlarmBehaviour(value: Boolean) {
         binding.exactSwitch.isEnabled = value
         binding.alarmTurnOnText.text = getInfoForOnOff(value)

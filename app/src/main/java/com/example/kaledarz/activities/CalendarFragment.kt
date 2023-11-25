@@ -135,7 +135,7 @@ class CalendarFragment : Fragment() {
         if (noteList.size == 0) {
             binding.noRowsInfo.visibility = View.VISIBLE
             binding.imageMute.isVisible =
-                myPref?.getString(Constants.ALARM_ON_OFF, "false") != "true"
+                myPref?.getString(Constants.ALARM_ON_OFF, "true") != "true"
         } else {
             binding.imageMute.visibility = View.INVISIBLE
             binding.noRowsInfo.visibility = View.INVISIBLE

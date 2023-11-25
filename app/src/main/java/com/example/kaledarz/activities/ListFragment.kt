@@ -243,7 +243,7 @@ class ListFragment : Fragment() {
         if (showList.size == 0) {
             binding.noRowsInfo.isVisible = true
             binding.imageMute.isVisible =
-                myPref?.getString(Constants.ALARM_ON_OFF, "false") != "true"
+                myPref?.getString(Constants.ALARM_ON_OFF, "true") != "true"
         } else {
             binding.noRowsInfo.isVisible = false
             binding.imageMute.isVisible = false

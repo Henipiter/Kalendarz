@@ -1,17 +1,19 @@
 package com.example.kaledarz.activities
 
 import android.app.AlertDialog
+import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.navigation.Navigation
-import com.example.kaledarz.helpers.ApplicationContext
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
@@ -19,6 +21,7 @@ import com.example.kaledarz.databinding.FragmentSettingsBinding
 import com.example.kaledarz.helpers.AlarmHelper
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
+import com.example.kaledarz.helpers.PickerHelper
 
 class SettingsFragment : Fragment() {
 
@@ -28,7 +31,9 @@ class SettingsFragment : Fragment() {
 
     private lateinit var databaseHelper: MyDatabaseHelper
     private var originalList = ArrayList<Note>()
-    private  var alarmHelper: AlarmHelper? = null
+    private var alarmHelper: AlarmHelper? = null
+    private var myPref: SharedPreferences? = null
+    private lateinit var pickerHelper: PickerHelper
 
     private var invalidRowsInfo = ""
 
@@ -43,10 +48,17 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ApplicationContext.context?.let {
-            alarmHelper = AlarmHelper(it)
-        }
+
+        myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
+        alarmHelper = AlarmHelper(requireContext())
+        pickerHelper = PickerHelper(requireContext())
         databaseHelper = MyDatabaseHelper(requireContext())
+
+        val alarmOnOffPref = myPref?.getString(Constants.ALARM_ON_OFF, "true") == "true"
+        val alarmExactPref = myPref?.getString(Constants.ALARM_EXACT, "false") == "true"
+        binding.turnOnOffSwitch.isChecked = alarmOnOffPref
+        binding.exactSwitch.isChecked = alarmExactPref
+        switchOnOffAlarmBehaviour(alarmOnOffPref)
 
         originalList.addAll(databaseHelper.readAllData())
 
@@ -59,10 +71,51 @@ class SettingsFragment : Fragment() {
         binding.clearButton.setOnClickListener {
             deleteAllRows()
         }
-        binding.sleepAlarms.setOnClickListener {
-            Navigation.findNavController(it)
-                .navigate(R.id.action_settingsFragment_to_alarmSettingFragment)
+        binding.restartButton.setOnClickListener {
+            cancelAndSetAllAlarms()
+            Toast.makeText(requireContext(), "Alarms restarted", Toast.LENGTH_SHORT).show()
         }
+
+        binding.turnOnOffSwitch.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
+            switchOnOffAlarmBehaviour(value)
+            myPref?.let {
+                it.edit()?.putString(Constants.ALARM_EXACT, "false")?.apply()
+                it.edit()?.putString(Constants.ALARM_ON_OFF, value.toString())?.apply()
+            }
+        }
+
+        binding.exactSwitch.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
+            myPref?.let {
+                it.edit()?.putString(Constants.ALARM_EXACT, value.toString())?.apply()
+            }
+            cancelAndSetAllAlarms()
+        }
+
+    }
+
+    private fun switchOnOffAlarmBehaviour(value: Boolean) {
+        binding.exactSwitch.isEnabled = value
+        binding.alarmTurnOnText.text = getInfoForOnOff(value)
+
+        binding.restartButton.isEnabled = value
+        if (value) {
+            alarmHelper?.setAlarmForNotes(originalList)
+        } else {
+            binding.exactSwitch.isChecked = false
+            alarmHelper?.unsetAlarmForNotes(originalList)
+        }
+    }
+
+    private fun cancelAndSetAllAlarms() {
+        alarmHelper?.unsetAlarmForNotes(originalList)
+        alarmHelper?.setAlarmForNotes(originalList)
+    }
+
+    private fun getInfoForOnOff(value: Boolean): String {
+        if (value) {
+            return "Alarm active"
+        }
+        return "Alarm inactive"
     }
 
     private fun importDatabase() {
@@ -171,7 +224,8 @@ class SettingsFragment : Fragment() {
                 .setNegativeButton("OK", null)
                 .setNeutralButton("COPY") { dialog, which ->
                     copyToClipboard(serialized.toString())
-                    Toast.makeText(requireContext(), "Text copied to clipboard", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Text copied to clipboard", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 .create()
             dialog.show()
@@ -195,7 +249,8 @@ class SettingsFragment : Fragment() {
 
                 alarmHelper?.unsetAlarmForNotes(originalList)
                 databaseHelper.deleteAllRows()
-                Toast.makeText(requireContext(), "All notes has been deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "All notes has been deleted", Toast.LENGTH_SHORT)
+                    .show()
             }
             .create()
         dialog.show()

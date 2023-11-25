@@ -1,7 +1,6 @@
 package com.example.kaledarz.activities
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -41,7 +40,7 @@ class CustomAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val myPref = context.getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
         holder.binding.imageMute.isVisible =
-            myPref.getString(Constants.ALARM_ON_OFF, "false") != "true"
+            myPref.getString(Constants.ALARM_ON_OFF, "true") != "true"
 
         holder.binding.timeStart.text = noteList[position].start_time
         holder.binding.dateStart.text = noteList[position].start_date

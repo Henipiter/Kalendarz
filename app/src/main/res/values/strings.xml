@@ -32,7 +32,7 @@
     <string name="end_sleep_mode">End sleep mode</string>
     <string name="start_sleep_mode">Start sleep mode</string>
     <string name="time">Time</string>
-    <string name="alarm_are_turn_off">Alarm are turned off</string>
+    <string name="alarm_active">Alarm inactive</string>
     <string name="title">Title</string>
     <string name="done">Done</string>
     <string name="alarm_inexact">Alarm inexact</string>

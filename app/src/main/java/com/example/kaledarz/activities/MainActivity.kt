@@ -3,7 +3,6 @@ package com.example.kaledarz.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.example.kaledarz.R
@@ -19,24 +18,7 @@ class MainActivity : AppCompatActivity() {
         val navController = Navigation.findNavController(this, R.id.ee)
 
         NavigationUI.setupWithNavController(binding!!.bottomNavigationView, navController)
-
-//        val appBarConfiguration = AppBarConfiguration.Builder(
-//            R.id.calendarFragment, R.id.settingsFragment, R.id.listFragment
-//        ).build()
-//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
-
-//        setContentView(binding!!.root)
-//        replaceFragment(CalendarFragment())
-//        binding!!.bottomNavigationView.background = null
-
-
     }
 
-    private fun replaceFragment(fragment: Fragment) {
-//        val fragmentManager: FragmentManager = supportFragmentManager
-//        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-//        fragmentTransaction.replace(R.id.frame_layout, fragment)
-//        fragmentTransaction.commit()
-    }
 }
 

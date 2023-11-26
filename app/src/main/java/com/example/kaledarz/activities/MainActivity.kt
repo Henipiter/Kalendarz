@@ -10,13 +10,13 @@ import com.example.kaledarz.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
-    var binding: ActivityMainBinding? = null
+    private var binding: ActivityMainBinding? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding!!.getRoot());
+        setContentView(binding!!.root)
         val navController = Navigation.findNavController(this, R.id.ee)
-        binding!!.bottomNavigationView.setSelectedItemId(R.id.calendarFragment);
+        binding!!.bottomNavigationView.selectedItemId = R.id.calendarFragment
 
         NavigationUI.setupWithNavController(binding!!.bottomNavigationView, navController)
     }

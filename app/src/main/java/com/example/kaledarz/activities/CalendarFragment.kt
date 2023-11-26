@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
@@ -29,6 +30,8 @@ class CalendarFragment : Fragment() {
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
 
+
+    private val args: CalendarFragmentArgs by navArgs()
 
     private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
@@ -47,6 +50,9 @@ class CalendarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+
 
         binding.toolbar.inflateMenu(R.menu.top_menu_calendar)
 
@@ -99,11 +105,25 @@ class CalendarFragment : Fragment() {
                     Navigation.findNavController(requireView()).navigate(action)
                     true
                 }
+
                 else -> false
             }
         }
         if (!allPermissionsGranted()) {
             requestAppPermissions()
+        }
+        if (args.id != null && args.id != "" && args.type != null && args.type != "") {
+            val action = CalendarFragmentDirections.actionCalendarFragmentToElementFragment(
+                id = args.id,
+                type = args.type,
+                content = null,
+                date = null,
+                startDate = null,
+                endDate = null,
+                startTime = null,
+                endTime = null
+            )
+            Navigation.findNavController(requireView()).navigate(action)
         }
     }
 

@@ -66,7 +66,6 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
         }
     }
 
-
     private fun getPendingIntentToNote(id: Int): PendingIntent {
         val bundle = Bundle()
         bundle.putString("type", "EDIT")
@@ -75,7 +74,7 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
         return NavDeepLinkBuilder(context)
             .setComponentName(MainActivity::class.java)
             .setGraph(R.navigation.nav)
-            .setDestination(R.id.elementFragment)
+            .setDestination(R.id.calendarFragment)
             .setArguments(bundle)
             .createPendingIntent()
     }

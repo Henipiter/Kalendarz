@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.getRoot());
         val navController = Navigation.findNavController(this, R.id.ee)
+        binding!!.bottomNavigationView.setSelectedItemId(R.id.calendarFragment);
 
         NavigationUI.setupWithNavController(binding!!.bottomNavigationView, navController)
     }

@@ -15,6 +15,16 @@
             app:destination="@id/elementFragment"
             app:popUpTo="@id/calendarFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="" />
+        <argument
+            android:name="type"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"

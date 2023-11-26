@@ -20,7 +20,6 @@ import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.R
 import com.example.kaledarz.databinding.FragmentCalendarBinding
-import com.example.kaledarz.helpers.AlarmHelper
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 
@@ -33,7 +32,6 @@ class CalendarFragment : Fragment() {
 
     private lateinit var customAdapter: CustomAdapter
     private lateinit var databaseHelper: MyDatabaseHelper
-    private var alarmHelper: AlarmHelper? = null
     private var myPref: SharedPreferences? = null
 
     private var chooseDate = "2020-01-01"
@@ -53,7 +51,6 @@ class CalendarFragment : Fragment() {
         binding.toolbar.inflateMenu(R.menu.top_menu_calendar)
 
         myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
-        alarmHelper = AlarmHelper(requireContext())
 
         chooseDate = DateFormatHelper.getTodayDate(binding.calendarView.date)
         databaseHelper = MyDatabaseHelper(requireContext())
@@ -77,9 +74,6 @@ class CalendarFragment : Fragment() {
 
         storeDataInArrays()
 
-        if (myPref?.getString(Constants.ALARM_ON_OFF, "true") == "true") {
-            alarmHelper?.setAlarmForNotes(noteList)
-        }
         customAdapter.notifyDataSetChanged()
 
         binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
@@ -105,26 +99,17 @@ class CalendarFragment : Fragment() {
                     Navigation.findNavController(requireView()).navigate(action)
                     true
                 }
-
                 else -> false
             }
         }
-
-
         if (!allPermissionsGranted()) {
             requestAppPermissions()
         }
-
-
     }
 
     override fun onResume() {
         super.onResume()
         storeDataInArrays()
-        if (myPref?.getString(Constants.ALARM_ON_OFF, "true") == "true") {
-            alarmHelper?.setAlarmForNotes(noteList)
-        }
-        customAdapter.notifyDataSetChanged()
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {

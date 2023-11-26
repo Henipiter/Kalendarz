@@ -60,9 +60,7 @@ class SettingsFragment : Fragment() {
         databaseHelper = MyDatabaseHelper(requireContext())
 
         val alarmOnOffPref = myPref?.getString(Constants.ALARM_ON_OFF, "true") == "true"
-        val alarmExactPref = myPref?.getString(Constants.ALARM_EXACT, "false") == "true"
         binding.turnOnOffSwitch.isChecked = alarmOnOffPref
-        binding.exactSwitch.isChecked = alarmExactPref
         switchOnOffAlarmBehaviour(alarmOnOffPref)
 
         originalList.addAll(databaseHelper.readAllData())
@@ -84,29 +82,19 @@ class SettingsFragment : Fragment() {
         binding.turnOnOffSwitch.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
             switchOnOffAlarmBehaviour(value)
             myPref?.let {
-                it.edit()?.putString(Constants.ALARM_EXACT, "false")?.apply()
                 it.edit()?.putString(Constants.ALARM_ON_OFF, value.toString())?.apply()
             }
-        }
-
-        binding.exactSwitch.setOnCheckedChangeListener { _: CompoundButton, value: Boolean ->
-            myPref?.let {
-                it.edit()?.putString(Constants.ALARM_EXACT, value.toString())?.apply()
-            }
-            cancelAndSetAllAlarms()
         }
 
     }
 
     private fun switchOnOffAlarmBehaviour(value: Boolean) {
-        binding.exactSwitch.isEnabled = value
         binding.alarmTurnOnText.text = getInfoForOnOff(value)
 
         binding.restartButton.isEnabled = value
         if (value) {
             alarmHelper?.setAlarmForNotes(originalList)
         } else {
-            binding.exactSwitch.isChecked = false
             alarmHelper?.unsetAlarmForNotes(originalList)
         }
     }

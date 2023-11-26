@@ -1,6 +1,5 @@
 package com.example.kaledarz.helpers
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -9,7 +8,6 @@ import android.content.Intent
 import android.icu.util.Calendar
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.example.kaledarz.DTO.Constants
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 
@@ -52,7 +50,7 @@ class AlarmHelper(private val context: Context) {
         notificationHelper.deleteNotification(id.toInt())
     }
 
-    @SuppressLint("ScheduleExactAlarm")
+
     private fun startAlarm(c: Calendar, note: Note, mode: String) {
         val alarmManager = context.getSystemService(AppCompatActivity.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
@@ -65,17 +63,21 @@ class AlarmHelper(private val context: Context) {
             id *= -1
         }
         val pendingIntent =
-            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
-
-        if (myPref.getString(Constants.ALARM_EXACT, "false") == "false") {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.timeInMillis, pendingIntent)
-        } else {
-            alarmManager.setAlarmClock(
-                AlarmManager.AlarmClockInfo(c.timeInMillis, pendingIntent),
-                pendingIntent
+            PendingIntent.getBroadcast(
+                context,
+                id,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-        }
+
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            c.timeInMillis,
+            pendingIntent
+        )
+
+
     }
 
     private fun getTitle(note: Note): String {

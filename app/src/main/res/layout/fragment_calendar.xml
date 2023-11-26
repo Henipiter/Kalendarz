@@ -12,7 +12,7 @@
         android:background="@color/green_700"
         app:titleTextColor="@color/white"
         app:collapseIcon="@color/white"
-        app:title="Title"
+        app:title="Calendar"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

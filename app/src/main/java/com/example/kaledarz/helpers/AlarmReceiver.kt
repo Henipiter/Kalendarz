@@ -16,16 +16,20 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         prepareNotificationHelper(context)
         receiveExtraIntent(intent)
-
-        if(mode =="SET") {
-            notificationHelper.createNotification(id.toInt(), title, content)
+        if ("android.intent.action.BOOT_COMPLETED" == intent.action) {
+            val alarmHelper = AlarmHelper(context)
+            alarmHelper.setAlarmForAllNotes()
+            return
         }
-        else{
+
+        if (mode == "SET") {
+            notificationHelper.createNotification(id.toInt(), title, content)
+        } else {
             notificationHelper.deleteNotification(id.toInt())
         }
     }
 
-    private fun receiveExtraIntent(intent: Intent){
+    private fun receiveExtraIntent(intent: Intent) {
         if (intent.hasExtra("mode")) {
             mode = intent.getStringExtra("mode").toString()
         }
@@ -40,7 +44,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun prepareNotificationHelper(context: Context){
+    private fun prepareNotificationHelper(context: Context) {
         notificationHelper = NotificationHelper(context)
         notificationHelper.createNotificationChannel()
     }

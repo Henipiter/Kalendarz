@@ -3,7 +3,6 @@ package com.example.kaledarz.helpers
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.icu.util.Calendar
 import android.util.Log
@@ -12,10 +11,13 @@ import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 
 class AlarmHelper(private val context: Context) {
-
     private val notificationHelper = NotificationHelper(context)
-    private var myPref = context.getSharedPreferences("run_alarms", MODE_PRIVATE)
 
+    fun setAlarmForAllNotes() {
+        val databaseHelper = MyDatabaseHelper(context)
+        val originalList: ArrayList<Note> = databaseHelper.readAllData()
+        setAlarmForNotes(originalList)
+    }
 
     fun setAlarmForNotes(noteArray: ArrayList<Note>) {
         Note.computeStatusForNoteList(noteArray)
@@ -123,7 +125,7 @@ class AlarmHelper(private val context: Context) {
     private fun startAlarmToDeleteNotification(shouldDelete: Boolean, note: Note) {
         if (shouldDelete) {
             startAlarm(
-                DateFormatHelper.getCalendarFromStrings(note.end_date!!, note.end_time!!),
+                DateFormatHelper.getCalendarFromStrings(note.end_date, note.end_time),
                 note, "UNSET"
             )
             Log.e("Alarm", "Alarm to hide notification")

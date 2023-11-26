@@ -12,7 +12,9 @@
         tools:layout="@layout/fragment_calendar">
         <action
             android:id="@+id/action_calendarFragment_to_elementFragment"
-            app:destination="@id/elementFragment" />
+            app:destination="@id/elementFragment"
+            app:popUpTo="@id/calendarFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -26,7 +28,9 @@
         tools:layout="@layout/fragment_list">
         <action
             android:id="@+id/action_listFragment_to_elementFragment"
-            app:destination="@id/elementFragment" />
+            app:destination="@id/elementFragment"
+            app:popUpTo="@id/listFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/elementFragment"
@@ -76,4 +80,8 @@
             app:nullable="true"
             android:defaultValue="" />
     </fragment>
+    <action
+        android:id="@+id/action_global_calendarFragment"
+        app:destination="@id/calendarFragment"
+        app:popUpTo="@id/calendarFragment" />
 </navigation>

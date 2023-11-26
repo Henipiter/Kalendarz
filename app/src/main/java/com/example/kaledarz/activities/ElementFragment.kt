@@ -76,7 +76,8 @@ class ElementFragment : Fragment() {
             when (activityType) {
                 "EDIT" -> {
                     if (binding.doneButton.isEnabled == true) {
-                        Navigation.findNavController(binding.root).popBackStack()
+                        Navigation.findNavController(binding.root)
+                            .navigate(R.id.action_global_calendarFragment)
                     } else {
                         clearToolbarMenu()
                         binding.toolbar.inflateMenu(R.menu.top_menu_element_display)
@@ -86,7 +87,8 @@ class ElementFragment : Fragment() {
                 }
 
                 "ADD" -> {
-                    Navigation.findNavController(binding.root).popBackStack()
+                    Navigation.findNavController(binding.root)
+                        .navigate(R.id.action_global_calendarFragment)
                 }
             }
         }
@@ -169,7 +171,7 @@ class ElementFragment : Fragment() {
             } else {
                 alarmHelper?.setAlarm(note)
             }
-            Navigation.findNavController(binding.root).popBackStack()
+            Navigation.findNavController(binding.root).navigate(R.id.action_global_calendarFragment)
         }
 
 
@@ -278,7 +280,8 @@ class ElementFragment : Fragment() {
             .setMessage("Are you sure to delete that event?")
             .setPositiveButton("Delete") { _, _ ->
                 deleteNoteAndAlarm()
-                Navigation.findNavController(binding.root).popBackStack()
+                Navigation.findNavController(binding.root)
+                    .navigate(R.id.action_global_calendarFragment)
             }
             .setNegativeButton("Cancel", null)
             .create()
@@ -368,7 +371,7 @@ class ElementFragment : Fragment() {
             note = createNote()
             addNoteToDatabase()
             addDuplicatedNotes()
-            Navigation.findNavController(binding.root).popBackStack()
+            Navigation.findNavController(binding.root).navigate(R.id.action_global_calendarFragment)
         } else {
             showErrorDateDialog(requireContext())
         }

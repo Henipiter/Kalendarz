@@ -22,14 +22,14 @@ import java.util.Locale
 
 class NotificationHelper(base: Context) : ContextWrapper(base) {
     private val context = base
-    private val CHANNEL_ID = "channelID"
+    private val channelId = "channelID"
 
     fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = getString(R.string.channel_name)
             val descriptionText = getString(R.string.channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            val channel = NotificationChannel(channelId, name, importance).apply {
                 description = descriptionText
             }
             val notificationManager: NotificationManager =
@@ -51,7 +51,7 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
         val icons = getIcons()
         val icon = icons[getNumOfWeek(subTitle) % icons.size]
 
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(this, channelId)
 
             .setSmallIcon(icon)
             .setContentTitle(title)

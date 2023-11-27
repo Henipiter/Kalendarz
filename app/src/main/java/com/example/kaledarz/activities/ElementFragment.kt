@@ -51,7 +51,7 @@ class ElementFragment : Fragment() {
         return binding.root
     }
 
-    fun clearToolbarMenu() {
+    private fun clearToolbarMenu() {
         binding.toolbar.menu.clear()
     }
 
@@ -346,7 +346,7 @@ class ElementFragment : Fragment() {
 
     private fun storeDataInArrays() {
         note = myDB.readOneData(note.id.toString())
-        Log.e("done:", note.done.toString())
+        Log.d("done:", note.done.toString())
         if (note.id == "") {
             Toast.makeText(requireContext(), "No data", Toast.LENGTH_SHORT).show()
         } else {

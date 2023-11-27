@@ -77,7 +77,7 @@ class CalendarFragment : Fragment() {
 
         binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             chooseDate = DateFormatHelper.getChosenDate(year, month, dayOfMonth)
-            Log.e("aa", chooseDate)
+            Log.d("aa", chooseDate)
             storeDataInArrays()
             customAdapter.notifyDataSetChanged()
         }

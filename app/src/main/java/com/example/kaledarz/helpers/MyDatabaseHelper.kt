@@ -92,12 +92,12 @@ class MyDatabaseHelper(val context: Context?) :
         val db = this.writableDatabase
         val query1 = "UPDATE $TABLE_NAME SET $DONE_MARK_COLUMN = $bool WHERE $ID_COLUMN = '$id'"
         db.execSQL(query1)
-        Log.e("aa", query1)
+        Log.d("aa", query1)
     }
 
     fun readAllData(): ArrayList<Note> {
         val query = "SELECT * FROM $TABLE_NAME ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
-        Log.e("query", query)
+        Log.d("query", query)
         val db = this.readableDatabase
         var cursor: Cursor? = null
         if (db != null) {
@@ -108,7 +108,7 @@ class MyDatabaseHelper(val context: Context?) :
 
     fun readOneData(id: String): Note {
         val query = "SELECT * FROM $TABLE_NAME WHERE $ID_COLUMN='$id';"
-        Log.e("query", query)
+        Log.d("query", query)
         val db = this.readableDatabase
         var cursor: Cursor? = null
         if (db != null) {

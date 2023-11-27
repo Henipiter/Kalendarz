@@ -59,31 +59,23 @@ class AlarmHelper(private val context: Context) {
         intent.putExtra("mode", mode)
         intent.putExtra("id", note.id)
         intent.putExtra("content", note.content)
-        intent.putExtra("title", getTitle(note))
+        intent.putExtra("title", "To " + note.end_time)
+        intent.putExtra("subtitle", "To " + note.end_date)
         var id = note.id!!.toInt()
         if (mode == "UNSET") {
             id *= -1
         }
-        val pendingIntent =
-            PendingIntent.getBroadcast(
-                context,
-                id,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
-
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            id,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             c.timeInMillis,
             pendingIntent
         )
-
-
-    }
-
-    private fun getTitle(note: Note): String {
-        return "To " + note.end_time + " " + note.end_date
     }
 
     private fun cancelAlarm(id: String) {
@@ -103,10 +95,10 @@ class AlarmHelper(private val context: Context) {
     private fun startAlarmToAddNotification(
         shouldPush: Boolean,
         shouldDelete: Boolean,
-        note: Note
+        note: Note,
     ) {
         if (shouldPush) {
-            Log.e("Alarm", "Alarm to to push notification")
+            Log.d("Alarm", "Alarm to to push notification")
             startAlarm(
                 DateFormatHelper.getCalendarFromStrings(
                     note.start_date, note.start_time
@@ -115,9 +107,9 @@ class AlarmHelper(private val context: Context) {
         } else {
             if (shouldDelete) {
                 notificationHelper.createNotification(note)
-                Log.e("Alarm", "Notification pushed without alarm")
+                Log.d("Alarm", "Notification pushed without alarm")
             } else {
-                Log.e("Alarm", "Notification not pushed")
+                Log.d("Alarm", "Notification not pushed")
             }
         }
     }
@@ -128,9 +120,9 @@ class AlarmHelper(private val context: Context) {
                 DateFormatHelper.getCalendarFromStrings(note.end_date, note.end_time),
                 note, "UNSET"
             )
-            Log.e("Alarm", "Alarm to hide notification")
+            Log.d("Alarm", "Alarm to hide notification")
         } else {
-            Log.e("Alarm", "No reaction")
+            Log.d("Alarm", "No reaction")
         }
     }
 }

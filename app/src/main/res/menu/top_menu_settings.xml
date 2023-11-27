@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/import_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Import"
+        android:icon="@drawable/import_icon"
+        android:iconTint="@color/white"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/export_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Export"
+        android:icon="@drawable/export"
+        android:iconTint="@color/white"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/clear_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Clear data"
+        android:icon="@drawable/delete"
+        android:iconTint="@color/white"
+        app:showAsAction="never" />
+</menu>

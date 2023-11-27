@@ -59,21 +59,14 @@ class SettingsFragment : Fragment() {
         pickerHelper = PickerHelper(requireContext())
         databaseHelper = MyDatabaseHelper(requireContext())
 
+        binding.toolbar.inflateMenu(R.menu.top_menu_settings)
+
         val alarmOnOffPref = myPref?.getString(Constants.ALARM_ON_OFF, "true") == "true"
         binding.turnOnOffSwitch.isChecked = alarmOnOffPref
         switchOnOffAlarmBehaviour(alarmOnOffPref)
 
         originalList.addAll(databaseHelper.readAllData())
 
-        binding.exportButton.setOnClickListener {
-            exportDatabase()
-        }
-        binding.importButton.setOnClickListener {
-            importDatabase()
-        }
-        binding.clearButton.setOnClickListener {
-            deleteAllRows()
-        }
         binding.restartButton.setOnClickListener {
             cancelAndSetAllAlarms()
             Toast.makeText(requireContext(), "Alarms restarted", Toast.LENGTH_SHORT).show()
@@ -83,6 +76,26 @@ class SettingsFragment : Fragment() {
             switchOnOffAlarmBehaviour(value)
             myPref?.let {
                 it.edit()?.putString(Constants.ALARM_ON_OFF, value.toString())?.apply()
+            }
+        }
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.import_bt -> {
+                    importDatabase()
+                    true
+                }
+
+                R.id.export_bt -> {
+                    exportDatabase()
+                    true
+                }
+
+                R.id.clear_data -> {
+                    deleteAllRows()
+                    true
+                }
+
+                else -> false
             }
         }
 

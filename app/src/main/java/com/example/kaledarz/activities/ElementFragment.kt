@@ -44,7 +44,7 @@ class ElementFragment : Fragment() {
     private var activityType = "ADD"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
 
         _binding = FragmentElementBinding.inflate(inflater, container, false)
@@ -75,7 +75,7 @@ class ElementFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener { _ ->
             when (activityType) {
                 "EDIT" -> {
-                    if (binding.doneButton.isEnabled == true) {
+                    if (binding.doneButton.isEnabled) {
                         Navigation.findNavController(binding.root).popBackStack()
                     } else {
                         clearToolbarMenu()
@@ -216,6 +216,7 @@ class ElementFragment : Fragment() {
         val myDB = MyDatabaseHelper(requireContext())
         myDB.addGame(note)
         note.id = myDB.readLastRow().id
+        alarmHelper?.setAlarm(note)
     }
 
     private fun setRedButtonIfDatesWrong() {
@@ -375,7 +376,7 @@ class ElementFragment : Fragment() {
     }
 
     private fun setHoursOnButtons() {
-        val hour = Calendar.getInstance()[Calendar.HOUR_OF_DAY] + 1
+        val hour = (Calendar.getInstance()[Calendar.HOUR_OF_DAY] + 1) % 24
         binding.startTimeButton.text = DateFormatHelper.makeFullHour(hour, 0)
         binding.endTimeButton.text = DateFormatHelper.makeFullHour(23, 59)
     }

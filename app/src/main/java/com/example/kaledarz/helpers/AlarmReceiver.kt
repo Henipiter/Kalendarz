@@ -9,6 +9,7 @@ class AlarmReceiver : BroadcastReceiver() {
     private var mode = "SET"
     private var id = "1"
     private var title = "title"
+    private var subtitle = "subtitle"
     private var content = "content"
 
     private lateinit var notificationHelper: NotificationHelper
@@ -23,7 +24,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         if (mode == "SET") {
-            notificationHelper.createNotification(id.toInt(), title, content)
+            notificationHelper.createNotification(id.toInt(), title, subtitle, content)
         } else {
             notificationHelper.deleteNotification(id.toInt())
         }
@@ -38,6 +39,9 @@ class AlarmReceiver : BroadcastReceiver() {
         }
         if (intent.hasExtra("title")) {
             title = intent.getStringExtra("title").toString()
+        }
+        if (intent.hasExtra("subtitle")) {
+            title = intent.getStringExtra("subtitle").toString()
         }
         if (intent.hasExtra("content")) {
             content = intent.getStringExtra("content").toString()

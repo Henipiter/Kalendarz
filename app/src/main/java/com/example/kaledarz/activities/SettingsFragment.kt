@@ -237,7 +237,7 @@ class SettingsFragment : Fragment() {
             .setTitle("Delete all notes")
             .setMessage("Are you sure to delete all notes?")
             .setNegativeButton("CANCEL", null)
-            .setNeutralButton("CLEAR") { dialog, which ->
+            .setNeutralButton("CLEAR") { _, _ ->
 
                 alarmHelper?.unsetAlarmForNotes(originalList)
                 databaseHelper.deleteAllRows()

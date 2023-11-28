@@ -60,7 +60,7 @@ class AlarmHelper(private val context: Context) {
         intent.putExtra("id", note.id)
         intent.putExtra("content", note.content)
         intent.putExtra("title", "To " + note.end_time)
-        intent.putExtra("subtitle", "To " + note.end_date)
+        intent.putExtra("subtitle", note.end_date)
         var id = note.id!!.toInt()
         if (mode == "UNSET") {
             id *= -1

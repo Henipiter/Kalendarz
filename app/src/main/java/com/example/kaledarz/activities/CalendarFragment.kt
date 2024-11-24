@@ -39,9 +39,6 @@ class CalendarFragment : Fragment() {
     private lateinit var databaseHelper: MyDatabaseHelper
     private var myPref: SharedPreferences? = null
 
-    private var chooseDate = "2024-01-01"
-    private var currentYear = 2024
-    private var currentMonth = 0
     private var noteList: ArrayList<Note> = ArrayList()
 
     override fun onCreateView(
@@ -55,25 +52,12 @@ class CalendarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.toolbar.inflateMenu(R.menu.top_menu_calendar)
-
         myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
-
-        chooseDate =
-            DateFormatHelper.getTodayDate(binding.calendarView.currentPageDate.timeInMillis)
-
-        currentYear = chooseDate.substring(6).toInt()
-        currentMonth = chooseDate.substring(3, 5).toInt() - 1
-
         databaseHelper = MyDatabaseHelper(requireContext())
 
         val calendar = Calendar.getInstance()
         binding.calendarView.setDate(calendar)
-
-
-
-
 
         customAdapter = CustomAdapter(requireContext(), noteList) { id ->
             val action = CalendarFragmentDirections.actionCalendarFragmentToElementFragment(
@@ -92,64 +76,26 @@ class CalendarFragment : Fragment() {
         binding.recyclerViewEvent.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-        storeDataInArrays()
 
-        customAdapter.notifyDataSetChanged()
 
         prepareCalendarEvents()
+        storeDataInArrays()
 
         binding.calendarView.setOnPreviousPageChangeListener(object : OnCalendarPageChangeListener {
             override fun onChange() {
-                if (currentMonth == 0) {
-                    currentMonth = 11
-                    currentYear -= 1
-                } else {
-                    currentMonth -= 1
-                }
-                Toast.makeText(
-                    requireContext(),
-                    "PREVIOUS ${currentYear} ${currentMonth}",
-                    Toast.LENGTH_SHORT
-                ).show()
                 prepareCalendarEvents()
             }
         })
         binding.calendarView.setOnForwardPageChangeListener(object : OnCalendarPageChangeListener {
             override fun onChange() {
-                if (currentMonth == 11) {
-                    currentMonth = 0
-                    currentYear += 1
-                } else {
-                    currentMonth += 1
-                }
-                Toast.makeText(
-                    requireContext(),
-                    "FORWARD ${currentYear} ${currentMonth}",
-                    Toast.LENGTH_SHORT
-                ).show()
                 prepareCalendarEvents()
             }
         })
 
         binding.calendarView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
             override fun onClick(calendarDay: CalendarDay) {
-                val clickedDayCalendar = calendarDay.calendar
-                val year = clickedDayCalendar.get(Calendar.YEAR)
-                val month = clickedDayCalendar.get(Calendar.MONTH)
-                val dayOfMonth = clickedDayCalendar.get(Calendar.DAY_OF_MONTH)
-                val calendar = Calendar.getInstance()
-                calendar.set(year, month, dayOfMonth)
-                binding.calendarView.setHighlightedDays(listOf(calendar))
-
-
-                currentYear = year
-                currentMonth = month
-                chooseDate = DateFormatHelper.getChosenDate(year, month, dayOfMonth)
-                Log.d("aa", chooseDate)
                 storeDataInArrays()
-                customAdapter.notifyDataSetChanged()
             }
-
         })
 
         binding.toolbar.setOnMenuItemClickListener {
@@ -159,7 +105,7 @@ class CalendarFragment : Fragment() {
                         id = null,
                         type = "ADD",
                         content = null,
-                        date = chooseDate,
+                        date = DateFormatHelper.getTodayDate(binding.calendarView.selectedDates.first().timeInMillis),
                         startDate = null,
                         endDate = null,
                         startTime = null,
@@ -180,7 +126,7 @@ class CalendarFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        storeDataInArrays()
+         storeDataInArrays()
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -190,6 +136,7 @@ class CalendarFragment : Fragment() {
 
     private fun storeDataInArrays() {
         noteList.clear()
+        val chooseDate = DateFormatHelper.getTodayDate(binding.calendarView.selectedDates.first().timeInMillis)
         noteList.addAll(filterNoteList(databaseHelper.readAllData(), chooseDate))
         if (noteList.size == 0) {
             binding.noRowsInfo.visibility = View.VISIBLE
@@ -200,6 +147,7 @@ class CalendarFragment : Fragment() {
             binding.noRowsInfo.visibility = View.INVISIBLE
             Note.computeStatusForNoteList(noteList)
         }
+        customAdapter.notifyDataSetChanged()
     }
 
     private fun filterNoteList(list: ArrayList<Note>, chosenDate: String): ArrayList<Note> {
@@ -281,6 +229,8 @@ class CalendarFragment : Fragment() {
     }
 
     private fun prepareCalendarEvents() {
+        val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
+        val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
         val lastDay = DateFormatHelper.getLastDayOfMonth(currentYear, currentMonth + 1)
 
         val calendarDayList = arrayListOf<CalendarDay>()

@@ -17,4 +17,8 @@
     <color name="buttonColorRed">@color/red</color>
     <color name="navigationGrayBackground">#2D2D2D</color>
     <color name="navigationGrayFont">#AAAAAA</color>
+    <color name="future">#0E93FA</color>
+    <color name="past">#FF0000</color>
+    <color name="done">#00FF00</color>
+    <color name="undone">#FFFF00</color>
 </resources>

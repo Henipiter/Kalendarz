@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation("com.applandeo:material-calendar-view:1.9.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")

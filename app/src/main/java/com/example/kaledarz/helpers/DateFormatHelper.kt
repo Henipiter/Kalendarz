@@ -3,7 +3,10 @@ package com.example.kaledarz.helpers
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import java.text.ParseException
-import java.util.*
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
+import java.util.Date
+import java.util.Locale
 
 class DateFormatHelper {
     companion object {
@@ -146,6 +149,11 @@ class DateFormatHelper {
                 (month + 1).toString()
             }
             return "$curDate-$monthStr-$year"
+        }
+
+        fun getLastDayOfMonth(year: Int, month: Int): Int {
+            val firstDayOfMonth = LocalDate.of(year, month, 1)
+            return firstDayOfMonth.with(TemporalAdjusters.lastDayOfMonth()).dayOfMonth
         }
     }
 }

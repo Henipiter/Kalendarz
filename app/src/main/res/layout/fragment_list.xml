@@ -42,7 +42,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/image_square_all" />
+                android:src="@drawable/event_four_done_undone_late_future" />
 
             <ImageButton
                 android:id="@+id/done_image_button"

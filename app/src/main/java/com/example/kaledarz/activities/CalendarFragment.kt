@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.applandeo.materialcalendarview.CalendarDay
@@ -26,20 +26,19 @@ import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
 import com.example.kaledarz.databinding.FragmentCalendarBinding
 import com.example.kaledarz.helpers.DateFormatHelper
-import com.example.kaledarz.helpers.MyDatabaseHelper
+import com.example.kaledarz.viewmodel.CalendarViewModel
 import java.util.Calendar
 
 
 class CalendarFragment : Fragment() {
 
+    private val calendarViewModel: CalendarViewModel by activityViewModels()
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var customAdapter: CustomAdapter
-    private lateinit var databaseHelper: MyDatabaseHelper
     private var myPref: SharedPreferences? = null
 
-    private var noteList: ArrayList<Note> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,12 +53,13 @@ class CalendarFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.toolbar.inflateMenu(R.menu.top_menu_calendar)
         myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
-        databaseHelper = MyDatabaseHelper(requireContext())
 
+        initObserver()
+        calendarViewModel.readAllNotes()
         val calendar = Calendar.getInstance()
         binding.calendarView.setDate(calendar)
 
-        customAdapter = CustomAdapter(requireContext(), noteList) { id ->
+        customAdapter = CustomAdapter(requireContext(), calendarViewModel.getFilteredList()) { id ->
             val action = CalendarFragmentDirections.actionCalendarFragmentToElementFragment(
                 id = id,
                 type = "EDIT",
@@ -76,11 +76,6 @@ class CalendarFragment : Fragment() {
         binding.recyclerViewEvent.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-
-
-        prepareCalendarEvents()
-        storeDataInArrays()
-
         binding.calendarView.setOnPreviousPageChangeListener(object : OnCalendarPageChangeListener {
             override fun onChange() {
                 prepareCalendarEvents()
@@ -94,7 +89,7 @@ class CalendarFragment : Fragment() {
 
         binding.calendarView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
             override fun onClick(calendarDay: CalendarDay) {
-                storeDataInArrays()
+                storeDataInArrays(calendarDay.calendar)
             }
         })
 
@@ -126,7 +121,14 @@ class CalendarFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-         storeDataInArrays()
+        calendarViewModel.readAllNotes()
+    }
+
+    private fun prepareCalendarEvents() {
+        val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
+        val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
+        calendarViewModel.prepareCalendarEvents(currentMonth, currentYear)
+
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -134,20 +136,38 @@ class CalendarFragment : Fragment() {
     }
 
 
-    private fun storeDataInArrays() {
-        noteList.clear()
-        val chooseDate = DateFormatHelper.getTodayDate(binding.calendarView.selectedDates.first().timeInMillis)
-        noteList.addAll(filterNoteList(databaseHelper.readAllData(), chooseDate))
-        if (noteList.size == 0) {
-            binding.noRowsInfo.visibility = View.VISIBLE
-            binding.imageMute.isVisible =
-                myPref?.getString(Constants.ALARM_ON_OFF, "true") != "true"
-        } else {
-            binding.imageMute.visibility = View.INVISIBLE
-            binding.noRowsInfo.visibility = View.INVISIBLE
-            Note.computeStatusForNoteList(noteList)
+    private fun storeDataInArrays(calendar:Calendar) {
+        val chooseDate =
+            DateFormatHelper.getTodayDate(calendar.timeInMillis)
+        calendarViewModel.filterNoteList(chooseDate)
+    }
+
+    private fun initObserver() {
+        calendarViewModel.noteList.observe(viewLifecycleOwner) {
+            prepareCalendarEvents()
+            storeDataInArrays(binding.calendarView.selectedDates.first())
         }
-        customAdapter.notifyDataSetChanged()
+
+        calendarViewModel.calendarDayList.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.calendarView.setCalendarDays(it)
+            }
+        }
+
+        calendarViewModel.filteredList.observe(viewLifecycleOwner) {
+            it?.let { noteList ->
+                if (noteList.size == 0) {
+                    binding.noRowsInfo.visibility = View.VISIBLE
+                    binding.imageMute.isVisible =
+                        myPref?.getString(Constants.ALARM_ON_OFF, "true") != "true"
+                } else {
+                    binding.imageMute.visibility = View.INVISIBLE
+                    binding.noRowsInfo.visibility = View.INVISIBLE
+                }
+                customAdapter.noteList = noteList
+                customAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     private fun filterNoteList(list: ArrayList<Note>, chosenDate: String): ArrayList<Note> {
@@ -169,104 +189,6 @@ class CalendarFragment : Fragment() {
 
     private fun requestAppPermissions() {
         activityResultLauncher.launch(REQUIRED_PERMISSIONS)
-
-    }
-
-    @DrawableRes
-    private fun getDrawableByStatus(statuses: Set<Status>): Int? {
-        if (statuses.size == 4) {
-            return R.drawable.event_four_done_undone_late_future
-        }
-        if (statuses.size == 3) {
-            if (!statuses.contains(Status.DONE)) {
-                return R.drawable.event_three_undone_past_future
-            }
-            if (!statuses.contains(Status.UNDONE)) {
-                return R.drawable.event_three_done_past_future
-            }
-            if (!statuses.contains(Status.PAST)) {
-                return R.drawable.event_three_done_undone_future
-            }
-            if (!statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_three_done_undone_past
-            }
-        }
-        if (statuses.size == 2) {
-            if (statuses.contains(Status.DONE) && statuses.contains(Status.UNDONE)) {
-                return R.drawable.event_two_done_undone
-            }
-            if (statuses.contains(Status.DONE) && statuses.contains(Status.PAST)) {
-                return R.drawable.event_two_done_past
-            }
-            if (statuses.contains(Status.DONE) && statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_two_done_future
-            }
-            if (statuses.contains(Status.UNDONE) && statuses.contains(Status.PAST)) {
-                return R.drawable.event_two_undone_past
-            }
-            if (statuses.contains(Status.UNDONE) && statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_two_undone_future
-            }
-            if (statuses.contains(Status.PAST) && statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_two_past_future
-            }
-        }
-        if (statuses.size == 1) {
-            if (statuses.contains(Status.DONE)) {
-                return R.drawable.event_one_done
-            }
-            if (statuses.contains(Status.UNDONE)) {
-                return R.drawable.event_one_undone
-            }
-            if (statuses.contains(Status.PAST)) {
-                return R.drawable.event_one_past
-            }
-            if (statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_one_future
-            }
-        }
-        return null
-    }
-
-    private fun prepareCalendarEvents() {
-        val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
-        val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
-        val lastDay = DateFormatHelper.getLastDayOfMonth(currentYear, currentMonth + 1)
-
-        val calendarDayList = arrayListOf<CalendarDay>()
-        val list = databaseHelper.readAllData()
-        for (i in 1..lastDay) {
-            val currentDate = String.format("%02d", i) + "-" + String.format(
-                "%02d",
-                currentMonth + 1
-            ) + "-" + currentYear
-            val notes = filterNoteList(list, currentDate)
-            if (notes.isNotEmpty()) {
-                Note.computeStatusForNoteList(notes)
-                val set = HashSet<Status>()
-                notes.forEach { note -> set.add(note.status) }
-
-                calendarDayList.add(
-                    getCalendarDay(
-                        currentYear,
-                        currentMonth,
-                        i,
-                        getDrawableByStatus((set))
-                    )
-                )
-            }
-        }
-        binding.calendarView.setCalendarDays(calendarDayList)
-    }
-
-    private fun getCalendarDay(
-        year: Int, month: Int, day: Int, @DrawableRes imageResource: Int?
-    ): CalendarDay {
-        val calendar = Calendar.getInstance()
-        calendar.set(year, month, day)
-        val calendarDay = CalendarDay(calendar)
-        calendarDay.imageResource = imageResource
-        return calendarDay
     }
 
     private val activityResultLauncher =

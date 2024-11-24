@@ -24,15 +24,15 @@
         android:layout_height="wrap_content"
 
         app:abbreviationsBarColor="@color/navigationGrayBackground"
-        app:abbreviationsLabelsColor="@color/navigationGrayFont"
-
-        app:daysLabelsColor="@color/navigationGrayFont"
+        app:abbreviationsLabelsColor="@color/white"
+        app:anotherMonthsDaysLabelsColor="@color/navigationGrayFont"
+        app:daysLabelsColor="@color/white"
         app:eventsEnabled="true"
         app:headerColor="@color/green_700"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:pagesColor="@color/navigationGrayBackground"
+        app:pagesColor="@color/dark_background"
 
         app:selectionColor="@color/green_200"
         app:selectionLabelColor="@color/white"

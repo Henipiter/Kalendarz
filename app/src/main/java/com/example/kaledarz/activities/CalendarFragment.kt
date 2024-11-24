@@ -265,16 +265,16 @@ class CalendarFragment : Fragment() {
         }
         if (statuses.size == 1) {
             if (statuses.contains(Status.DONE)) {
-                return R.drawable.image_square_done
+                return R.drawable.event_one_done
             }
             if (statuses.contains(Status.UNDONE)) {
-                return R.drawable.image_square_undone
+                return R.drawable.event_one_undone
             }
             if (statuses.contains(Status.PAST)) {
-                return R.drawable.image_square_late
+                return R.drawable.event_one_past
             }
             if (statuses.contains(Status.FUTURE)) {
-                return R.drawable.image_square_future
+                return R.drawable.event_one_future
             }
         }
         return null

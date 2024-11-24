@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="@color/navigationGrayBackground" />
-            <size android:width="100dp" android:height="100dp" />
-        </shape>
-    </item>
-
     <item android:left="100dp">
         <shape android:shape="rectangle">
             <solid android:color="@color/future" />
@@ -17,7 +10,7 @@
 
     <item android:left="200dp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/navigationGrayBackground" />
+            <solid android:color="@color/dark_background" />
             <size android:width="100dp" android:height="100dp" />
         </shape>
     </item>

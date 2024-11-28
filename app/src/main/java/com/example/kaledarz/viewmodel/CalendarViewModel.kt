@@ -51,11 +51,11 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
             for (note in it) {
                 val isAboveStart =
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        chosenDate, note.start_date, "dd-MM-yyyy"
+                        chosenDate, note.startDate, "dd-MM-yyyy"
                     )
                 val isUnderEnd =
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        note.end_date, chosenDate, "dd-MM-yyyy"
+                        note.endDate, chosenDate, "dd-MM-yyyy"
                     )
                 if (isAboveStart && isUnderEnd)
                     list.add(note)

@@ -178,16 +178,16 @@ class SettingsFragment : Fragment() {
     }
 
     private fun validateNote(note: Note): Boolean {
-        if (!DateFormatHelper.validate(note.start_date, "dd-MM-yyyy")) {
+        if (!DateFormatHelper.validate(note.startDate, "dd-MM-yyyy")) {
             return false
         }
-        if (!DateFormatHelper.validate(note.end_date, "dd-MM-yyyy")) {
+        if (!DateFormatHelper.validate(note.endDate, "dd-MM-yyyy")) {
             return false
         }
-        if (!DateFormatHelper.validate(note.start_time, "HH:mm")) {
+        if (!DateFormatHelper.validate(note.startTime, "HH:mm")) {
             return false
         }
-        if (!DateFormatHelper.validate(note.start_time, "HH:mm")) {
+        if (!DateFormatHelper.validate(note.startTime, "HH:mm")) {
             return false
         }
         if (!Status.values().map { it.name }.contains(note.status.name)) {

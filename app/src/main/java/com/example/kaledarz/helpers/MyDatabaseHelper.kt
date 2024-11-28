@@ -92,10 +92,10 @@ class MyDatabaseHelper(val context: Context?) :
     fun addGame(note: Note): Int {
         val db = this.writableDatabase
         val contentValues = ContentValues()
-        contentValues.put(START_DATE_COLUMN, note.start_date)
-        contentValues.put(END_DATE_COLUMN, note.end_date)
-        contentValues.put(START_TIME_COLUMN, note.start_time)
-        contentValues.put(END_TIME_COLUMN, note.end_time)
+        contentValues.put(START_DATE_COLUMN, note.startDate)
+        contentValues.put(END_DATE_COLUMN, note.endDate)
+        contentValues.put(START_TIME_COLUMN, note.startTime)
+        contentValues.put(END_TIME_COLUMN, note.endTime)
         contentValues.put(CONTENT_COLUMN, note.content)
         contentValues.put(DONE_MARK_COLUMN, note.done)
         contentValues.put(CYCLIC_COLUMN, note.cyclic)

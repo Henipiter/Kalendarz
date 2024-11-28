@@ -4,10 +4,10 @@ import com.example.kaledarz.helpers.DateFormatHelper
 
 class Note(
     var id: String?,
-    var start_date: String,
-    var end_date: String,
-    var start_time: String,
-    var end_time: String,
+    var startDate: String,
+    var endDate: String,
+    var startTime: String,
+    var endTime: String,
     var content: String?,
     var done: Boolean,
     var cyclic: Boolean,
@@ -15,7 +15,7 @@ class Note(
 ) {
 
     fun export(): String {
-        return "$start_date`$end_date`$start_time`$end_time`$content`$done`$cyclic`$status``\n``"
+        return "$startDate`$endDate`$startTime`$endTime`$content`$done`$cyclic`$status``\n``"
     }
 
     constructor() : this("", "", "", "", "", "", false, false, Status.UNDONE)
@@ -56,13 +56,13 @@ class Note(
         private fun checkStatusPast(note: Note): Boolean {
             return DateFormatHelper.isFirstDateGreaterThanSecond(
                 DateFormatHelper.getCurrentDateTime(),
-                note.end_date + " " + note.end_time + ":00"
+                note.endDate + " " + note.endTime + ":00"
             )
         }
 
         private fun checkStatusFuture(note: Note): Boolean {
             return DateFormatHelper.isFirstDateGreaterThanSecond(
-                note.start_date + " " + note.start_time + ":00",
+                note.startDate + " " + note.startTime + ":00",
                 DateFormatHelper.getCurrentDateTime()
             )
         }

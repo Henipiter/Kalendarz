@@ -32,8 +32,8 @@ class AlarmHelper(private val context: Context) {
 
     fun setAlarm(note: Note) {
         val now = DateFormatHelper.getCurrentDateTime()
-        val startAt = note.start_date + " " + note.start_time + ":00"
-        val endAt = note.end_date + " " + note.end_time + ":00"
+        val startAt = note.startDate + " " + note.startTime + ":00"
+        val endAt = note.endDate + " " + note.endTime + ":00"
 
         val shouldPush = DateFormatHelper.isFirstDateGreaterThanSecond(startAt, now)
         val shouldDelete = DateFormatHelper.isFirstDateGreaterThanSecond(endAt, now)
@@ -62,8 +62,8 @@ class AlarmHelper(private val context: Context) {
         intent.putExtra("mode", mode)
         intent.putExtra("id", note.id)
         intent.putExtra("content", note.content)
-        intent.putExtra("title", "To " + note.end_time)
-        intent.putExtra("subtitle", note.end_date)
+        intent.putExtra("title", "To " + note.endTime)
+        intent.putExtra("subtitle", note.endDate)
         var id = note.id!!.toInt()
         if (mode == "UNSET") {
             id *= -1
@@ -114,7 +114,7 @@ class AlarmHelper(private val context: Context) {
             Log.d("Alarm", "Alarm to to push notification")
             startAlarm(
                 DateFormatHelper.getCalendarFromStrings(
-                    note.start_date, note.start_time
+                    note.startDate, note.startTime
                 ), note, "SET"
             )
         } else {
@@ -130,7 +130,7 @@ class AlarmHelper(private val context: Context) {
     private fun startAlarmToDeleteNotification(shouldDelete: Boolean, note: Note) {
         if (shouldDelete) {
             startAlarm(
-                DateFormatHelper.getCalendarFromStrings(note.end_date, note.end_time),
+                DateFormatHelper.getCalendarFromStrings(note.endDate, note.endTime),
                 note, "UNSET"
             )
             Log.d("Alarm", "Alarm to hide notification")

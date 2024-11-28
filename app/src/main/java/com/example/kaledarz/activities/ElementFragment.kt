@@ -200,8 +200,8 @@ class ElementFragment : Fragment() {
 
     private fun addDuplicatedNotes() {
         for (i in 1..binding.duplicationNumberButton.text.toString().toInt()) {
-            note.start_date = DateFormatHelper.getNextDayFromString(note.start_date)
-            note.end_date = DateFormatHelper.getNextDayFromString(note.end_date)
+            note.startDate = DateFormatHelper.getNextDayFromString(note.startDate)
+            note.endDate = DateFormatHelper.getNextDayFromString(note.endDate)
             addNoteToDatabase()
         }
     }
@@ -367,10 +367,10 @@ class ElementFragment : Fragment() {
         if (note.id == "") {
             Toast.makeText(requireContext(), "No data", Toast.LENGTH_SHORT).show()
         } else {
-            binding.startDateButton.text = note.start_date
-            binding.endDateButton.text = note.end_date
-            binding.startTimeButton.text = note.start_time
-            binding.endTimeButton.text = note.end_time
+            binding.startDateButton.text = note.startDate
+            binding.endDateButton.text = note.endDate
+            binding.startTimeButton.text = note.startTime
+            binding.endTimeButton.text = note.endTime
             binding.contentText.setText(note.content)
             binding.cyclicSwitch.isChecked = note.cyclic
         }
@@ -416,10 +416,10 @@ class ElementFragment : Fragment() {
     private fun enableButtonIfCancel() {
 
         enableEditText(binding.contentText, false)
-        binding.startDateButton.text = note.start_date
-        binding.endDateButton.text = note.end_date
+        binding.startDateButton.text = note.startDate
+        binding.endDateButton.text = note.endDate
         binding.contentText.setText(note.content)
-        binding.startTimeButton.text = note.start_time
+        binding.startTimeButton.text = note.startTime
         binding.endDateButton.setBackgroundResource(android.R.drawable.btn_default)
         binding.endTimeButton.setBackgroundResource(android.R.drawable.btn_default)
         enableButtonIfEdit(false)

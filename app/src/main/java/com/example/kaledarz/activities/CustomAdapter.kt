@@ -42,10 +42,10 @@ class CustomAdapter(
         holder.binding.imageMute.isVisible =
             myPref.getString(Constants.ALARM_ON_OFF, "true") != "true"
 
-        holder.binding.timeStart.text = noteList[position].start_time
-        holder.binding.dateStart.text = noteList[position].start_date
-        holder.binding.timeEnd.text = noteList[position].end_time
-        holder.binding.dateEnd.text = noteList[position].end_date
+        holder.binding.timeStart.text = noteList[position].startTime
+        holder.binding.dateStart.text = noteList[position].startDate
+        holder.binding.timeEnd.text = noteList[position].endTime
+        holder.binding.dateEnd.text = noteList[position].endDate
         holder.binding.content1.text = noteList[position].content?.let { trimDescription(it) }
         getRightStatusImage(holder, noteList[position])
         holder.binding.mainLayout.setOnClickListener {

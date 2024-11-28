@@ -213,19 +213,19 @@ class ListFragment : Fragment() {
         for (note in tempList) {
             val isLowerStartDateNoteIsValid = filterLowerStart == Constants.NONE ||
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        note.start_date, filterLowerStart, "dd-MM-yyyy"
+                        note.startDate, filterLowerStart, "dd-MM-yyyy"
                     )
             val isUpperStartDateNoteIsValid = filterUpperStart == Constants.NONE ||
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        filterUpperStart, note.start_date, "dd-MM-yyyy"
+                        filterUpperStart, note.startDate, "dd-MM-yyyy"
                     )
             val isLowerEndDateNoteIsValid = filterLowerEnd == Constants.NONE ||
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        note.end_date, filterLowerEnd, "dd-MM-yyyy"
+                        note.endDate, filterLowerEnd, "dd-MM-yyyy"
                     )
             val isUpperEndDateNoteIsValid = filterUpperEnd == Constants.NONE ||
                     DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        filterUpperEnd, note.end_date, "dd-MM-yyyy"
+                        filterUpperEnd, note.endDate, "dd-MM-yyyy"
                     )
             val isContentValid =
                 filterContent == Constants.NONE || note.content != null && note.content!!.contains(

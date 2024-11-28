@@ -3,7 +3,9 @@ package com.example.kaledarz.helpers
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import java.text.ParseException
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 import java.util.Date
 import java.util.Locale
@@ -99,10 +101,6 @@ class DateFormatHelper {
             )
         }
 
-        fun getCurrentDateTimeForDatabase(): String? {
-            return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", locale).format(Date())
-        }
-
         fun getCurrentDateTime(): String {
             return SimpleDateFormat("dd-MM-yyyy HH:mm:ss", locale).format(Date())
         }
@@ -137,23 +135,44 @@ class DateFormatHelper {
             return "$curDate-$month-$year"
         }
 
-        fun getChosenDate(year: Int, month: Int, dayOfMonth: Int): String {
-            val curDate = if (dayOfMonth < 10) {
-                "0$dayOfMonth"
-            } else {
-                dayOfMonth.toString()
-            }
-            val monthStr: String = if (month + 1 < 10) {
-                "0" + (month + 1).toString()
-            } else {
-                (month + 1).toString()
-            }
-            return "$curDate-$monthStr-$year"
-        }
-
         fun getLastDayOfMonth(year: Int, month: Int): Int {
             val firstDayOfMonth = LocalDate.of(year, month, 1)
             return firstDayOfMonth.with(TemporalAdjusters.lastDayOfMonth()).dayOfMonth
+        }
+
+        fun getSecondLastMondayOfMonth(month: Int, year: Int): Int {
+            val lastDayOfMonth = YearMonth.of(year, month + 1).atEndOfMonth()
+            var lastMonday = lastDayOfMonth
+            while (lastMonday.dayOfWeek != DayOfWeek.MONDAY) {
+                lastMonday = lastMonday.minusDays(1)
+            }
+            return lastMonday.dayOfMonth - 7
+        }
+
+        fun getSecondSundayOfMonth(month: Int, year: Int): Int {
+            val firstDayOfMonth = YearMonth.of(year, month + 1).atDay(1)
+            var firstSunday = firstDayOfMonth
+            while (firstSunday.dayOfWeek != DayOfWeek.SUNDAY) {
+                firstSunday = firstSunday.plusDays(1)
+            }
+
+            return firstSunday.dayOfMonth + 7
+        }
+
+        fun getPreviousMonthAndYear(month: Int, year: Int): Pair<Int, Int> {
+            return if (month == 0) {
+                Pair(11, year - 1)
+            } else {
+                Pair(month - 1, year)
+            }
+        }
+
+        fun getNextMonthAndYear(month: Int, year: Int): Pair<Int, Int> {
+            return if (month == 11) {
+                Pair(0, year + 1)
+            } else {
+                Pair(month + 1, year)
+            }
         }
     }
 }

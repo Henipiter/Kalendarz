@@ -1,6 +1,7 @@
 package com.example.kaledarz.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.AndroidViewModel
@@ -9,8 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.applandeo.materialcalendarview.CalendarDay
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
-import com.example.kaledarz.R
 import com.example.kaledarz.helpers.DateFormatHelper
+import com.example.kaledarz.helpers.DrawableHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -23,6 +24,11 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     var filteredList = MutableLiveData<ArrayList<Note>>()
 
     var calendarDayList = MutableLiveData<ArrayList<CalendarDay>>()
+    private var boundaryPreviousCalendarDayList = ArrayList<CalendarDay>()
+    private var previousCalendarDayList = ArrayList<CalendarDay>()
+    private var currentCalendarDayList = ArrayList<CalendarDay>()
+    private var nextCalendarDayList = ArrayList<CalendarDay>()
+    private var boundaryNextCalendarDayList = ArrayList<CalendarDay>()
 
     init {
         databaseHelper = MyDatabaseHelper(getApplication<Application>().applicationContext)
@@ -66,9 +72,147 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun prepareCalendarEvents(currentMonth: Int, currentYear: Int) {
+        currentCalendarDayList.clear()
+        previousCalendarDayList.clear()
+        nextCalendarDayList.clear()
+        boundaryPreviousCalendarDayList.clear()
+        boundaryNextCalendarDayList.clear()
+
+        Log.d("DATEE", "prepareCalendarEvents")
+        currentCalendarDayList.addAll(prepareCurrentCalendarEvents(currentMonth, currentYear))
+        previousCalendarDayList.addAll(preparePreviousCalendarEvents(currentMonth, currentYear))
+        nextCalendarDayList.addAll(prepareNextCalendarEvents(currentMonth, currentYear))
+        boundaryNextCalendarDayList.addAll(
+            prepareBoundaryNextCalendarEvents(
+                currentMonth,
+                currentYear
+            )
+        )
+        boundaryPreviousCalendarDayList.addAll(
+            prepareBoundaryPreviousCalendarEvents(currentMonth, currentYear)
+        )
+        buildAllList()
+
+        Log.d("DATEE", "prepareCalendarEvents END")
+    }
+
+    fun preparePreviousCalendarEventsAA(currentMonth: Int, currentYear: Int) {
+        boundaryNextCalendarDayList.clear()
+        boundaryNextCalendarDayList.addAll(nextCalendarDayList)
+        nextCalendarDayList.clear()
+        nextCalendarDayList.addAll(currentCalendarDayList)
+        currentCalendarDayList.clear()
+        currentCalendarDayList.addAll(previousCalendarDayList)
+        previousCalendarDayList.clear()
+        previousCalendarDayList.addAll(preparePreviousCalendarEvents(currentMonth, currentYear))
+        boundaryPreviousCalendarDayList.clear()
+        boundaryPreviousCalendarDayList.addAll(
+            prepareBoundaryPreviousCalendarEvents(currentMonth, currentYear)
+        )
+        buildAllList()
+    }
+
+    fun prepareNextCalendarEventsAA(currentMonth: Int, currentYear: Int) {
+        boundaryPreviousCalendarDayList.clear()
+        boundaryPreviousCalendarDayList.addAll(previousCalendarDayList)
+        previousCalendarDayList.clear()
+        previousCalendarDayList.addAll(currentCalendarDayList)
+        currentCalendarDayList.clear()
+        currentCalendarDayList.addAll(nextCalendarDayList)
+        nextCalendarDayList.clear()
+        nextCalendarDayList.addAll(prepareNextCalendarEvents(currentMonth, currentYear))
+        boundaryNextCalendarDayList.clear()
+        boundaryNextCalendarDayList.addAll(
+            prepareBoundaryNextCalendarEvents(currentMonth, currentYear)
+        )
+        buildAllList()
+    }
+
+    private fun buildAllList() {
+        val allList = arrayListOf<CalendarDay>()
+        allList.addAll(boundaryPreviousCalendarDayList)
+        allList.addAll(previousCalendarDayList)
+        allList.addAll(currentCalendarDayList)
+        allList.addAll(nextCalendarDayList)
+        allList.addAll(boundaryNextCalendarDayList)
+        calendarDayList.postValue(allList)
+    }
+
+    private fun prepareNextCalendarEvents(currentMonth: Int, currentYear: Int): List<CalendarDay> {
+        Log.d("DATEE", "prepareNextCalendarEvents")
+        val (nextMonth, nextYear) =
+            DateFormatHelper.getNextMonthAndYear(currentMonth, currentYear)
+
+        return prepareCurrentCalendarEvents(nextMonth, nextYear)
+
+    }
+
+    private fun prepareBoundaryNextCalendarEvents(
+        currentMonth: Int, currentYear: Int
+    ): List<CalendarDay> {
+        Log.d("DATEE", "prepareBoundaryNextCalendarEvents")
+        val (nextMonth, nextYear) =
+            DateFormatHelper.getNextMonthAndYear(currentMonth, currentYear)
+        val (nextNextMonth, nextNextYear) =
+            DateFormatHelper.getNextMonthAndYear(nextMonth, nextYear)
+        val lastDayOfNextNextMonth = DateFormatHelper.getSecondSundayOfMonth(
+            nextNextMonth, nextNextYear
+        )
+
+        return prepareCurrentCalendarEvents(
+            nextNextMonth, nextNextYear, defaultLastDay = lastDayOfNextNextMonth
+        )
+
+    }
+
+    private fun prepareBoundaryPreviousCalendarEvents(
+        currentMonth: Int,
+        currentYear: Int
+    ): List<CalendarDay> {
+        Log.d("DATEE", "prepareBoundaryPreviousCalendarEvents")
+        val (previousMonth, previousYear) =
+            DateFormatHelper.getPreviousMonthAndYear(currentMonth, currentYear)
+        val (previousPreviousMonth, previousPreviousYear) =
+            DateFormatHelper.getPreviousMonthAndYear(previousMonth, previousYear)
+        val firstDayOfPreviousPreviousMonth = DateFormatHelper.getSecondLastMondayOfMonth(
+            previousPreviousMonth, previousPreviousYear
+        )
+
+        return prepareCurrentCalendarEvents(
+            previousPreviousMonth, previousPreviousYear, firstDay = firstDayOfPreviousPreviousMonth
+        )
+
+    }
+
+    private fun preparePreviousCalendarEvents(
+        currentMonth: Int,
+        currentYear: Int
+    ): List<CalendarDay> {
+        Log.d("DATEE", "preparePreviousCalendarEvents")
+        val (previousMonth, previousYear) =
+            DateFormatHelper.getPreviousMonthAndYear(currentMonth, currentYear)
+        return prepareCurrentCalendarEvents(previousMonth, previousYear)
+
+    }
+
+    private fun prepareCurrentCalendarEvents(
+        currentMonth: Int,
+        currentYear: Int,
+        firstDay: Int = 1,
+        defaultLastDay: Int = -1
+    ): List<CalendarDay> {
+        Log.d(
+            "DATEE",
+            "currentMonth $currentMonth currentYear $currentYear " +
+                    "firstDay $firstDay defaultLastDay $defaultLastDay"
+        )
         val dayList = arrayListOf<CalendarDay>()
-        val lastDay = DateFormatHelper.getLastDayOfMonth(currentYear, currentMonth + 1)
-        for (i in 1..lastDay) {
+        val lastDay = if (defaultLastDay != -1) {
+            defaultLastDay
+        } else {
+            DateFormatHelper.getLastDayOfMonth(currentYear, currentMonth + 1)
+        }
+        for (i in firstDay..lastDay) {
             val currentDate = String.format("%02d", i) + "-" + String.format(
                 "%02d",
                 currentMonth + 1
@@ -91,13 +235,13 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                         currentYear,
                         currentMonth,
                         i,
-                        getColorByNoteCyclicType(isRegularNotePresent),
-                        getDrawableByStatus(cyclicNoteStatuses, isRegularNotePresent)
+                        DrawableHelper.getColorByNoteCyclicType(isRegularNotePresent),
+                        DrawableHelper.getDrawableByStatus(cyclicNoteStatuses, isRegularNotePresent)
                     )
                 )
             }
         }
-        calendarDayList.postValue(dayList)
+        return dayList
     }
 
     private fun getCalendarDay(
@@ -115,126 +259,4 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         return calendarDay
     }
 
-    @ColorRes
-    private fun getColorByNoteCyclicType(isRegular: Boolean): Int {
-        return if (isRegular) {
-            R.color.done
-        } else {
-            R.color.white
-        }
-    }
-
-    @DrawableRes
-    private fun getDrawableByStatus(statuses: Set<Status>, isRegular: Boolean): Int? {
-        if (isRegular) {
-            if (statuses.size == 4) {
-                return R.drawable.image_round_all_bonus
-            }
-            if (statuses.size == 3) {
-                if (!statuses.contains(Status.DONE)) {
-                    return R.drawable.event_three_undone_past_future_regular
-                }
-                if (!statuses.contains(Status.UNDONE)) {
-                    return R.drawable.event_three_done_past_future_regular
-                }
-                if (!statuses.contains(Status.PAST)) {
-                    return R.drawable.event_three_done_undone_future_regular
-                }
-                if (!statuses.contains(Status.FUTURE)) {
-                    return R.drawable.event_three_done_undone_past_regular
-                }
-            }
-            if (statuses.size == 2) {
-                if (statuses.contains(Status.DONE) && statuses.contains(Status.UNDONE)) {
-                    return R.drawable.event_two_done_undone_regular
-                }
-                if (statuses.contains(Status.DONE) && statuses.contains(Status.PAST)) {
-                    return R.drawable.event_two_done_past_regular
-                }
-                if (statuses.contains(Status.DONE) && statuses.contains(Status.FUTURE)) {
-                    return R.drawable.event_two_done_future_regular
-                }
-                if (statuses.contains(Status.UNDONE) && statuses.contains(Status.PAST)) {
-                    return R.drawable.event_two_undone_past_regular
-                }
-                if (statuses.contains(Status.UNDONE) && statuses.contains(Status.FUTURE)) {
-                    return R.drawable.event_two_undone_future_regular
-                }
-                if (statuses.contains(Status.PAST) && statuses.contains(Status.FUTURE)) {
-                    return R.drawable.event_two_past_future_regular
-                }
-            }
-            if (statuses.size == 1) {
-                if (statuses.contains(Status.DONE)) {
-                    return R.drawable.event_one_done_regular
-                }
-                if (statuses.contains(Status.UNDONE)) {
-                    return R.drawable.event_one_undone_regular
-                }
-                if (statuses.contains(Status.PAST)) {
-                    return R.drawable.event_one_past_regular
-                }
-                if (statuses.contains(Status.FUTURE)) {
-                    return R.drawable.event_one_future_regular
-                }
-            }
-            return R.drawable.event_zero_regular
-        }
-
-
-
-
-        if (statuses.size == 4) {
-            return R.drawable.image_round_all
-        }
-        if (statuses.size == 3) {
-            if (!statuses.contains(Status.DONE)) {
-                return R.drawable.event_three_undone_past_future
-            }
-            if (!statuses.contains(Status.UNDONE)) {
-                return R.drawable.event_three_done_past_future
-            }
-            if (!statuses.contains(Status.PAST)) {
-                return R.drawable.event_three_done_undone_future
-            }
-            if (!statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_three_done_undone_past
-            }
-        }
-        if (statuses.size == 2) {
-            if (statuses.contains(Status.DONE) && statuses.contains(Status.UNDONE)) {
-                return R.drawable.event_two_done_undone
-            }
-            if (statuses.contains(Status.DONE) && statuses.contains(Status.PAST)) {
-                return R.drawable.event_two_done_past
-            }
-            if (statuses.contains(Status.DONE) && statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_two_done_future
-            }
-            if (statuses.contains(Status.UNDONE) && statuses.contains(Status.PAST)) {
-                return R.drawable.event_two_undone_past
-            }
-            if (statuses.contains(Status.UNDONE) && statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_two_undone_future
-            }
-            if (statuses.contains(Status.PAST) && statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_two_past_future
-            }
-        }
-        if (statuses.size == 1) {
-            if (statuses.contains(Status.DONE)) {
-                return R.drawable.event_one_done
-            }
-            if (statuses.contains(Status.UNDONE)) {
-                return R.drawable.event_one_undone
-            }
-            if (statuses.contains(Status.PAST)) {
-                return R.drawable.event_one_past
-            }
-            if (statuses.contains(Status.FUTURE)) {
-                return R.drawable.event_one_future
-            }
-        }
-        return null
-    }
 }

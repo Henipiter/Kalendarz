@@ -3,6 +3,7 @@ package com.example.kaledarz.activities
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,12 +76,18 @@ class CalendarFragment : Fragment() {
 
         binding.calendarView.setOnPreviousPageChangeListener(object : OnCalendarPageChangeListener {
             override fun onChange() {
-                prepareCalendarEvents()
+                val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
+                val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
+                calendarViewModel.preparePreviousCalendarEventsAA(currentMonth, currentYear)
+                Log.d("DATEE", "=================")
             }
         })
         binding.calendarView.setOnForwardPageChangeListener(object : OnCalendarPageChangeListener {
             override fun onChange() {
-                prepareCalendarEvents()
+                val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
+                val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
+                calendarViewModel.prepareNextCalendarEventsAA(currentMonth, currentYear)
+                Log.d("DATEE", "=================")
             }
         })
 
@@ -121,13 +128,6 @@ class CalendarFragment : Fragment() {
         calendarViewModel.readAllNotes()
     }
 
-    private fun prepareCalendarEvents() {
-        val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
-        val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
-        calendarViewModel.prepareCalendarEvents(currentMonth, currentYear)
-
-    }
-
     private fun allPermissionsGranted() = AskPermissionHelper.REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
@@ -141,7 +141,10 @@ class CalendarFragment : Fragment() {
 
     private fun initObserver() {
         calendarViewModel.noteList.observe(viewLifecycleOwner) {
-            prepareCalendarEvents()
+            val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
+            val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
+            calendarViewModel.prepareCalendarEvents(currentMonth, currentYear)
+            Log.d("DATEE", "=================")
             storeDataInArrays(binding.calendarView.selectedDates.first())
         }
 

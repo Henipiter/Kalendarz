@@ -28,6 +28,7 @@
         app:anotherMonthsDaysLabelsColor="@color/navigationGrayFont"
         app:daysLabelsColor="@color/white"
         app:eventsEnabled="true"
+        app:highlightedDaysLabelsColor="@color/done"
         app:headerColor="@color/green_700"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -23,7 +23,7 @@ class MyDatabaseHelper(val context: Context?) :
         const val END_TIME_COLUMN = "end_time"
         const val CONTENT_COLUMN = "content"
         const val DONE_MARK_COLUMN = "done_mark"
-        const val CREATION_DATE = "creation_date"
+        const val CYCLIC_COLUMN = "cyclic"
 
         const val ID_CURSOR_POSITION = 0
         const val START_DATE_CURSOR_POSITION = 1
@@ -32,7 +32,7 @@ class MyDatabaseHelper(val context: Context?) :
         const val END_TIME_CURSOR_POSITION = 4
         const val CONTENT_CURSOR_POSITION = 5
         const val DONE_MARK_CURSOR_POSITION = 6
-        const val CREATION_DATE_CURSOR_POSITION = 7
+        const val CYCLIC_CURSOR_POSITION = 7
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -45,7 +45,7 @@ class MyDatabaseHelper(val context: Context?) :
                         "$END_TIME_COLUMN  TEXT, " +
                         "$CONTENT_COLUMN  TEXT, " +
                         "$DONE_MARK_COLUMN  INTEGER," +
-                        "$CREATION_DATE DATE );")
+                        "$CYCLIC_COLUMN INTEGER );")
         db?.execSQL(createTableQuery)
     }
 
@@ -98,7 +98,7 @@ class MyDatabaseHelper(val context: Context?) :
         contentValues.put(END_TIME_COLUMN, note.end_time)
         contentValues.put(CONTENT_COLUMN, note.content)
         contentValues.put(DONE_MARK_COLUMN, note.done)
-        contentValues.put(CREATION_DATE, DateFormatHelper.getCurrentDateTimeForDatabase())
+        contentValues.put(CYCLIC_COLUMN, note.cyclic)
 
         val result = db.insert(TABLE_NAME, null, contentValues)
         Log.d("DEBUG", "result rowid $result")
@@ -183,7 +183,7 @@ class MyDatabaseHelper(val context: Context?) :
             cursor.getString(END_TIME_CURSOR_POSITION),
             cursor.getString(CONTENT_CURSOR_POSITION),
             strToBool(cursor.getString(DONE_MARK_CURSOR_POSITION)),
-            cursor.getString(CREATION_DATE_CURSOR_POSITION),
+            strToBool(cursor.getString(CYCLIC_CURSOR_POSITION)),
             Status.UNDONE
         )
     }

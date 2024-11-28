@@ -10,15 +10,15 @@ class Note(
     var end_time: String,
     var content: String?,
     var done: Boolean,
-    var creation_date: String,
+    var cyclic: Boolean,
     var status: Status
 ) {
 
     fun export(): String {
-        return "$start_date`$end_date`$start_time`$end_time`$content`$done`$status``\n``"
+        return "$start_date`$end_date`$start_time`$end_time`$content`$done`$cyclic`$status``\n``"
     }
 
-    constructor() : this("", "", "", "", "", "", false, "", Status.UNDONE)
+    constructor() : this("", "", "", "", "", "", false, false, Status.UNDONE)
 
 
     companion object {
@@ -42,9 +42,11 @@ class Note(
                 checkStatusPast(note) -> {
                     note.status = Status.PAST
                 }
+
                 checkStatusFuture(note) -> {
                     note.status = Status.FUTURE
                 }
+
                 else -> {
                     note.status = Status.UNDONE
                 }

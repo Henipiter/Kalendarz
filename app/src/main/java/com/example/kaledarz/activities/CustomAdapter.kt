@@ -58,24 +58,50 @@ class CustomAdapter(
     }
 
     private fun getRightStatusImage(holder: MyViewHolder, note: Note) {
-        when (note.status) {
-            Status.DONE -> {
-                holder.binding.imageDone.setImageResource(R.drawable.image_round_done)
-            }
+        if (note.cyclic) {
 
-            Status.UNDONE -> {
-                holder.binding.imageDone.setImageResource(R.drawable.image_round_undone)
-            }
+            when (note.status) {
+                Status.DONE -> {
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_done_cyclic)
+                }
 
-            Status.PAST -> {
-                holder.binding.imageDone.setImageResource(R.drawable.image_round_late)
-            }
+                Status.UNDONE -> {
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_undone_cyclic)
+                }
 
-            Status.FUTURE -> {
-                holder.binding.imageDone.setImageResource(R.drawable.image_round_future)
-            }
+                Status.PAST -> {
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_past_cyclic)
+                }
 
-            Status.ALL -> {
+                Status.FUTURE -> {
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_future_cyclic)
+                }
+
+                Status.ALL -> {
+                }
+            }
+        } else {
+
+
+            when (note.status) {
+                Status.DONE -> {
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_done)
+                }
+
+                Status.UNDONE -> {
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_undone)
+                }
+
+                Status.PAST -> {
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_past)
+                }
+
+                Status.FUTURE -> {
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_future)
+                }
+
+                Status.ALL -> {
+                }
             }
         }
     }

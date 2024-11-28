@@ -33,6 +33,7 @@
     <string name="start_sleep_mode">Start sleep mode</string>
     <string name="time">Time</string>
     <string name="alarm_active">Alarm inactive</string>
+    <string name="cyclic_text">Cyclic mode</string>
     <string name="title">Title</string>
     <string name="done">Done</string>
     <string name="alarm_inexact">Alarm inexact</string>

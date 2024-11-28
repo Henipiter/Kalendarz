@@ -42,7 +42,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/event_four_done_undone_late_future" />
+                android:src="@drawable/image_round_all" />
 
             <ImageButton
                 android:id="@+id/done_image_button"
@@ -54,7 +54,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/image_square_done" />
+                android:src="@drawable/image_round_done" />
 
 
             <ImageButton
@@ -67,7 +67,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/image_square_undone" />
+                android:src="@drawable/image_round_undone" />
 
             <ImageButton
                 android:id="@+id/past_image_button"
@@ -79,7 +79,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/image_square_late" />
+                android:src="@drawable/image_round_past" />
 
             <ImageButton
                 android:id="@+id/future_image_button"
@@ -91,7 +91,7 @@
                 android:background="@color/buttonColor"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
-                android:src="@drawable/image_square_future" />
+                android:src="@drawable/image_round_future" />
         </TableRow>
     </TableLayout>
 

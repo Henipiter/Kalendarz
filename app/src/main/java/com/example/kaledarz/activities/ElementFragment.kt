@@ -106,8 +106,9 @@ class ElementFragment : Fragment() {
                         startDate = binding.startDateButton.text.toString(),
                         endDate = binding.endDateButton.text.toString(),
                         startTime = binding.startTimeButton.text.toString(),
-                        endTime = binding.endTimeButton.text.toString()
-                    )
+                        cyclic = binding.cyclicSwitch.isChecked,
+
+                        )
                     Navigation.findNavController(requireView()).navigate(action)
                     true
                 }
@@ -177,12 +178,24 @@ class ElementFragment : Fragment() {
             val popUpManager = PopUpManager(requireContext())
             popUpManager.getNumber(
                 binding.duplicationNumberButton.text.toString().toInt(),
-                layoutInflater.inflate(R.layout.number_picker, null),
-                binding.duplicationNumberButton,
-                binding.startDateButton.text.toString(),
-                binding.nextDaysInfo
-            )
+                layoutInflater.inflate(R.layout.number_picker, null)
+            ) { valueNumber, minValue ->
+                binding.duplicationNumberButton.text = valueNumber.toString()
+                if (valueNumber > minValue) {
+                    binding.cyclicSwitch.isChecked = true
+                    binding.nextDaysInfo.text =
+                        getDayRangeText(binding.startDateButton.text.toString(), valueNumber)
+                } else {
+                    binding.cyclicSwitch.isChecked = false
+                    binding.nextDaysInfo.text = ""
+                }
+            }
         }
+    }
+
+    private fun getDayRangeText(startDate: String, days: Int): String {
+        val endDate = DateFormatHelper.getNextDayFromString(startDate, days)
+        return "<$startDate : $endDate>"
     }
 
     private fun addDuplicatedNotes() {
@@ -206,8 +219,8 @@ class ElementFragment : Fragment() {
             binding.startTimeButton.text.toString().trim(),
             binding.endTimeButton.text.toString().trim(),
             content,
-            false,
-            "",
+            done = false,
+            cyclic = binding.cyclicSwitch.isChecked,
             Status.UNDONE
         )
     }
@@ -343,6 +356,9 @@ class ElementFragment : Fragment() {
         args.content?.let {
             binding.contentText.setText(it)
         }
+        args.cyclic.let {
+            binding.cyclicSwitch.isChecked = it
+        }
     }
 
     private fun storeDataInArrays() {
@@ -356,6 +372,7 @@ class ElementFragment : Fragment() {
             binding.startTimeButton.text = note.start_time
             binding.endTimeButton.text = note.end_time
             binding.contentText.setText(note.content)
+            binding.cyclicSwitch.isChecked = note.cyclic
         }
     }
 
@@ -441,6 +458,7 @@ class ElementFragment : Fragment() {
         binding.startTimeButton.isEnabled = bool
         binding.endTimeButton.isEnabled = bool
         binding.contentText.isEnabled = bool
+        binding.cyclicSwitch.isEnabled = bool
     }
 
 }

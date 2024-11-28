@@ -1,6 +1,7 @@
 package com.example.kaledarz.viewmodel
 
 import android.app.Application
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -75,15 +76,23 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
             val notes = filterNoteListForSingleDay(currentDate)
             if (notes.isNotEmpty()) {
                 Note.computeStatusForNoteList(notes)
-                val set = HashSet<Status>()
-                notes.forEach { note -> set.add(note.status) }
+                var isRegularNotePresent = false
+                val cyclicNoteStatuses = HashSet<Status>()
+                notes.forEach { note ->
+                    if (note.cyclic) {
+                        cyclicNoteStatuses.add(note.status)
+                    } else {
+                        isRegularNotePresent = true
+                    }
+                }
 
                 dayList.add(
                     getCalendarDay(
                         currentYear,
                         currentMonth,
                         i,
-                        getDrawableByStatus((set))
+                        getColorByNoteCyclicType(isRegularNotePresent),
+                        getDrawableByStatus((cyclicNoteStatuses))
                     )
                 )
             }
@@ -92,13 +101,27 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     }
 
     private fun getCalendarDay(
-        year: Int, month: Int, day: Int, @DrawableRes imageResource: Int?
+        year: Int,
+        month: Int,
+        day: Int,
+        @ColorRes labelColor: Int?,
+        @DrawableRes imageResource: Int?
     ): CalendarDay {
         val calendar = Calendar.getInstance()
         calendar.set(year, month, day)
         val calendarDay = CalendarDay(calendar)
         calendarDay.imageResource = imageResource
+        calendarDay.labelColor = labelColor
         return calendarDay
+    }
+
+    @ColorRes
+    private fun getColorByNoteCyclicType(isRegular: Boolean): Int {
+        return if (isRegular) {
+            R.color.done
+        } else {
+            R.color.white
+        }
     }
 
     @DrawableRes

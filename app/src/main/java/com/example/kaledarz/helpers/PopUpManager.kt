@@ -23,9 +23,7 @@ class PopUpManager(private val context: Context) {
     fun getNumber(
         currentValue: Int,
         view: View,
-        button: Button,
-        startDate: String,
-        textView: TextView
+        confirm: (Int, Int) -> Unit
     ) {
         var dialog: AlertDialog? = null
         val builder = AlertDialog.Builder(context)
@@ -91,14 +89,7 @@ class PopUpManager(private val context: Context) {
             true
         }
         btConfirm.setOnClickListener {
-            button.text = valueNumber.toString()
-            if (valueNumber > minValue) {
-                textView.text = "<" + startDate + " : " + DateFormatHelper.getNextDayFromString(
-                    startDate, valueNumber
-                ) + ">"
-            } else {
-                textView.text = ""
-            }
+            confirm(valueNumber, minValue)
             dialog?.dismiss()
         }
         builder.setView(view)

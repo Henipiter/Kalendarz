@@ -85,19 +85,19 @@ class CustomAdapter(
 
             when (note.status) {
                 Status.DONE -> {
-                    holder.binding.imageDone.setImageResource(R.drawable.image_round_done)
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_done_single)
                 }
 
                 Status.UNDONE -> {
-                    holder.binding.imageDone.setImageResource(R.drawable.image_round_undone)
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_undone_single)
                 }
 
                 Status.PAST -> {
-                    holder.binding.imageDone.setImageResource(R.drawable.image_round_past)
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_past_single)
                 }
 
                 Status.FUTURE -> {
-                    holder.binding.imageDone.setImageResource(R.drawable.image_round_future)
+                    holder.binding.imageDone.setImageResource(R.drawable.image_round_future_single)
                 }
 
                 Status.ALL -> {

@@ -6,7 +6,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import android.widget.Toast
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 
@@ -65,7 +64,32 @@ class MyDatabaseHelper(val context: Context?) :
         db.execSQL(query1)
     }
 
-    fun addGame(note: Note) {
+    private fun getByRowId(rowId: Long): Int {
+        val db = this.writableDatabase
+        val query = "SELECT $ID_COLUMN FROM  $TABLE_NAME WHERE rowid = $rowId"
+        var cursor: Cursor? = null
+        if (db != null) {
+            cursor = db.rawQuery(query, null)
+        }
+        var id = -1
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                id = try {
+                    cursor.getInt(0)
+                } catch (e: Exception) {
+                    -1
+                }
+            }
+            cursor.close()
+        }
+        return id
+
+
+    }
+
+
+    fun addGame(note: Note): Int {
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(START_DATE_COLUMN, note.start_date)
@@ -77,10 +101,13 @@ class MyDatabaseHelper(val context: Context?) :
         contentValues.put(CREATION_DATE, DateFormatHelper.getCurrentDateTimeForDatabase())
 
         val result = db.insert(TABLE_NAME, null, contentValues)
-        if (result == (-1).toLong()) {
-            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
+        Log.d("DEBUG", "result rowid $result")
+        return if (result == (-1).toLong()) {
+            Log.d("DEBUG", "FAILED")
+            -1
         } else {
-            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+            Log.d("DEBUG", "SUCCESS")
+            getByRowId(result)
         }
     }
 
@@ -115,16 +142,6 @@ class MyDatabaseHelper(val context: Context?) :
             cursor = db.rawQuery(query, null)
         }
         return cursorToNote(cursor, id)
-    }
-
-    fun readLastRow(): Note {
-        val query = "SELECT * FROM $TABLE_NAME ORDER BY $CREATION_DATE LIMIT 1;"
-        val db = this.readableDatabase
-        var cursor: Cursor? = null
-        if (db != null) {
-            cursor = db.rawQuery(query, null)
-        }
-        return cursorToNotes(cursor)[0]
     }
 
     private fun cursorToNotes(cursor: Cursor?): ArrayList<Note> {

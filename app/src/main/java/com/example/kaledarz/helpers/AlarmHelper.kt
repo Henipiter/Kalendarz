@@ -5,10 +5,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
+import android.net.Uri
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
+import com.example.kaledarz.activities.CalendarFragment
 
 class AlarmHelper(private val context: Context) {
     private val notificationHelper = NotificationHelper(context)
@@ -56,6 +58,7 @@ class AlarmHelper(private val context: Context) {
     private fun startAlarm(c: Calendar, note: Note, mode: String) {
         val alarmManager = context.getSystemService(AppCompatActivity.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
+        intent.data = Uri.parse("custom://" + System.currentTimeMillis())
         intent.putExtra("mode", mode)
         intent.putExtra("id", note.id)
         intent.putExtra("content", note.content)
@@ -65,15 +68,25 @@ class AlarmHelper(private val context: Context) {
         if (mode == "UNSET") {
             id *= -1
         }
+        val manageAlarmIntent = Intent(context, CalendarFragment::class.java)
+        val managePendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            manageAlarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        Log.d("DEBUG", "Intent extras before PendingIntent: " + intent.extras)
+
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            id,
+            System.currentTimeMillis().toInt(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            c.timeInMillis,
+        Log.d("DEBUG", "Intent extras before PendingIntent: " + intent.extras)
+
+        alarmManager.setAlarmClock(
+            AlarmManager.AlarmClockInfo(c.timeInMillis, managePendingIntent),
             pendingIntent
         )
     }

@@ -2,14 +2,12 @@ package com.example.kaledarz.activities
 
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -21,10 +19,9 @@ import com.applandeo.materialcalendarview.CalendarDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener
 import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener
 import com.example.kaledarz.DTO.Constants
-import com.example.kaledarz.DTO.Note
-import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
 import com.example.kaledarz.databinding.FragmentCalendarBinding
+import com.example.kaledarz.helpers.AskPermissionHelper
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.viewmodel.CalendarViewModel
 import java.util.Calendar
@@ -131,12 +128,12 @@ class CalendarFragment : Fragment() {
 
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+    private fun allPermissionsGranted() = AskPermissionHelper.REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
 
 
-    private fun storeDataInArrays(calendar:Calendar) {
+    private fun storeDataInArrays(calendar: Calendar) {
         val chooseDate =
             DateFormatHelper.getTodayDate(calendar.timeInMillis)
         calendarViewModel.filterNoteList(chooseDate)
@@ -170,25 +167,12 @@ class CalendarFragment : Fragment() {
         }
     }
 
-    private fun filterNoteList(list: ArrayList<Note>, chosenDate: String): ArrayList<Note> {
-        val noteList = ArrayList<Note>()
-        for (note in list) {
-            val isAboveStart =
-                DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                    chosenDate, note.start_date, "dd-MM-yyyy"
-                )
-            val isUnderEnd =
-                DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                    note.end_date, chosenDate, "dd-MM-yyyy"
-                )
-            if (isAboveStart && isUnderEnd)
-                noteList.add(note)
-        }
-        return noteList
-    }
-
     private fun requestAppPermissions() {
-        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+        activityResultLauncher.launch(AskPermissionHelper.REQUIRED_PERMISSIONS)
+
+        if (!AskPermissionHelper.hasExactAlarmPermission(requireContext())) {
+            AskPermissionHelper.requestExactAlarmPermission(requireContext())
+        }
     }
 
     private val activityResultLauncher =
@@ -198,7 +182,7 @@ class CalendarFragment : Fragment() {
         { permissions ->
             var permissionGranted = true
             permissions.entries.forEach {
-                if (it.key in REQUIRED_PERMISSIONS && !it.value)
+                if (it.key in AskPermissionHelper.REQUIRED_PERMISSIONS && !it.value)
                     permissionGranted = false
             }
             if (!permissionGranted) {
@@ -209,13 +193,4 @@ class CalendarFragment : Fragment() {
                 ).show()
             }
         }
-
-    companion object {
-        private val REQUIRED_PERMISSIONS =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                mutableListOf(android.Manifest.permission.POST_NOTIFICATIONS).toTypedArray()
-            } else {
-                arrayOf()
-            }
-    }
 }

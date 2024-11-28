@@ -41,7 +41,7 @@ class AlarmReceiver : BroadcastReceiver() {
             title = intent.getStringExtra("title").toString()
         }
         if (intent.hasExtra("subtitle")) {
-            title = intent.getStringExtra("subtitle").toString()
+            subtitle = intent.getStringExtra("subtitle").toString()
         }
         if (intent.hasExtra("content")) {
             content = intent.getStringExtra("content").toString()

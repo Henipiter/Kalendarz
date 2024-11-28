@@ -214,8 +214,9 @@ class ElementFragment : Fragment() {
 
     private fun addNoteToDatabase() {
         val myDB = MyDatabaseHelper(requireContext())
-        myDB.addGame(note)
-        note.id = myDB.readLastRow().id
+        val id = myDB.addGame(note)
+        note.id = id.toString()
+        Log.d("DEBUG", "id $id")
         alarmHelper?.setAlarm(note)
     }
 
@@ -426,11 +427,6 @@ class ElementFragment : Fragment() {
         editText.isFocusableInTouchMode = bool
         editText.isEnabled = bool
         editText.isCursorVisible = bool
-    }
-
-    private fun enableButtonIfSave() {
-        enableEditText(binding.contentText, false)
-        binding.doneButton.isEnabled = true
     }
 
     private fun enableButtonIfEdit() {

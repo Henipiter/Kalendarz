@@ -192,7 +192,7 @@ class ListFragment : Fragment() {
     }
 
     private fun choseButton(choose: Status) {
-        getButtonStatus(this.choose).setBackgroundResource(R.color.buttonColor)
+        getButtonStatus(this.choose).setBackgroundResource(R.drawable.image_background_round)
         this.choose = choose
         getButtonStatus(choose).setBackgroundResource(R.color.selectedButtonColor)
         prepareArrays(choose)

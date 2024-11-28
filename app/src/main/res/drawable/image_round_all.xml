@@ -14,5 +14,5 @@
         android:fillColor="@color/future" />
     <path
         android:pathData="M100,100L0,100A100,100 0,0 1,100 0Z"
-        android:fillColor="#E21B1B" />
+        android:fillColor="@color/past" />
 </vector>

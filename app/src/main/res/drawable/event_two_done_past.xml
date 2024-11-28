@@ -1,32 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-
-    <item android:left="50dp">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/done" />
-            <size
-                android:width="100dp"
-                android:height="100dp" />
-        </shape>
-    </item>
-
-    <item android:left="150dp">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/past" />
-            <size
-                android:width="100dp"
-                android:height="100dp" />
-        </shape>
-    </item>
-    <item android:left="250dp">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/dark_background" />
-            <size
-                android:width="50dp"
-                android:height="100dp" />
-        </shape>
-    </item>
-
-
-</layer-list>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <path
+        android:pathData="M15,15m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0"
+        android:fillColor="@color/dark_background" />
+    <path
+        android:pathData="M100,100L100,0A100,100 0,0 1,200 100Z"
+        android:fillColor="@color/done" />
+    <path
+        android:pathData="M100,100L200,100A100,100 0,0 1,100 200Z"
+        android:fillColor="@color/done" />
+    <path
+        android:pathData="M100,100L100,200A100,100 0,0 1,0 100Z"
+        android:fillColor="@color/past" />
+    <path
+        android:pathData="M100,100L0,100A100,100 0,0 1,100 0Z"
+        android:fillColor="@color/past" />
+</vector>

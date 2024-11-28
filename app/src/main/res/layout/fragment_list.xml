@@ -39,7 +39,7 @@
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:adjustViewBounds="true"
-                android:background="@color/buttonColor"
+                android:background="@drawable/image_background_round"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
                 android:src="@drawable/image_round_all" />
@@ -51,7 +51,7 @@
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:adjustViewBounds="true"
-                android:background="@color/buttonColor"
+                android:background="@drawable/image_background_round"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
                 android:src="@drawable/image_round_done" />
@@ -64,7 +64,7 @@
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:adjustViewBounds="true"
-                android:background="@color/buttonColor"
+                android:background="@drawable/image_background_round"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
                 android:src="@drawable/image_round_undone" />
@@ -76,7 +76,7 @@
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:adjustViewBounds="true"
-                android:background="@color/buttonColor"
+                android:background="@drawable/image_background_round"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
                 android:src="@drawable/image_round_past" />
@@ -88,7 +88,7 @@
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:adjustViewBounds="true"
-                android:background="@color/buttonColor"
+                android:background="@drawable/image_background_round"
                 android:padding="@dimen/padding"
                 android:scaleType="centerInside"
                 android:src="@drawable/image_round_future" />

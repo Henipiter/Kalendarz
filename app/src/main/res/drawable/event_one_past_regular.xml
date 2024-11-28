@@ -5,17 +5,17 @@
     android:viewportHeight="200">
     <path
         android:pathData="M15,15m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0"
-        android:fillColor="@color/dark_background" />
+        android:fillColor="@color/white" />
     <path
         android:pathData="M100,100L100,0A100,100 0,0 1,200 100Z"
-        android:fillColor="@color/future" />
+        android:fillColor="@color/past" />
     <path
         android:pathData="M100,100L200,100A100,100 0,0 1,100 200Z"
-        android:fillColor="@color/future" />
+        android:fillColor="@color/past" />
     <path
         android:pathData="M100,100L100,200A100,100 0,0 1,0 100Z"
-        android:fillColor="@color/future" />
+        android:fillColor="@color/past" />
     <path
         android:pathData="M100,100L0,100A100,100 0,0 1,100 0Z"
-        android:fillColor="@color/future" />
+        android:fillColor="@color/past" />
 </vector>

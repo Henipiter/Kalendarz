@@ -15,16 +15,4 @@
         android:name="square_2"
         android:pathData="M90,15m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0"
         android:fillColor="#E21B1B" />
-    <path
-        android:name="circle_0"
-        android:pathData="M24,33L36,33A6,6 0,0 1,42 39L42,51A6,6 0,0 1,36 57L24,57A6,6 0,0 1,18 51L18,39A6,6 0,0 1,24 33z"
-        android:fillColor="#E21B1B" />
-    <path
-        android:name="circle_1"
-        android:pathData="M54,33L66,33A6,6 0,0 1,72 39L72,51A6,6 0,0 1,66 57L54,57A6,6 0,0 1,48 51L48,39A6,6 0,0 1,54 33z"
-        android:fillColor="#E21B1B" />
-    <path
-        android:name="circle_2"
-        android:pathData="M84,33L96,33A6,6 0,0 1,102 39L102,51A6,6 0,0 1,96 57L84,57A6,6 0,0 1,78 51L78,39A6,6 0,0 1,84 33z"
-        android:fillColor="#E21B1B" />
 </vector>

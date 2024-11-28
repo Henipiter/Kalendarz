@@ -92,7 +92,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                         currentMonth,
                         i,
                         getColorByNoteCyclicType(isRegularNotePresent),
-                        getDrawableByStatus((cyclicNoteStatuses))
+                        getDrawableByStatus(cyclicNoteStatuses, isRegularNotePresent)
                     )
                 )
             }
@@ -125,9 +125,67 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     }
 
     @DrawableRes
-    private fun getDrawableByStatus(statuses: Set<Status>): Int? {
+    private fun getDrawableByStatus(statuses: Set<Status>, isRegular: Boolean): Int? {
+        if (isRegular) {
+            if (statuses.size == 4) {
+                return R.drawable.image_round_all_bonus
+            }
+            if (statuses.size == 3) {
+                if (!statuses.contains(Status.DONE)) {
+                    return R.drawable.event_three_undone_past_future_regular
+                }
+                if (!statuses.contains(Status.UNDONE)) {
+                    return R.drawable.event_three_done_past_future_regular
+                }
+                if (!statuses.contains(Status.PAST)) {
+                    return R.drawable.event_three_done_undone_future_regular
+                }
+                if (!statuses.contains(Status.FUTURE)) {
+                    return R.drawable.event_three_done_undone_past_regular
+                }
+            }
+            if (statuses.size == 2) {
+                if (statuses.contains(Status.DONE) && statuses.contains(Status.UNDONE)) {
+                    return R.drawable.event_two_done_undone_regular
+                }
+                if (statuses.contains(Status.DONE) && statuses.contains(Status.PAST)) {
+                    return R.drawable.event_two_done_past_regular
+                }
+                if (statuses.contains(Status.DONE) && statuses.contains(Status.FUTURE)) {
+                    return R.drawable.event_two_done_future_regular
+                }
+                if (statuses.contains(Status.UNDONE) && statuses.contains(Status.PAST)) {
+                    return R.drawable.event_two_undone_past_regular
+                }
+                if (statuses.contains(Status.UNDONE) && statuses.contains(Status.FUTURE)) {
+                    return R.drawable.event_two_undone_future_regular
+                }
+                if (statuses.contains(Status.PAST) && statuses.contains(Status.FUTURE)) {
+                    return R.drawable.event_two_past_future_regular
+                }
+            }
+            if (statuses.size == 1) {
+                if (statuses.contains(Status.DONE)) {
+                    return R.drawable.event_one_done_regular
+                }
+                if (statuses.contains(Status.UNDONE)) {
+                    return R.drawable.event_one_undone_regular
+                }
+                if (statuses.contains(Status.PAST)) {
+                    return R.drawable.event_one_past_regular
+                }
+                if (statuses.contains(Status.FUTURE)) {
+                    return R.drawable.event_one_future_regular
+                }
+            }
+            return R.drawable.event_zero_regular
+        }
+
+
+
+
         if (statuses.size == 4) {
-            return R.drawable.event_four_done_undone_late_future
+            return R.drawable.image_round_all
         }
         if (statuses.size == 3) {
             if (!statuses.contains(Status.DONE)) {

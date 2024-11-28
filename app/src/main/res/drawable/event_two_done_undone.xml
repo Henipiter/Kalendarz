@@ -11,11 +11,11 @@
         android:fillColor="@color/undone" />
     <path
         android:pathData="M100,100L200,100A100,100 0,0 1,100 200Z"
-        android:fillColor="@color/done" />
+        android:fillColor="@color/undone" />
     <path
         android:pathData="M100,100L100,200A100,100 0,0 1,0 100Z"
         android:fillColor="@color/done" />
     <path
         android:pathData="M100,100L0,100A100,100 0,0 1,100 0Z"
-        android:fillColor="@color/undone" />
+        android:fillColor="@color/done" />
 </vector>

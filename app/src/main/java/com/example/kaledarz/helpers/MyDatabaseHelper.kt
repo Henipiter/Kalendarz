@@ -124,7 +124,7 @@ class MyDatabaseHelper(val context: Context?) :
 
     fun readAllData(): ArrayList<Note> {
         val query = "SELECT * FROM $TABLE_NAME ORDER BY $START_TIME_COLUMN, $CONTENT_COLUMN;"
-        Log.d("query", query)
+        Log.d("EEE", query)
         val db = this.readableDatabase
         var cursor: Cursor? = null
         if (db != null) {
@@ -135,7 +135,7 @@ class MyDatabaseHelper(val context: Context?) :
 
     fun readOneData(id: String): Note {
         val query = "SELECT * FROM $TABLE_NAME WHERE $ID_COLUMN='$id';"
-        Log.d("query", query)
+        Log.d("EEE", query)
         val db = this.readableDatabase
         var cursor: Cursor? = null
         if (db != null) {

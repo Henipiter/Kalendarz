@@ -144,17 +144,20 @@ class CalendarFragment : Fragment() {
             val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
             val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
             calendarViewModel.prepareCalendarEvents(currentMonth, currentYear)
-            Log.d("DATEE", "=================")
+//            Log.d("DATEE", "=================")
             storeDataInArrays(binding.calendarView.selectedDates.first())
         }
 
         calendarViewModel.calendarDayList.observe(viewLifecycleOwner) {
+            Log.d("EEE", "calendarDayList.observe")
             it?.let {
+
                 binding.calendarView.setCalendarDays(it)
             }
         }
 
         calendarViewModel.filteredList.observe(viewLifecycleOwner) {
+            Log.d("EEE", "filteredList.observe")
             it?.let { noteList ->
                 if (noteList.size == 0) {
                     binding.noRowsInfo.visibility = View.VISIBLE

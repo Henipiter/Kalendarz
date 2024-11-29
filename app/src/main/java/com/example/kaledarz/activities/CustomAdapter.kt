@@ -11,6 +11,7 @@ import com.example.kaledarz.DTO.Note
 import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
 import com.example.kaledarz.databinding.MyRowBinding
+import com.example.kaledarz.helpers.DateFormatHelper
 
 class CustomAdapter(
     var context: Context,
@@ -43,9 +44,11 @@ class CustomAdapter(
             myPref.getString(Constants.ALARM_ON_OFF, "true") != "true"
 
         holder.binding.timeStart.text = noteList[position].startTime
-        holder.binding.dateStart.text = noteList[position].startDate
         holder.binding.timeEnd.text = noteList[position].endTime
-        holder.binding.dateEnd.text = noteList[position].endDate
+        holder.binding.dateStart.text =
+            DateFormatHelper.changeDateFormatToUser(noteList[position].startDate)
+        holder.binding.dateEnd.text =
+            DateFormatHelper.changeDateFormatToUser(noteList[position].endDate)
         holder.binding.content1.text = noteList[position].content?.let { trimDescription(it) }
         getRightStatusImage(holder, noteList[position])
         holder.binding.mainLayout.setOnClickListener {

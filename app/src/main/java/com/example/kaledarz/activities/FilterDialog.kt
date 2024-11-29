@@ -6,22 +6,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import com.applandeo.materialcalendarview.CalendarView
-import com.applandeo.materialcalendarview.builders.DatePickerBuilder
-import com.applandeo.materialcalendarview.listeners.OnSelectDateListener
 import com.example.kaledarz.DTO.DateFilter
 import com.example.kaledarz.databinding.DialogFilterBinding
+import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.PickerHelper
 import com.google.android.material.datepicker.MaterialDatePicker
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 class FilterDialog(
-    var dateFilter: DateFilter,
-    var onStartClick: (DateFilter) -> Unit,
+    private var dateFilter: DateFilter,
+    private var onStartClick: (DateFilter) -> Unit,
 
 
     ) : DialogFragment() {
@@ -54,19 +49,6 @@ class FilterDialog(
         binding.contentInput.setText(dateFilter.content)
 
         pickerHelper = PickerHelper(requireContext())
-
-
-        DatePickerBuilder(requireContext(), object : OnSelectDateListener {
-
-
-            override fun onSelect(calendar: List<Calendar>) {
-                Toast.makeText(requireContext(), "Alarms restarted", Toast.LENGTH_SHORT).show()
-
-            }
-        })
-            .pickerType(CalendarView.ONE_DAY_PICKER)
-            .build()
-            .show()
 
         binding.lowerStartDateLayout.setStartIconOnClickListener {
             binding.lowerStartDateInput.setText("")
@@ -115,8 +97,7 @@ class FilterDialog(
         datePicker.show(childFragmentManager, "Test")
         datePicker.addOnPositiveButtonClickListener {
             lowerStartCalendar.timeInMillis = it
-            val date =
-                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(lowerStartCalendar.time)
+            val date = DateFormatHelper.transformToDate(lowerStartCalendar.time)
             binding.lowerStartDateInput.setText(date)
         }
     }
@@ -127,8 +108,7 @@ class FilterDialog(
         datePicker.show(childFragmentManager, "Test")
         datePicker.addOnPositiveButtonClickListener {
             upperStartCalendar.timeInMillis = it
-            val date =
-                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(upperStartCalendar.time)
+            val date = DateFormatHelper.transformToDate(upperStartCalendar.time)
             binding.upperStartDateInput.setText(date)
         }
     }
@@ -139,8 +119,7 @@ class FilterDialog(
         datePicker.show(childFragmentManager, "Test")
         datePicker.addOnPositiveButtonClickListener {
             lowerEndCalendar.timeInMillis = it
-            val date =
-                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(lowerEndCalendar.time)
+            val date = DateFormatHelper.transformToDate(lowerEndCalendar.time)
             binding.lowerEndDateInput.setText(date)
         }
     }
@@ -151,25 +130,16 @@ class FilterDialog(
         datePicker.show(childFragmentManager, "Test")
         datePicker.addOnPositiveButtonClickListener {
             upperEndCalendar.timeInMillis = it
-            val date =
-                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(upperEndCalendar.time)
+            val date = DateFormatHelper.transformToDate(upperEndCalendar.time)
             binding.upperEndDateInput.setText(date)
         }
     }
 
-    fun DialogFragment.setWidthPercent(percentage: Int) {
+    private fun DialogFragment.setWidthPercent(percentage: Int) {
         val percent = percentage.toFloat() / 100
         val dm = Resources.getSystem().displayMetrics
         val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
         val percentWidth = rect.width() * percent
         dialog?.window?.setLayout(percentWidth.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    /**
-     * Call this method (in onActivityCreated or later)
-     * to make the dialog near-full screen.
-     */
-    fun DialogFragment.setFullScreen() {
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 }

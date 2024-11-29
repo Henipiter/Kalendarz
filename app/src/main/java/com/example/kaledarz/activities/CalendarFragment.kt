@@ -151,7 +151,6 @@ class CalendarFragment : Fragment() {
         calendarViewModel.calendarDayList.observe(viewLifecycleOwner) {
             Log.d("EEE", "calendarDayList.observe")
             it?.let {
-
                 binding.calendarView.setCalendarDays(it)
             }
         }

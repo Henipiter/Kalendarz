@@ -16,9 +16,9 @@ class DateFormatHelper {
 
         fun getCalendarFromStrings(date: String, clock: String): Calendar {
             val calendar = Calendar.getInstance()
-            calendar.set(Calendar.DAY_OF_MONTH, date.split("-")[0].toInt())
+            calendar.set(Calendar.YEAR, date.split("-")[0].toInt())
             calendar.set(Calendar.MONTH, date.split("-")[1].toInt() - 1)
-            calendar.set(Calendar.YEAR, date.split("-")[2].toInt())
+            calendar.set(Calendar.DAY_OF_MONTH, date.split("-")[2].toInt())
             calendar.set(Calendar.HOUR_OF_DAY, clock.split(":")[0].toInt())
             calendar.set(Calendar.MINUTE, clock.split(":")[1].toInt())
             calendar.set(Calendar.SECOND, 0)
@@ -35,21 +35,6 @@ class DateFormatHelper {
             return makeFullDate(calendar)
         }
 
-        fun isEndDateGreaterAndEqualThanStartDate(startDate: String, endDate: String): Boolean {
-            val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
-            return sdf.parse(startDate) <= sdf.parse(endDate)
-        }
-
-        fun isEndDateGreaterThanStartDate(startDate: String, endDate: String): Boolean {
-            val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
-            return sdf.parse(startDate) < sdf.parse(endDate)
-        }
-
-        fun isEndDateEqualToStartDate(startDate: String, endDate: String): Boolean {
-            val sdf = SimpleDateFormat("dd-MM-yyyy", locale)
-            return sdf.parse(startDate) == sdf.parse(endDate)
-        }
-
         fun validate(dateStr: String, dateFormat: String): Boolean {
             val sdf = SimpleDateFormat(dateFormat, locale)
             sdf.isLenient = false
@@ -61,36 +46,14 @@ class DateFormatHelper {
             return true
         }
 
-        fun isEndTimeGreaterThanStartTime(startTime: String, endTime: String): Boolean {
-            val sdf = SimpleDateFormat("HH:mm", locale)
-            return sdf.parse(startTime) < sdf.parse(endTime)
-        }
-
-        fun isCorrectDate(
-            startDate: String,
-            endDate: String,
-            startTime: String,
-            endTime: String
-        ): Boolean {
-            return isEndDateGreaterThanStartDate(startDate, endDate) ||
-                    (isEndDateEqualToStartDate(startDate, endDate) &&
-                            isEndTimeGreaterThanStartTime(startTime, endTime))
-        }
-
-        private fun makeTwoCipherNumber(time: Int): String {
-            return if (time.toString().length == 1) {
-                "0$time"
-            } else {
-                time.toString()
-            }
-        }
-
         fun makeFullHour(hour: Int, minute: Int): String {
-            return makeTwoCipherNumber(hour) + ":" + makeTwoCipherNumber(minute)
+            return String.format("%02d", hour) + ":" + String.format("%02d", minute)
         }
 
         fun makeFullDate(year: Int, month: Int, day: Int): String {
-            return makeTwoCipherNumber(day) + "-" + makeTwoCipherNumber(month) + "-" + year
+            return "$year-" +
+                    String.format("%02d", month) +
+                    "-" + String.format("%02d", day)
         }
 
         private fun makeFullDate(calendar: Calendar): String {
@@ -102,21 +65,28 @@ class DateFormatHelper {
         }
 
         fun getCurrentDateTime(): String {
-            return SimpleDateFormat("dd-MM-yyyy HH:mm:ss", locale).format(Date())
+            return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", locale).format(Date())
         }
 
-        fun isFirstDateGreaterThanSecond(date1: String, date2: String): Boolean {
-            val sdf = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", locale)
-            return sdf.parse(date1) > sdf.parse(date2)
+        fun transformToDate(date: Date): String {
+            return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
         }
 
-        fun isFirstDateGreaterAndEqualToSecond(
-            date1: String,
-            date2: String,
-            pattern: String
-        ): Boolean {
-            val sdf = SimpleDateFormat(pattern, locale)
-            return sdf.parse(date1) >= sdf.parse(date2)
+        private fun changeDateFormat(
+            inputDate: String, inputFormatString: String, outputFormatString: String
+        ): String {
+            val inputFormat = SimpleDateFormat(inputFormatString, Locale.getDefault())
+            val outputFormat = SimpleDateFormat(outputFormatString, Locale.getDefault())
+            val date = inputFormat.parse(inputDate)
+            return outputFormat.format(date ?: throw IllegalArgumentException("Invalid date"))
+        }
+
+        fun changeDateFormatToUser(inputDate: String): String {
+            return changeDateFormat(inputDate, "yyyy-MM-dd", "dd-MM-yyyy")
+        }
+
+        fun changeDateFormatToDatabase(inputDate: String): String {
+            return changeDateFormat(inputDate, "dd-MM-yyyy", "yyyy-MM-dd")
         }
 
         fun getTodayDate(calendarInMillis: Long): String {
@@ -132,7 +102,7 @@ class DateFormatHelper {
             if (month.length == 1) {
                 month = "0$month"
             }
-            return "$curDate-$month-$year"
+            return "$year-$month-$curDate"
         }
 
         fun getLastDayOfMonth(year: Int, month: Int): Int {

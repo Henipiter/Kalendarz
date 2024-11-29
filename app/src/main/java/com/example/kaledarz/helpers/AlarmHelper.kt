@@ -35,8 +35,8 @@ class AlarmHelper(private val context: Context) {
         val startAt = note.startDate + " " + note.startTime + ":00"
         val endAt = note.endDate + " " + note.endTime + ":00"
 
-        val shouldPush = DateFormatHelper.isFirstDateGreaterThanSecond(startAt, now)
-        val shouldDelete = DateFormatHelper.isFirstDateGreaterThanSecond(endAt, now)
+        val shouldPush = startAt < endAt
+        val shouldDelete = endAt < now
         startAlarmToAddNotification(shouldPush, shouldDelete, note)
         startAlarmToDeleteNotification(shouldDelete, note)
     }

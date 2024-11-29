@@ -29,7 +29,6 @@ class Note(
         }
 
         private fun getRightStatusImage(note: Note) {
-
             if (note.done) {
                 note.status = Status.DONE
             } else {
@@ -54,17 +53,12 @@ class Note(
         }
 
         private fun checkStatusPast(note: Note): Boolean {
-            return DateFormatHelper.isFirstDateGreaterThanSecond(
-                DateFormatHelper.getCurrentDateTime(),
-                note.endDate + " " + note.endTime + ":00"
-            )
+            return DateFormatHelper.getCurrentDateTime() > "${note.endDate} ${note.endTime}:00"
+
         }
 
         private fun checkStatusFuture(note: Note): Boolean {
-            return DateFormatHelper.isFirstDateGreaterThanSecond(
-                note.startDate + " " + note.startTime + ":00",
-                DateFormatHelper.getCurrentDateTime()
-            )
+            return "${note.startDate} ${note.startTime}:00" > DateFormatHelper.getCurrentDateTime()
         }
     }
 }

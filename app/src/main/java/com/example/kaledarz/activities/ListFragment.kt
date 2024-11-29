@@ -19,7 +19,6 @@ import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.R
 import com.example.kaledarz.databinding.FragmentListBinding
 import com.example.kaledarz.helpers.AlarmHelper
-import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 
 
@@ -211,22 +210,14 @@ class ListFragment : Fragment() {
     private fun applyFilter() {
         val tempList = originalList.toList()
         for (note in tempList) {
-            val isLowerStartDateNoteIsValid = filterLowerStart == Constants.NONE ||
-                    DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        note.startDate, filterLowerStart, "dd-MM-yyyy"
-                    )
-            val isUpperStartDateNoteIsValid = filterUpperStart == Constants.NONE ||
-                    DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        filterUpperStart, note.startDate, "dd-MM-yyyy"
-                    )
-            val isLowerEndDateNoteIsValid = filterLowerEnd == Constants.NONE ||
-                    DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        note.endDate, filterLowerEnd, "dd-MM-yyyy"
-                    )
-            val isUpperEndDateNoteIsValid = filterUpperEnd == Constants.NONE ||
-                    DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        filterUpperEnd, note.endDate, "dd-MM-yyyy"
-                    )
+            val isLowerStartDateNoteIsValid =
+                filterLowerStart == Constants.NONE || note.startDate >= filterLowerStart
+            val isUpperStartDateNoteIsValid =
+                filterUpperStart == Constants.NONE || filterUpperStart >= note.startDate
+            val isLowerEndDateNoteIsValid =
+                filterLowerEnd == Constants.NONE || note.endDate >= filterLowerEnd
+            val isUpperEndDateNoteIsValid =
+                filterUpperEnd == Constants.NONE || filterUpperEnd >= note.endDate
             val isContentValid =
                 filterContent == Constants.NONE || note.content != null && note.content!!.contains(
                     filterContent

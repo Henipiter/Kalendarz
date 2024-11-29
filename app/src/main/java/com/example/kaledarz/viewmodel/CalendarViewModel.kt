@@ -63,15 +63,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         val list = arrayListOf<Note>()
         noteList.value?.let {
             for (note in it) {
-                val isAboveStart =
-                    DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        chosenDate, note.startDate, "dd-MM-yyyy"
-                    )
-                val isUnderEnd =
-                    DateFormatHelper.isFirstDateGreaterAndEqualToSecond(
-                        note.endDate, chosenDate, "dd-MM-yyyy"
-                    )
-                if (isAboveStart && isUnderEnd)
+                if (chosenDate >= note.startDate && chosenDate <= note.endDate)
                     list.add(note)
             }
         }
@@ -254,14 +246,14 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                     "firstDay $firstDay defaultLastDay $defaultLastDay"
         )
         val dayList = arrayListOf<CalendarDay>()
-        val montAndYearString = "-" + String.format("%02d", currentMonth + 1) + "-" + currentYear
+        val montAndYearString = "$currentYear-" + String.format("%02d", currentMonth + 1) + "-"
         val lastDay = if (defaultLastDay != -1) {
             defaultLastDay
         } else {
             DateFormatHelper.getLastDayOfMonth(currentYear, currentMonth + 1)
         }
         for (i in firstDay..lastDay) {
-            val currentDate = String.format("%02d", i) + montAndYearString
+            val currentDate = montAndYearString + String.format("%02d", i)
             val notes = filterNoteListForSingleDay(currentDate)
             if (notes.isNotEmpty()) {
                 Note.computeStatusForNoteList(notes)

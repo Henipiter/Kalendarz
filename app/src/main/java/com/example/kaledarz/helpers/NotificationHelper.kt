@@ -84,7 +84,7 @@ class NotificationHelper(base: Context) : ContextWrapper(base) {
 
     private fun getNumOfWeek(dateStr: String): Int {
         return try {
-            val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(dateStr)
+            val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateStr)
             if (date != null) {
                 val calendar = Calendar.getInstance()
                 calendar.time = date

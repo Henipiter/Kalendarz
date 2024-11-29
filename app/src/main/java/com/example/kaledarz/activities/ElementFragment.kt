@@ -106,6 +106,7 @@ class ElementFragment : Fragment() {
                         startDate = binding.startDateButton.text.toString(),
                         endDate = binding.endDateButton.text.toString(),
                         startTime = binding.startTimeButton.text.toString(),
+                        endTime = binding.endTimeButton.text.toString(),
                         cyclic = binding.cyclicSwitch.isChecked,
 
                         )
@@ -145,19 +146,27 @@ class ElementFragment : Fragment() {
         }
 
         binding.startTimeButton.setOnClickListener {
-            pickerHelper.runTimePicker(binding.startTimeButton)
+            pickerHelper.runTimePicker(binding.startTimeButton.text) {
+                binding.startTimeButton.text = it
+            }
         }
 
         binding.endTimeButton.setOnClickListener {
-            pickerHelper.runTimePicker(binding.endTimeButton)
+            pickerHelper.runTimePicker(binding.endTimeButton.text) {
+                binding.endTimeButton.text = it
+            }
         }
 
         binding.startDateButton.setOnClickListener {
-            pickerHelper.runDatePicker(binding.startDateButton)
+            pickerHelper.runDatePicker(binding.startDateButton.text) {
+                binding.startDateButton.text = it
+            }
         }
 
         binding.endDateButton.setOnClickListener {
-            pickerHelper.runDatePicker(binding.endDateButton)
+            pickerHelper.runDatePicker(binding.endDateButton.text) {
+                binding.endDateButton.text = it
+            }
         }
 
 
@@ -214,8 +223,12 @@ class ElementFragment : Fragment() {
         }
         return Note(
             null,
-            binding.startDateButton.text.toString().trim(),
-            binding.endDateButton.text.toString().trim(),
+            DateFormatHelper.changeDateFormatToDatabase(
+                binding.startDateButton.text.toString().trim()
+            ),
+            DateFormatHelper.changeDateFormatToDatabase(
+                binding.endDateButton.text.toString().trim()
+            ),
             binding.startTimeButton.text.toString().trim(),
             binding.endTimeButton.text.toString().trim(),
             content,
@@ -251,23 +264,18 @@ class ElementFragment : Fragment() {
     }
 
     private fun checkRightDate(): Boolean {
-        return DateFormatHelper.isEndDateGreaterAndEqualThanStartDate(
-            binding.startDateButton.text.toString(),
-            binding.endDateButton.text.toString()
-        )
+        return DateFormatHelper.changeDateFormatToDatabase(binding.startDateButton.text.toString()) <=
+                DateFormatHelper.changeDateFormatToDatabase(binding.endDateButton.text.toString())
     }
 
     private fun checkRightHour(): Boolean {
-        return DateFormatHelper.isEndDateEqualToStartDate(
-            binding.startDateButton.text.toString(),
-            binding.startDateButton.text.toString()
-        ) && DateFormatHelper.isEndTimeGreaterThanStartTime(
-            binding.startTimeButton.text.toString(),
-            binding.endTimeButton.text.toString()
-        ) || DateFormatHelper.isEndDateGreaterThanStartDate(
-            binding.startDateButton.text.toString(),
-            binding.endDateButton.text.toString()
-        )
+        val startDate =
+            DateFormatHelper.changeDateFormatToDatabase(binding.startDateButton.text.toString())
+        val endDate =
+            DateFormatHelper.changeDateFormatToDatabase(binding.endDateButton.text.toString())
+        val startTime = binding.startTimeButton.text.toString()
+        val endTime = binding.endTimeButton.text.toString()
+        return startDate + startTime < endDate + endTime
     }
 
     private fun showErrorDateDialog(c: Context) {
@@ -338,14 +346,14 @@ class ElementFragment : Fragment() {
     private fun getIntentForAddView() {
         binding.doneButton.text = "Add"
         args.date?.let {
-            binding.startDateButton.text = it
-            binding.endDateButton.text = it
+            binding.startDateButton.text = DateFormatHelper.changeDateFormatToUser(it)
+            binding.endDateButton.text = DateFormatHelper.changeDateFormatToUser(it)
         }
         args.startDate?.let {
-            binding.startDateButton.text = it
+            binding.startDateButton.text = DateFormatHelper.changeDateFormatToUser(it)
         }
         args.endDate?.let {
-            binding.endDateButton.text = it
+            binding.endDateButton.text = DateFormatHelper.changeDateFormatToUser(it)
         }
         args.startTime?.let {
             binding.startTimeButton.text = it
@@ -367,8 +375,8 @@ class ElementFragment : Fragment() {
         if (note.id == "") {
             Toast.makeText(requireContext(), "No data", Toast.LENGTH_SHORT).show()
         } else {
-            binding.startDateButton.text = note.startDate
-            binding.endDateButton.text = note.endDate
+            binding.startDateButton.text = DateFormatHelper.changeDateFormatToUser(note.startDate)
+            binding.endDateButton.text = DateFormatHelper.changeDateFormatToUser(note.endDate)
             binding.startTimeButton.text = note.startTime
             binding.endTimeButton.text = note.endTime
             binding.contentText.setText(note.content)
@@ -414,12 +422,12 @@ class ElementFragment : Fragment() {
     }
 
     private fun enableButtonIfCancel() {
-
         enableEditText(binding.contentText, false)
-        binding.startDateButton.text = note.startDate
-        binding.endDateButton.text = note.endDate
+        binding.startDateButton.text = DateFormatHelper.changeDateFormatToUser(note.startDate)
+        binding.endDateButton.text = DateFormatHelper.changeDateFormatToUser(note.endDate)
         binding.contentText.setText(note.content)
         binding.startTimeButton.text = note.startTime
+        binding.endTimeButton.text = note.endTime
         binding.endDateButton.setBackgroundResource(android.R.drawable.btn_default)
         binding.endTimeButton.setBackgroundResource(android.R.drawable.btn_default)
         enableButtonIfEdit(false)

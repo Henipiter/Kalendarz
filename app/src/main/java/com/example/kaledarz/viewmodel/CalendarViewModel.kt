@@ -231,7 +231,6 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         val (previousMonth, previousYear) =
             DateFormatHelper.getPreviousMonthAndYear(currentMonth, currentYear)
         return prepareCurrentCalendarEvents(previousMonth, previousYear)
-
     }
 
     private suspend fun prepareCurrentCalendarEvents(

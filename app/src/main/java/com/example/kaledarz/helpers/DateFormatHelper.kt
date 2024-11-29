@@ -93,16 +93,11 @@ class DateFormatHelper {
             val calender = Calendar.getInstance()
             calender.timeInMillis = calendarInMillis
             val year = calender[java.util.Calendar.YEAR].toString()
-            var month = (1 + calender[java.util.Calendar.MONTH]).toString()
-            var curDate = calender[java.util.Calendar.DAY_OF_MONTH].toString()
-
-            if (curDate.length == 1) {
-                curDate = "0$curDate"
-            }
-            if (month.length == 1) {
-                month = "0$month"
-            }
-            return "$year-$month-$curDate"
+            val monthInt = (1 + calender[java.util.Calendar.MONTH])
+            val dayInt = calender[java.util.Calendar.DAY_OF_MONTH]
+            val month = String.format("%02d", monthInt)
+            val day = String.format("%02d", dayInt)
+            return "$year-$month-$day"
         }
 
         fun getLastDayOfMonth(year: Int, month: Int): Int {

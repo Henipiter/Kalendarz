@@ -134,8 +134,7 @@ class CalendarFragment : Fragment() {
 
 
     private fun storeDataInArrays(calendar: Calendar) {
-        val chooseDate =
-            DateFormatHelper.getTodayDate(calendar.timeInMillis)
+        val chooseDate = DateFormatHelper.getTodayDate(calendar.timeInMillis)
         calendarViewModel.filterNoteList(chooseDate)
     }
 
@@ -144,7 +143,6 @@ class CalendarFragment : Fragment() {
             val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
             val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
             calendarViewModel.prepareCalendarEvents(currentMonth, currentYear)
-//            Log.d("DATEE", "=================")
             storeDataInArrays(binding.calendarView.selectedDates.first())
         }
 

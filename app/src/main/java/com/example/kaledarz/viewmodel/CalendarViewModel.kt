@@ -16,6 +16,8 @@ import com.example.kaledarz.helpers.MyDatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
@@ -72,15 +74,18 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun prepareCalendarEvents(currentMonth: Int, currentYear: Int) {
-
+        currentCalendarDayList.clear()
+        previousCalendarDayList.clear()
+        nextCalendarDayList.clear()
+        boundaryPreviousCalendarDayList.clear()
+        boundaryNextCalendarDayList.clear()
+        if (noteList.value?.size == 0) {
+            return
+        }
         viewModelScope.launch {
 
             withContext(Dispatchers.IO) {
-                currentCalendarDayList.clear()
-                previousCalendarDayList.clear()
-                nextCalendarDayList.clear()
-                boundaryPreviousCalendarDayList.clear()
-                boundaryNextCalendarDayList.clear()
+
 
                 Log.d("DATEE", "prepareCalendarEvents")
                 currentCalendarDayList.addAll(
@@ -174,33 +179,37 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         calendarDayList.postValue(allList)
     }
 
+    private suspend fun prepareCurrentCalendarEvents(
+        currentMonth: Int,
+        currentYear: Int
+    ): List<CalendarDay> {
+        val date = LocalDate.of(currentYear, currentMonth + 1, 1)
+        Log.d("DATEE", "prepareNextCalendarEvents $date")
+        return iterateCalendar(date, date.lengthOfMonth())
+
+    }
+
     private suspend fun prepareNextCalendarEvents(
         currentMonth: Int,
         currentYear: Int
     ): List<CalendarDay> {
-        Log.d("DATEE", "prepareNextCalendarEvents")
-        val (nextMonth, nextYear) =
-            DateFormatHelper.getNextMonthAndYear(currentMonth, currentYear)
-
-        return prepareCurrentCalendarEvents(nextMonth, nextYear)
+        var date = LocalDate.of(currentYear, currentMonth + 1, 1)
+        date = date.plusMonths(1)
+        Log.d("DATEE", "prepareNextCalendarEvents $date")
+        return iterateCalendar(date, date.lengthOfMonth())
 
     }
 
     private suspend fun prepareBoundaryNextCalendarEvents(
         currentMonth: Int, currentYear: Int
     ): List<CalendarDay> {
-        Log.d("DATEE", "prepareBoundaryNextCalendarEvents")
-        val (nextMonth, nextYear) =
-            DateFormatHelper.getNextMonthAndYear(currentMonth, currentYear)
-        val (nextNextMonth, nextNextYear) =
-            DateFormatHelper.getNextMonthAndYear(nextMonth, nextYear)
+        var date = LocalDate.of(currentYear, currentMonth + 1, 1)
+        date = date.plusMonths(2)
         val lastDayOfNextNextMonth = DateFormatHelper.getSecondSundayOfMonth(
-            nextNextMonth, nextNextYear
+            date.monthValue - 1, date.year
         )
-
-        return prepareCurrentCalendarEvents(
-            nextNextMonth, nextNextYear, defaultLastDay = lastDayOfNextNextMonth
-        )
+        Log.d("DATEE", "prepareBoundaryNextCalendarEvents $date")
+        return iterateCalendar(date, lastDayOfNextNextMonth)
 
     }
 
@@ -208,18 +217,14 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         currentMonth: Int,
         currentYear: Int
     ): List<CalendarDay> {
-        Log.d("DATEE", "prepareBoundaryPreviousCalendarEvents")
-        val (previousMonth, previousYear) =
-            DateFormatHelper.getPreviousMonthAndYear(currentMonth, currentYear)
-        val (previousPreviousMonth, previousPreviousYear) =
-            DateFormatHelper.getPreviousMonthAndYear(previousMonth, previousYear)
+        var date = LocalDate.of(currentYear, currentMonth + 1, 1)
+        date = date.minusMonths(2)
         val firstDayOfPreviousPreviousMonth = DateFormatHelper.getSecondLastMondayOfMonth(
-            previousPreviousMonth, previousPreviousYear
+            date.monthValue - 1, date.year
         )
-
-        return prepareCurrentCalendarEvents(
-            previousPreviousMonth, previousPreviousYear, firstDay = firstDayOfPreviousPreviousMonth
-        )
+        date.plusDays(firstDayOfPreviousPreviousMonth.toLong())
+        Log.d("DATEE", "prepareBoundaryPreviousCalendarEvents $date")
+        return iterateCalendar(date, date.lengthOfMonth() - firstDayOfPreviousPreviousMonth)
 
     }
 
@@ -227,13 +232,46 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         currentMonth: Int,
         currentYear: Int
     ): List<CalendarDay> {
-        Log.d("DATEE", "preparePreviousCalendarEvents")
-        val (previousMonth, previousYear) =
-            DateFormatHelper.getPreviousMonthAndYear(currentMonth, currentYear)
-        return prepareCurrentCalendarEvents(previousMonth, previousYear)
+        var date = LocalDate.of(currentYear, currentMonth + 1, 1)
+        date = date.minusMonths(1)
+        Log.d("DATEE", "preparePreviousCalendarEvents $date")
+        return iterateCalendar(date, date.lengthOfMonth())
     }
 
-    private suspend fun prepareCurrentCalendarEvents(
+    private suspend fun iterateCalendar(startDate: LocalDate, daysCount: Int): List<CalendarDay> {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dayList = arrayListOf<CalendarDay>()
+        var currentDate = startDate
+        for (i in 0..daysCount) {
+            currentDate = currentDate.plusDays(1)
+            val notes = filterNoteListForSingleDay(currentDate.format(formatter))
+            if (notes.isNotEmpty()) {
+                Note.computeStatusForNoteList(notes)
+                var isRegularNotePresent = false
+                val cyclicNoteStatuses = HashSet<Status>()
+                notes.forEach { note ->
+                    if (note.cyclic) {
+                        cyclicNoteStatuses.add(note.status)
+                    } else {
+                        isRegularNotePresent = true
+                    }
+                }
+
+                dayList.add(
+                    getCalendarDay(
+                        currentDate.year,
+                        currentDate.monthValue - 1,
+                        currentDate.dayOfMonth,
+                        DrawableHelper.getColorByNoteCyclicType(isRegularNotePresent),
+                        DrawableHelper.getDrawableByStatus(cyclicNoteStatuses, isRegularNotePresent)
+                    )
+                )
+            }
+        }
+        return dayList
+    }
+
+    private suspend fun prepareCurrentCalendarEvents9(
         currentMonth: Int,
         currentYear: Int,
         firstDay: Int = 1,

@@ -13,6 +13,7 @@ import com.example.kaledarz.DTO.Status
 import com.example.kaledarz.helpers.DrawableHelper
 import com.example.kaledarz.helpers.MyDatabaseHelper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -33,6 +34,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     var updateCalendarProcessing = MutableLiveData(false)
     var currentPrepareProcessing = MutableLiveData(false)
     var prevAndNextPrepareProcessing = MutableLiveData(false)
+    var calendarDaySleep = MutableLiveData(false)
     var calendarDayList = MutableLiveData<ArrayList<CalendarDay>>()
     private val monthsList: MutableList<String> = Collections.synchronizedList(mutableListOf())
     var currentPageUpdated = MutableLiveData(false)
@@ -40,6 +42,17 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
 
     init {
         databaseHelper = MyDatabaseHelper(getApplication<Application>().applicationContext)
+    }
+
+    fun resetProcessing() {
+        calculatingDays.set(false)
+        currentPrepareProcessing.postValue(false)
+        prevAndNextPrepareProcessing.postValue(false)
+        updateCalendarProcessing.postValue(false)
+        currentPageUpdated.postValue(false)
+        shouldUpdateGrid.postValue(false)
+        calendarDayList.value!!.clear()
+        monthsList.clear()
     }
 
     fun isPrepareProcessing(): Boolean {
@@ -65,6 +78,15 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                     Log.d("DATEE", "calendarViewModel.noteList BBBBB")
                     readingNoteProcessFinished.set(true)
                 }
+            }
+        }
+    }
+
+    fun runCalendarDaySleep() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                delay(150)
+                calendarDaySleep.postValue(true)
             }
         }
     }

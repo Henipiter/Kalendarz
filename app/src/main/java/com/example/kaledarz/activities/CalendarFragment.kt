@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.applandeo.materialcalendarview.CalendarDay
@@ -25,6 +26,8 @@ import com.example.kaledarz.databinding.FragmentCalendarBinding
 import com.example.kaledarz.helpers.AskPermissionHelper
 import com.example.kaledarz.helpers.DateFormatHelper
 import com.example.kaledarz.viewmodel.CalendarViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 
@@ -105,6 +108,16 @@ class CalendarFragment : Fragment() {
             }
         })
 
+        binding.progressBar.setOnLongClickListener {
+            Toast.makeText(requireContext(), "Restarting", Toast.LENGTH_SHORT).show()
+            binding.progressBarInfo.visibility = View.GONE
+            calendarViewModel.resetProcessing()
+            val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
+            val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
+            calendarViewModel.prepareCurrent(currentMonth, currentYear)
+            return@setOnLongClickListener true
+        }
+
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.add -> {
@@ -145,6 +158,7 @@ class CalendarFragment : Fragment() {
     private fun storeDataInArrays(calendar: Calendar) {
         val chooseDate = DateFormatHelper.getTodayDate(calendar.timeInMillis)
         calendarViewModel.filterNoteList(chooseDate)
+        freezeCalendar()
     }
 
     private fun freezeCalendar() {
@@ -152,6 +166,12 @@ class CalendarFragment : Fragment() {
         binding.calendarView.setSwipeEnabled(false)
         binding.blockerView.visibility = View.VISIBLE
         binding.progressBar.visibility = View.VISIBLE
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(3000)
+            if (binding.blockerView.visibility == View.VISIBLE) {
+                binding.progressBarInfo.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun startCalendar() {
@@ -209,6 +229,12 @@ class CalendarFragment : Fragment() {
             }
         }
 
+        calendarViewModel.calendarDaySleep.observe(viewLifecycleOwner) {
+            if (it) {
+                calendarViewModel.calendarDaySleep.postValue(false)
+                binding.calendarView.notifyDataSetChanged()
+            }
+        }
         calendarViewModel.shouldUpdateGrid.observe(viewLifecycleOwner) { shouldUpdateGrid ->
             if (!shouldUpdateGrid) {
                 return@observe
@@ -216,6 +242,7 @@ class CalendarFragment : Fragment() {
             Log.d("EEE", "calendarDayList.observe")
             calendarViewModel.calendarDayList.value?.let {
                 binding.calendarView.setCalendarDays(it)
+                calendarViewModel.runCalendarDaySleep()
                 Log.d("DATEE", "calendarView update")
                 calendarViewModel.shouldUpdateGrid.postValue(false)
                 calendarViewModel.updateCalendarProcessing.postValue(false)

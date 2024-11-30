@@ -85,7 +85,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     fun runCalendarDaySleep() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                delay(150)
+                delay(1000)
                 calendarDaySleep.postValue(true)
             }
         }

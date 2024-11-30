@@ -108,18 +108,13 @@ class CalendarFragment : Fragment() {
             }
         })
 
-        binding.progressBar.setOnLongClickListener {
-            Toast.makeText(requireContext(), "Restarting", Toast.LENGTH_SHORT).show()
-            binding.progressBarInfo.visibility = View.GONE
-            calendarViewModel.resetProcessing()
-            val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
-            val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
-            calendarViewModel.prepareCurrent(currentMonth, currentYear)
-            return@setOnLongClickListener true
-        }
-
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
+                R.id.reload -> {
+                    reloadCalendarData()
+                    true
+                }
+
                 R.id.add -> {
                     val action = CalendarFragmentDirections.actionCalendarFragmentToElementFragment(
                         id = null,
@@ -144,6 +139,15 @@ class CalendarFragment : Fragment() {
 
     }
 
+    private fun reloadCalendarData() {
+        Toast.makeText(requireContext(), "Restarting", Toast.LENGTH_SHORT).show()
+        binding.progressBarInfo.visibility = View.GONE
+        calendarViewModel.resetProcessing()
+        val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
+        val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
+        calendarViewModel.prepareCurrent(currentMonth, currentYear)
+    }
+
     override fun onResume() {
         super.onResume()
         Log.d("DATEE", "readAllNotes onResume")
@@ -158,7 +162,6 @@ class CalendarFragment : Fragment() {
     private fun storeDataInArrays(calendar: Calendar) {
         val chooseDate = DateFormatHelper.getTodayDate(calendar.timeInMillis)
         calendarViewModel.filterNoteList(chooseDate)
-        freezeCalendar()
     }
 
     private fun freezeCalendar() {
@@ -179,6 +182,7 @@ class CalendarFragment : Fragment() {
         binding.calendarView.setSwipeEnabled(true)
         binding.blockerView.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
+        binding.progressBarInfo.visibility = View.GONE
     }
 
     private fun initObserver() {

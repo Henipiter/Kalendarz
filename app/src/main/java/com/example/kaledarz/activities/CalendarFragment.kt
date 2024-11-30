@@ -49,6 +49,7 @@ class CalendarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        calendarViewModel.atomicBoolean.set(false)
         binding.toolbar.inflateMenu(R.menu.top_menu_calendar)
         myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
 
@@ -78,7 +79,7 @@ class CalendarFragment : Fragment() {
             override fun onChange() {
                 val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
                 val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
-                calendarViewModel.preparePreviousCalendarEventsAA(currentMonth, currentYear)
+                calendarViewModel.preparePrevious(currentMonth, currentYear)
                 Log.d("DATEE", "=================")
             }
         })
@@ -86,7 +87,7 @@ class CalendarFragment : Fragment() {
             override fun onChange() {
                 val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
                 val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
-                calendarViewModel.prepareNextCalendarEventsAA(currentMonth, currentYear)
+                calendarViewModel.prepareNext(currentMonth, currentYear)
                 Log.d("DATEE", "=================")
             }
         })
@@ -140,16 +141,31 @@ class CalendarFragment : Fragment() {
 
     private fun initObserver() {
         calendarViewModel.noteList.observe(viewLifecycleOwner) {
+            if (it.isEmpty() || !calendarViewModel.atomicBoolean.get()) {
+                return@observe
+            }
             val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
             val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
-            calendarViewModel.prepareCalendarEvents(currentMonth, currentYear)
+            calendarViewModel.prepareCurrent(currentMonth, currentYear)
             storeDataInArrays(binding.calendarView.selectedDates.first())
         }
+        calendarViewModel.currentPageUpdated.observe(viewLifecycleOwner) {
+            if (it) {
+                val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
+                val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
+                calendarViewModel.preparePrevious(currentMonth, currentYear)
+                calendarViewModel.prepareNext(currentMonth, currentYear)
+            }
+        }
 
-        calendarViewModel.calendarDayList.observe(viewLifecycleOwner) {
+        calendarViewModel.shouldUpdateGrid.observe(viewLifecycleOwner) { shouldUpdateGrid ->
+            if (!shouldUpdateGrid) {
+                return@observe
+            }
             Log.d("EEE", "calendarDayList.observe")
-            it?.let {
+            calendarViewModel.calendarDayList.value?.let {
                 binding.calendarView.setCalendarDays(it)
+                calendarViewModel.shouldUpdateGrid.postValue(false)
             }
         }
 

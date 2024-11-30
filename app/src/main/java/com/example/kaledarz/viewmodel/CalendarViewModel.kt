@@ -19,6 +19,8 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Collections
+import java.util.concurrent.atomic.AtomicBoolean
 
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -27,12 +29,11 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     var noteList = MutableLiveData<ArrayList<Note>>()
     var filteredList = MutableLiveData<ArrayList<Note>>()
 
+    val atomicBoolean = AtomicBoolean(false)
     var calendarDayList = MutableLiveData<ArrayList<CalendarDay>>()
-    private var boundaryPreviousCalendarDayList = ArrayList<CalendarDay>()
-    private var previousCalendarDayList = ArrayList<CalendarDay>()
-    private var currentCalendarDayList = ArrayList<CalendarDay>()
-    private var nextCalendarDayList = ArrayList<CalendarDay>()
-    private var boundaryNextCalendarDayList = ArrayList<CalendarDay>()
+    private val monthsList: MutableList<String> = Collections.synchronizedList(mutableListOf())
+    var currentPageUpdated = MutableLiveData(false)
+    var shouldUpdateGrid = MutableLiveData(false)
 
     init {
         databaseHelper = MyDatabaseHelper(getApplication<Application>().applicationContext)
@@ -45,8 +46,10 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     fun readAllNotes() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                atomicBoolean.set(false)
                 databaseHelper?.let { databaseHelper ->
                     noteList.postValue(databaseHelper.readAllData())
+                    atomicBoolean.set(true)
                 }
             }
         }
@@ -73,132 +76,89 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         return list
     }
 
-    fun prepareCalendarEvents(currentMonth: Int, currentYear: Int) {
-        currentCalendarDayList.clear()
-        previousCalendarDayList.clear()
-        nextCalendarDayList.clear()
-        boundaryPreviousCalendarDayList.clear()
-        boundaryNextCalendarDayList.clear()
-        if (noteList.value?.size == 0) {
+    fun prepareCurrent(currentMonth: Int, currentYear: Int) {
+        val date = LocalDate.of(currentYear, currentMonth + 1, 1)
+        currentPageUpdated.postValue(false)
+        monthsList.clear()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                Log.d("DATEE", "prepareCurrent ${date.monthValue}-${date.year}")
+                val list = iterateCalendar(date, date.lengthOfMonth())
+                if (addMonthsList("${date.monthValue}-${date.year}")) {
+                    calendarDayList.postValue(ArrayList(list))
+                    currentPageUpdated.postValue(true)
+                    shouldUpdateGrid.postValue(true)
+                }
+                Log.d("DATEE", "monthsList $monthsList")
+                Log.d("DATEE", "calendarDayList size ${calendarDayList.value?.size ?: 0}")
+            }
+        }
+    }
+
+    private fun isMonthsListContains(text: String): Boolean {
+        synchronized(monthsList) {
+            return monthsList.contains(text)
+        }
+    }
+
+    private fun addMonthsList(text: String): Boolean {
+        synchronized(monthsList) {
+            if (!monthsList.contains(text)) {
+                monthsList.add(text)
+                return true
+            }
+            return false
+        }
+    }
+
+    fun preparePrevious(currentMonth: Int, currentYear: Int) {
+        var date = LocalDate.of(currentYear, currentMonth + 1, 1)
+        date = date.minusMonths(1)
+        if (isMonthsListContains("${date.monthValue}-${date.year}")) {
+            Log.d("DATEE", "preparePrevious - stop - exits ${date.monthValue}-${date.year}")
             return
         }
         viewModelScope.launch {
-
             withContext(Dispatchers.IO) {
-
-
-                Log.d("DATEE", "prepareCalendarEvents")
-                currentCalendarDayList.addAll(
-                    prepareCurrentCalendarEvents(
-                        currentMonth,
-                        currentYear
-                    )
-                )
-                previousCalendarDayList.addAll(
-                    preparePreviousCalendarEvents(
-                        currentMonth,
-                        currentYear
-                    )
-                )
-                nextCalendarDayList.addAll(prepareNextCalendarEvents(currentMonth, currentYear))
-                boundaryNextCalendarDayList.addAll(
-                    prepareBoundaryNextCalendarEvents(
-                        currentMonth,
-                        currentYear
-                    )
-                )
-                boundaryPreviousCalendarDayList.addAll(
-                    prepareBoundaryPreviousCalendarEvents(currentMonth, currentYear)
-                )
-                buildAllList()
-                Log.d("DATEE", "prepareCalendarEvents END")
+                Log.d("DATEE", "preparePrevious ${date.monthValue}-${date.year}")
+                val list = iterateCalendar(date, date.lengthOfMonth())
+                if (currentPageUpdated.value == true) {
+                    if (addMonthsList("${date.monthValue}-${date.year}")) {
+                        calendarDayList.value?.addAll(list)
+                        shouldUpdateGrid.postValue(true)
+                    }
+                    Log.d("DATEE", "monthsList $monthsList")
+                    Log.d("DATEE", "calendarDayList size ${calendarDayList.value?.size ?: 0}")
+                }
             }
         }
     }
 
-    fun preparePreviousCalendarEventsAA(currentMonth: Int, currentYear: Int) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                boundaryNextCalendarDayList.clear()
-                boundaryNextCalendarDayList.addAll(nextCalendarDayList)
-                nextCalendarDayList.clear()
-                nextCalendarDayList.addAll(currentCalendarDayList)
-                currentCalendarDayList.clear()
-                currentCalendarDayList.addAll(previousCalendarDayList)
-                previousCalendarDayList.clear()
-                previousCalendarDayList.addAll(
-                    preparePreviousCalendarEvents(
-                        currentMonth,
-                        currentYear
-                    )
-                )
-                boundaryPreviousCalendarDayList.clear()
-                boundaryPreviousCalendarDayList.addAll(
-                    prepareBoundaryPreviousCalendarEvents(currentMonth, currentYear)
-                )
-                buildAllList()
-            }
-        }
-    }
-
-    fun prepareNextCalendarEventsAA(currentMonth: Int, currentYear: Int) {
-
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                boundaryPreviousCalendarDayList.clear()
-                boundaryPreviousCalendarDayList.addAll(previousCalendarDayList)
-                previousCalendarDayList.clear()
-                previousCalendarDayList.addAll(currentCalendarDayList)
-                currentCalendarDayList.clear()
-                currentCalendarDayList.addAll(nextCalendarDayList)
-                nextCalendarDayList.clear()
-                nextCalendarDayList.addAll(prepareNextCalendarEvents(currentMonth, currentYear))
-                boundaryNextCalendarDayList.clear()
-                boundaryNextCalendarDayList.addAll(
-                    prepareBoundaryNextCalendarEvents(currentMonth, currentYear)
-                )
-                buildAllList()
-            }
-        }
-    }
-
-    private fun buildAllList() {
-
-        Log.d("EEE", "========================")
-        Log.d("EEE", "boundaryPreviousCalendarDayList: ${boundaryPreviousCalendarDayList.size}")
-        Log.d("EEE", "previousCalendarDayList: ${previousCalendarDayList.size}")
-        Log.d("EEE", "currentCalendarDayList: ${currentCalendarDayList.size}")
-        Log.d("EEE", "nextCalendarDayList: ${nextCalendarDayList.size}")
-        Log.d("EEE", "boundaryNextCalendarDayList: ${boundaryNextCalendarDayList.size}")
-        val allList = arrayListOf<CalendarDay>()
-        allList.addAll(boundaryPreviousCalendarDayList)
-        allList.addAll(previousCalendarDayList)
-        allList.addAll(currentCalendarDayList)
-        allList.addAll(nextCalendarDayList)
-        allList.addAll(boundaryNextCalendarDayList)
-        calendarDayList.postValue(allList)
-    }
-
-    private suspend fun prepareCurrentCalendarEvents(
-        currentMonth: Int,
-        currentYear: Int
-    ): List<CalendarDay> {
-        val date = LocalDate.of(currentYear, currentMonth + 1, 1)
-        Log.d("DATEE", "prepareNextCalendarEvents $date")
-        return iterateCalendar(date, date.lengthOfMonth())
-
-    }
-
-    private suspend fun prepareNextCalendarEvents(
-        currentMonth: Int,
-        currentYear: Int
-    ): List<CalendarDay> {
+    fun prepareNext(currentMonth: Int, currentYear: Int) {
         var date = LocalDate.of(currentYear, currentMonth + 1, 1)
         date = date.plusMonths(1)
-        Log.d("DATEE", "prepareNextCalendarEvents $date")
-        return iterateCalendar(date, date.lengthOfMonth())
 
+        if (isMonthsListContains("${date.monthValue}-${date.year}")) {
+            Log.d("DATEE", "prepareNext - stop - exits ${date.monthValue}-${date.year}")
+            return
+        }
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                Log.d("DATEE", "prepareNext ${date.monthValue}-${date.year}")
+                val list = iterateCalendar(date, date.lengthOfMonth())
+                if (currentPageUpdated.value == true) {
+                    if (addMonthsList("${date.monthValue}-${date.year}")) {
+                        calendarDayList.value?.addAll(list)
+                        shouldUpdateGrid.postValue(true)
+                    }
+                    Log.d("DATEE", "monthsList $monthsList")
+                    Log.d("DATEE", "calendarDayList size ${calendarDayList.value?.size ?: 0}")
+                }
+            }
+        }
     }
+
+
 
     private suspend fun prepareBoundaryNextCalendarEvents(
         currentMonth: Int, currentYear: Int
@@ -225,25 +185,14 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         date.plusDays(firstDayOfPreviousPreviousMonth.toLong())
         Log.d("DATEE", "prepareBoundaryPreviousCalendarEvents $date")
         return iterateCalendar(date, date.lengthOfMonth() - firstDayOfPreviousPreviousMonth)
-
-    }
-
-    private suspend fun preparePreviousCalendarEvents(
-        currentMonth: Int,
-        currentYear: Int
-    ): List<CalendarDay> {
-        var date = LocalDate.of(currentYear, currentMonth + 1, 1)
-        date = date.minusMonths(1)
-        Log.d("DATEE", "preparePreviousCalendarEvents $date")
-        return iterateCalendar(date, date.lengthOfMonth())
     }
 
     private suspend fun iterateCalendar(startDate: LocalDate, daysCount: Int): List<CalendarDay> {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val dayList = arrayListOf<CalendarDay>()
         var currentDate = startDate
-        for (i in 0..daysCount) {
-            currentDate = currentDate.plusDays(1)
+        Log.d("DATEE", "iterateCalendar from $currentDate for $daysCount days")
+        for (i in 0..<daysCount) {
             val notes = filterNoteListForSingleDay(currentDate.format(formatter))
             if (notes.isNotEmpty()) {
                 Note.computeStatusForNoteList(notes)
@@ -267,54 +216,16 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                     )
                 )
             }
+            currentDate = currentDate.plusDays(1)
         }
-        return dayList
-    }
-
-    private suspend fun prepareCurrentCalendarEvents9(
-        currentMonth: Int,
-        currentYear: Int,
-        firstDay: Int = 1,
-        defaultLastDay: Int = -1
-    ): List<CalendarDay> {
         Log.d(
             "DATEE",
-            "currentMonth $currentMonth currentYear $currentYear " +
-                    "firstDay $firstDay defaultLastDay $defaultLastDay"
-        )
-        val dayList = arrayListOf<CalendarDay>()
-        val montAndYearString = "$currentYear-" + String.format("%02d", currentMonth + 1) + "-"
-        val lastDay = if (defaultLastDay != -1) {
-            defaultLastDay
-        } else {
-            DateFormatHelper.getLastDayOfMonth(currentYear, currentMonth + 1)
-        }
-        for (i in firstDay..lastDay) {
-            val currentDate = montAndYearString + String.format("%02d", i)
-            val notes = filterNoteListForSingleDay(currentDate)
-            if (notes.isNotEmpty()) {
-                Note.computeStatusForNoteList(notes)
-                var isRegularNotePresent = false
-                val cyclicNoteStatuses = HashSet<Status>()
-                notes.forEach { note ->
-                    if (note.cyclic) {
-                        cyclicNoteStatuses.add(note.status)
-                    } else {
-                        isRegularNotePresent = true
-                    }
+            "iterateCalendar found ${dayList.size} elements: ${
+                dayList.map {
+                    it.calendar.get(Calendar.DAY_OF_MONTH)
                 }
-
-                dayList.add(
-                    getCalendarDay(
-                        currentYear,
-                        currentMonth,
-                        i,
-                        DrawableHelper.getColorByNoteCyclicType(isRegularNotePresent),
-                        DrawableHelper.getDrawableByStatus(cyclicNoteStatuses, isRegularNotePresent)
-                    )
-                )
-            }
-        }
+            }"
+        )
         return dayList
     }
 

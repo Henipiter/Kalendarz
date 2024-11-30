@@ -7,7 +7,7 @@
     tools:context=".activities.FilterDialog">
 
     <Space
-        android:id="@+id/space3"
+        android:id="@+id/space"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,8 +23,8 @@
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="20dp"
         android:hint="Lower start date"
-        app:endIconMode="custom"
         app:endIconDrawable="@drawable/date"
+        app:endIconMode="custom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -86,6 +86,7 @@
             android:focusableInTouchMode="false"
             android:inputType="date" />
     </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/upper_end_date_layout"
         android:layout_width="0dp"
@@ -118,10 +119,10 @@
         android:layout_marginHorizontal="32dp"
         android:layout_marginTop="30dp"
         android:hint="Content"
-        app:startIconDrawable="@drawable/clear"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upper_end_date_layout">
+        app:layout_constraintTop_toBottomOf="@+id/upper_end_date_layout"
+        app:startIconDrawable="@drawable/clear">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/content_input"
@@ -129,29 +130,58 @@
             android:layout_height="match_parent"
             android:inputType="textMultiLine" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <CheckBox
+        android:id="@+id/regular_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Regular"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="@id/space"
+        app:layout_constraintTop_toBottomOf="@+id/content_layout" />
+
+    <CheckBox
+        android:gravity="center"
+        android:id="@+id/cyclic_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="Cyclic"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="@id/space"
+        app:layout_constraintTop_toBottomOf="@+id/content_layout" />
+
+    <TextView
+        android:id="@+id/cyclic_switch_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cyclic_text"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cyclic_checkbox" />
+
     <Button
         android:id="@+id/confirm_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="32dp"
         android:text="confirm"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/space3"
-        app:layout_constraintTop_toBottomOf="@+id/content_layout"/>
+        app:layout_constraintStart_toEndOf="@id/space"
+        app:layout_constraintTop_toBottomOf="@+id/cyclic_switch_text" />
 
- <Button
+    <Button
         android:id="@+id/cancel_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
         android:layout_marginTop="32dp"
-     android:layout_marginHorizontal="32dp"
         android:text="cancel"
-        app:layout_constraintEnd_toStartOf="@id/space3"
+        app:layout_constraintEnd_toStartOf="@id/space"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content_layout"/>
-
-
+        app:layout_constraintTop_toBottomOf="@+id/cyclic_switch_text" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

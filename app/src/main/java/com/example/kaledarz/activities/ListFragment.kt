@@ -41,6 +41,7 @@ class ListFragment : Fragment() {
     private var filterUpperStart = Constants.NONE
     private var filterUpperEnd = Constants.NONE
     private var filterContent = Constants.NONE
+    private var filterCyclic = "all"
 
     private var choose = Status.UNDONE
 
@@ -65,11 +66,10 @@ class ListFragment : Fragment() {
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.filter -> {
-                    FilterDialog(dateFilter) {
-                        if (it != DateFilter()) {
-                            binding.toolbar.menu.findItem(R.id.clear_filter).isVisible = true
-                        }
-                        dateFilter = it
+                    FilterDialog(dateFilter) { filter ->
+                        val isFilterSet = filter != DateFilter()
+                        binding.toolbar.menu.findItem(R.id.clear_filter).isVisible = isFilterSet
+                        dateFilter = filter
                         applyFilterAndGetData()
                     }.show(childFragmentManager, "TAG")
                     true
@@ -106,7 +106,6 @@ class ListFragment : Fragment() {
 
         applyFilterAndGetData()
         choseButton(choose)
-
         binding.doneImageButton.setOnLongClickListener {
             choseButton(Status.DONE)
             deleteAllRows(Status.DONE)
@@ -157,12 +156,14 @@ class ListFragment : Fragment() {
         filterUpperStart = getValueFromIntentIfSet(dateFilter.upperStartDate)
         filterUpperEnd = getValueFromIntentIfSet(dateFilter.upperEndDate)
         filterContent = getValueFromIntentIfSet(dateFilter.content)
+        filterCyclic = getValueFromIntentIfSet(dateFilter.cyclic, "all")
 
         binding.lowerStartDateText.text = filterLowerStart
         binding.lowerEndDateText.text = filterLowerEnd
         binding.upperStartDateText.text = filterUpperStart
         binding.upperEndDateText.text = filterUpperEnd
         binding.contentText.text = filterContent
+        binding.cyclicText.text = filterCyclic
 
         choseButton(choose)
     }
@@ -193,17 +194,17 @@ class ListFragment : Fragment() {
     private fun choseButton(choose: Status) {
         getButtonStatus(this.choose).setBackgroundResource(R.drawable.image_background_round)
         this.choose = choose
-        getButtonStatus(choose).setBackgroundResource(R.color.selectedButtonColor)
+        getButtonStatus(choose).setBackgroundResource(R.drawable.image_selected_round)
         prepareArrays(choose)
         chooseArray()
     }
 
 
-    private fun getValueFromIntentIfSet(key: String): String {
+    private fun getValueFromIntentIfSet(key: String, default: String = Constants.NONE): String {
         return if (key != "") {
             key
         } else {
-            Constants.NONE
+            default
         }
     }
 
@@ -222,8 +223,11 @@ class ListFragment : Fragment() {
                 filterContent == Constants.NONE || note.content != null && note.content!!.contains(
                     filterContent
                 )
+
+            val isCyclic =
+                filterCyclic == "all" || (note.cyclic && filterCyclic == "cyclic") || (!note.cyclic && filterCyclic == "regular")
             if (!(isLowerStartDateNoteIsValid && isUpperStartDateNoteIsValid
-                        && isLowerEndDateNoteIsValid && isUpperEndDateNoteIsValid && isContentValid)
+                        && isLowerEndDateNoteIsValid && isUpperEndDateNoteIsValid && isContentValid && isCyclic)
             ) {
                 originalList.remove(note)
             }

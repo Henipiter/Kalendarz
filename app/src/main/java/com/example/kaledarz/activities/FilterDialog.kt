@@ -47,9 +47,19 @@ class FilterDialog(
         binding.lowerEndDateInput.setText(dateFilter.lowerEndDate)
         binding.upperEndDateInput.setText(dateFilter.upperEndDate)
         binding.contentInput.setText(dateFilter.content)
+        setCheckboxesOfCyclicByText(dateFilter.cyclic)
 
         pickerHelper = PickerHelper(requireContext())
-
+        binding.cyclicCheckbox.setOnClickListener {
+            if (!binding.cyclicCheckbox.isChecked && !binding.regularCheckbox.isChecked) {
+                binding.regularCheckbox.isChecked = true
+            }
+        }
+        binding.regularCheckbox.setOnClickListener {
+            if (!binding.cyclicCheckbox.isChecked && !binding.regularCheckbox.isChecked) {
+                binding.cyclicCheckbox.isChecked = true
+            }
+        }
         binding.lowerStartDateLayout.setStartIconOnClickListener {
             binding.lowerStartDateInput.setText("")
         }
@@ -81,6 +91,7 @@ class FilterDialog(
                 lowerEndDate = binding.lowerEndDateInput.text.toString(),
                 upperEndDate = binding.upperEndDateInput.text.toString(),
                 content = binding.contentInput.text.toString(),
+                cyclic = getCyclicTextFilter()
             )
             onStartClick.invoke(newDateFilter)
             dismiss()
@@ -89,6 +100,34 @@ class FilterDialog(
             dismiss()
         }
 
+    }
+
+    private fun getCyclicTextFilter(): String {
+        return if (binding.regularCheckbox.isChecked && binding.cyclicCheckbox.isChecked) {
+            "all"
+        } else if (binding.cyclicCheckbox.isChecked) {
+            "cyclic"
+        } else
+            "regular"
+    }
+
+    private fun setCheckboxesOfCyclicByText(text: String) {
+        when (text) {
+            "regular" -> {
+                binding.regularCheckbox.isChecked = true
+                binding.cyclicCheckbox.isChecked = false
+            }
+
+            "cyclic" -> {
+                binding.regularCheckbox.isChecked = false
+                binding.cyclicCheckbox.isChecked = true
+            }
+
+            "all" -> {
+                binding.regularCheckbox.isChecked = true
+                binding.cyclicCheckbox.isChecked = true
+            }
+        }
     }
 
     private fun showLowerStartDatePicker() {

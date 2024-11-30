@@ -5,5 +5,6 @@ data class DateFilter(
     var upperStartDate: String = "",
     var lowerEndDate: String = "",
     var upperEndDate: String = "",
-    var content: String = ""
+    var content: String = "",
+    var cyclic: String = "all"
 )

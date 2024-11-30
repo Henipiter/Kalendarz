@@ -49,14 +49,17 @@ class CalendarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        calendarViewModel.atomicBoolean.set(false)
+        calendarViewModel.readingNoteProcessFinished.set(false)
+        Log.d("DATEE", "calendarViewModel.noteList AAAAA")
+        calendarViewModel.noteList.value = ArrayList()
         binding.toolbar.inflateMenu(R.menu.top_menu_calendar)
         myPref = requireContext().getSharedPreferences("run_alarms", AppCompatActivity.MODE_PRIVATE)
-
         initObserver()
+        Log.d("DATEE", "readAllNotes onViewCreated")
         calendarViewModel.readAllNotes()
         val calendar = Calendar.getInstance()
         binding.calendarView.setDate(calendar)
+
 
         customAdapter = CustomAdapter(requireContext(), calendarViewModel.getFilteredList()) { id ->
             val action = CalendarFragmentDirections.actionCalendarFragmentToElementFragment(
@@ -77,17 +80,21 @@ class CalendarFragment : Fragment() {
 
         binding.calendarView.setOnPreviousPageChangeListener(object : OnCalendarPageChangeListener {
             override fun onChange() {
+                Log.w("BLOCKING", "setOnPreviousPageChangeListener freezeCalendar")
+                freezeCalendar()
                 val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
                 val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
-                calendarViewModel.preparePrevious(currentMonth, currentYear)
+                calendarViewModel.preparePreviousAndNextMonths(currentMonth, currentYear)
                 Log.d("DATEE", "=================")
             }
         })
         binding.calendarView.setOnForwardPageChangeListener(object : OnCalendarPageChangeListener {
             override fun onChange() {
+                Log.w("BLOCKING", "setOnForwardPageChangeListener freezeCalendar")
+                freezeCalendar()
                 val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
                 val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
-                calendarViewModel.prepareNext(currentMonth, currentYear)
+                calendarViewModel.preparePreviousAndNextMonths(currentMonth, currentYear)
                 Log.d("DATEE", "=================")
             }
         })
@@ -126,6 +133,7 @@ class CalendarFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        Log.d("DATEE", "readAllNotes onResume")
         calendarViewModel.readAllNotes()
     }
 
@@ -139,11 +147,53 @@ class CalendarFragment : Fragment() {
         calendarViewModel.filterNoteList(chooseDate)
     }
 
+    private fun freezeCalendar() {
+        Log.w("BLOCKING", "freezeCalendar")
+        binding.calendarView.setSwipeEnabled(false)
+        binding.blockerView.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun startCalendar() {
+        Log.w("BLOCKING", "startCalendar")
+        binding.calendarView.setSwipeEnabled(true)
+        binding.blockerView.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+    }
+
     private fun initObserver() {
+        calendarViewModel.currentPrepareProcessing.observe(viewLifecycleOwner) {
+            Log.d("DATEE", "currentPrepareProcessing ${calendarViewModel.isPrepareProcessing()}")
+            if (!it && !calendarViewModel.isPrepareProcessing()) {
+                Log.d("BLOCKING", "currentPrepareProcessing start")
+                startCalendar()
+            }
+        }
+        calendarViewModel.prevAndNextPrepareProcessing.observe(viewLifecycleOwner) {
+            Log.d(
+                "DATEE",
+                "prevAndNextPrepareProcessing ${calendarViewModel.isPrepareProcessing()}"
+            )
+            if (!it && !calendarViewModel.isPrepareProcessing()) {
+                Log.d("BLOCKING", "prevAndNextPrepareProcessing start")
+                startCalendar()
+            }
+        }
+        calendarViewModel.updateCalendarProcessing.observe(viewLifecycleOwner) {
+            Log.d("DATEE", "updateCalendarProcessing ${calendarViewModel.isPrepareProcessing()}")
+            if (!it && !calendarViewModel.isPrepareProcessing()) {
+                Log.d("BLOCKING", "updateCalendarProcessing start")
+                startCalendar()
+            }
+        }
         calendarViewModel.noteList.observe(viewLifecycleOwner) {
-            if (it.isEmpty() || !calendarViewModel.atomicBoolean.get()) {
+            if (it.isEmpty() || !calendarViewModel.readingNoteProcessFinished.get()) {
                 return@observe
             }
+            Log.d(
+                "DATEE",
+                "calendarViewModel.noteList size ${calendarViewModel.noteList.value!!.size}"
+            )
             val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
             val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
             calendarViewModel.prepareCurrent(currentMonth, currentYear)
@@ -151,10 +201,11 @@ class CalendarFragment : Fragment() {
         }
         calendarViewModel.currentPageUpdated.observe(viewLifecycleOwner) {
             if (it) {
+                Log.w("BLOCKING", "currentPageUpdated freezeCalendar")
+                freezeCalendar()
                 val currentMonth = binding.calendarView.currentPageDate.get(Calendar.MONTH)
                 val currentYear = binding.calendarView.currentPageDate.get(Calendar.YEAR)
-                calendarViewModel.preparePrevious(currentMonth, currentYear)
-                calendarViewModel.prepareNext(currentMonth, currentYear)
+                calendarViewModel.preparePreviousAndNextMonths(currentMonth, currentYear)
             }
         }
 
@@ -165,7 +216,9 @@ class CalendarFragment : Fragment() {
             Log.d("EEE", "calendarDayList.observe")
             calendarViewModel.calendarDayList.value?.let {
                 binding.calendarView.setCalendarDays(it)
+                Log.d("DATEE", "calendarView update")
                 calendarViewModel.shouldUpdateGrid.postValue(false)
+                calendarViewModel.updateCalendarProcessing.postValue(false)
             }
         }
 
